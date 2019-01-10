@@ -1,0 +1,10 @@
+# Windows shortcuts
+*.lnk
+
+#   Added later or manually
+/_package_binaries
+/_package_preparation
+*.gz
+*.zip
+*.pdf
+*.Rcheck
