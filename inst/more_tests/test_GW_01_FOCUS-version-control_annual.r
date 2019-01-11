@@ -51,17 +51,17 @@ param <- data.frame(
     "app_j_day"         = c(   298L,   298L,   298L,    298L,   298L ), 
     stringsAsFactors    = FALSE ) 
 
-expected_results <- data.frame(
+expected_results_s <- data.frame(
     "name"                  = c( "GW-A", "GW-B",  "GW-C", "Met_C", "GW-D" ), 
     "target_ug_per_L_rnd"   = c(   2.86,    7.2, 1.45E-5,    23.3,  0.154 ), 
-    "target_index_period1"  = c(      7,      4,       7,       8,      7 ), 
-    "target_index_period2"  = c(      8,      6,       8,      10,     10 ), 
+    "target_index_period1"  = c(      7,      4,       7,       8,     10 ), 
+    "target_index_period2"  = c(      8,      6,       8,      10,      7 ), 
     stringsAsFactors        = FALSE ) 
 
 expected_results_w <- data.frame(
     "name"                  = c( "GW-A", "GW-B", "GW-C", "Met_C", "GW-D" ), 
-    "perc_period1_mm"       = c( 256.42, 200.46, 256.42,  237.04, 256.42 ), 
-    "perc_period2_mm"       = c( 237.04, 202.54, 237.04,  307.55, 307.55 ), 
+    "perc_period1_mm"       = c( 256.42, 200.46, 256.42,  237.04, 307.55 ), 
+    "perc_period2_mm"       = c( 237.04, 202.54, 237.04,  307.55, 256.42 ), 
     stringsAsFactors        = FALSE ) 
 
 expected_parfiles <- data.frame(
@@ -94,39 +94,10 @@ res <- macrounchainedFocusGW(
     s         = param, 
     parfile   = parfile, 
     overwrite = TRUE, 
-    run       = FALSE ) 
+    run       = TRUE ) 
 
 
 
-
-
-
-modelVar  <- rmacrolite::rmacroliteGetModelVar() 
-
-all_files <- res[["operation_register"]][, c( "par_file", 
-    "output_rename", "indump_rename", "summary_file" ) ]
-all_files <- unlist( all_files ) 
-all_files <- c( all_files, res[["extra_files"]] ) 
-all_files <- all_files[ !is.na( all_files ) ] 
-names( all_files ) <- NULL 
-all_files <- file.path( modelVar[[ "path" ]], all_files )
-all_files <- all_files[ file.exists( all_files ) ] 
-
-archive_file <- file.path( modelVar[[ "path" ]], 
-    "rml_001-006_archive.tar.gz" )
-
-if( file.exists( archive_file ) ){
-    file.remove( archive_file ) 
-}   
-
-suppressWarnings( where_tar <- tryCatch( system2( "where", 
-    "tar.exe", stdout = TRUE) ) )
-
-if( is.character( where_tar ) ){
-    utils::tar( tarfile = normalizePath( archive_file, 
-        mustWork = FALSE ), files = normalizePath( all_files ),
-        compression = "gzip", tar = "tar.exe" )
-}   
 
 
 
