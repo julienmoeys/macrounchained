@@ -41,9 +41,8 @@ pdu_pkgDescription(
     pkgDepends  = NULL, 
     pkgImports  = c( "rmacrolite", "macroutils2", "codeinfo", 
         "utils", "stats" ), 
-    pkgSuggests = "readxl", 
-    RVersion    = NULL 
-)   
+    pkgSuggests = c( "readxl", "knitr" ), 
+    RVersion    = NULL ) 
 
 #   Tools used in rmacroliteImportParFile-examples.r
 

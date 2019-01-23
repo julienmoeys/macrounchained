@@ -22,4 +22,7 @@ Imports:
     utils,
     stats
 Suggests: 
-    readxl
+    readxl,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

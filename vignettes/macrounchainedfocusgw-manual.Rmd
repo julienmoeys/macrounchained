@@ -1,0 +1,106 @@
+---
+title: "macrounchainedFocusGW() manual"
+author: "Julien Moeys"
+date: "`r Sys.Date()`"
+output: 
+    rmarkdown::html_vignette:
+        toc: true
+vignette: >
+  %\VignetteIndexEntry{macrounchainedFocusGW() manual}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+
+Introduction
+============================================================
+
+Note: In the text below i use `macrounchained` to indicate 
+the package, and `macrounchained()` to indicate the function 
+named macrounchained in that package. More generally, names 
+followed by `()` are function names. For example, 
+`macrounchainedFocusGW()` is used for the function named 
+macrounchainedFocusGW.
+
+`macrounchainedFocusGW()` is a higher level function of the 
+package `macrounchained`. It is build on top of the more 
+generic function `macrounchained()`. It is specifically 
+designed to perform groundwater simulations like MACRO In 
+FOCUS. 
+
+`macrounchainedFocusGW()` is not as user friendly 
+as the graphical user interface (GUI) of MACRO In FOCUS, but 
+it allows the simulation of Nth-order metabolites (MACRO In 
+FOCUS GUI only allows 1st order metabolites), and of 
+large batches of simulations. `macrounchainedFocusGW()` also 
+reduces the total number of simulations to be run when simulating 
+several degradation products of the same substance, compared 
+to MACRO In FOCUS GUI, by avoiding to re-run the same 
+"intermediate" simulation multiple time.
+
+
+
+Installation and system setup
+============================================================
+
+Installation
+------------------------------------------------------------
+
+See [https://github.com/julienmoeys/macrounchained/tree/master/README.md][]
+
+
+
+Use of Windows Environment Variables to permanently save the 
+path of the directory where MACRO or MACRO In FOCUS are 
+installed
+------------------------------------------------------------
+
+
+
+Alternative to Windows Environment Variables
+------------------------------------------------------------
+
+
+
+Running MACRO In FOCUS simulations with macrounchainedFocusGW()
+============================================================
+
+Preparing a template par-file
+------------------------------------------------------------
+
+A template par-file need to be prepared for each combination 
+of:
+*   Scenario (ex. Chateaudun)
+*   Crop (ex. Winter cereals)
+*   Number of application per year
+*   Number of years interval between application-years 
+    (application every year, every two years, every three years)
+
+This template need to be prepared with MACRO In FOCUS. Prepare 
+a groundwater simulation (with the right scenario, crop, Number 
+of application per year and Number of years interval between 
+application-years), and when it is ready, chose the Tools 
+menu > Save current run to parameter file and log file. You 
+can choose any dummy substance (ex. GW-A) and any dose and 
+application date(s) for the template, as long as the DT50 is 
+not 0 or extremely short. All the substance and application 
+parameters will be overwritten by `macrounchainedFocusGW()`.
+
+
+
+Simple case
+------------------------------------------------------------
+
+
+
+Several application per year
+------------------------------------------------------------
+
