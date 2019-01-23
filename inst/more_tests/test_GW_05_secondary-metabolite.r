@@ -52,21 +52,21 @@ param <- data.frame(
     stringsAsFactors    = FALSE 
 )   
 
-#   Results obtained on 2019/01/11 with MACRO In FOCUS 5.5.4 
-#   macrounchained 0.9.0 (git revision: 9178595), 
+#   Results obtained on 2019/01/23 with MACRO In FOCUS 5.5.4 
+#   macrounchained 0.9.0 (git revision: cbfe075), 
 #   rmacrolite 0.9.2 (git revision: b792510) and 
 #   macroutils2 2.2.1 (git revision: fafcc2b)
 expected_results_s <- data.frame(
     "name"                  = c( "GW-M", "Met-M1", "Met-M2" ), 
-    "target_ug_per_L_rnd"   = c(  0.108,  0.00194,   0.0346 ), 
-    "target_index_period1"  = c(      6,        7,       15 ), 
-    "target_index_period2"  = c(     14,       15,        8 ), 
+    "target_ug_per_L_rnd"   = c(  0.140,  0.00269,  0.04150 ), 
+    "target_index_period1"  = c(     14,        7,        8 ), 
+    "target_index_period2"  = c(      7,       15,        2 ), 
     stringsAsFactors        = FALSE ) 
 
 expected_results_w <- data.frame(
     "name"                  = c(    "GW-M",  "Met-M1",  "Met-M2" ), 
-    "perc_period1_mm"       = c( 202.45740, 256.35559,  38.68237 ), 
-    "perc_period2_mm"       = c( 234.07593,  38.68237, 237.01477 ), 
+    "perc_period1_mm"       = c(  234.0759,  256.3556,  237.0148 ), 
+    "perc_period2_mm"       = c( 256.35547,  38.68237,  19.49554 ), 
     stringsAsFactors        = FALSE ) 
 
 
