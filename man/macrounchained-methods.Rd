@@ -16,7 +16,85 @@ macrounchained(s, ...)
 \arguments{
 \item{s}{A \code{\link[base]{data.frame}} containing different sets 
 of substance properties and application patterns to be 
-simulated.}
+simulated. Each row is a substance. The order of the 
+column has no importance, but the order of the row 
+will steer the simulation order. Substances deriving 
+from the same applied substance will nonetheless be 
+simulated together. The following columns 
+must or can be provided 
+\itemize{
+    \item{"id"}{Integer-value, between 1 and 998. Unique 
+        identifier of the substance. Will also be used as 
+        a Run ID.} 
+    \item{"name"}{Character-string. Name of the substance. 
+        Names don't need to be unique, but it may be a 
+        good idea if they are.} 
+    \item{"kfoc"}{Numeric-value. [L/kg]. Freundlich 
+        adsorption coefficient of the substance.} 
+    \item{"nf"}{Numeric-value. [-]. Freundlich exponent 
+        of the substance.} 
+    \item{"dt50"}{Numeric-value. [days]. Half-life of 
+        the substance in soil.} 
+    \item{"dt50_ref_temp"}{Numeric-value. [Degrees Celsius]. 
+        Reference temperature at which the half-life was 
+        measured.} 
+    \item{"dt50_pf"}{Integer-value. [log10(cm)]. pF at 
+        which the DT50 was measured.} 
+    \item{"exp_temp_resp"}{Numeric-value. [-]. Exponent 
+        of the temperature response (effect of temperature 
+        on degradation).} 
+    \item{"exp_moist_resp"}{Numeric-value. [-]. Exponent 
+        of the moisture response (effect of soil water 
+        content on degradation).} 
+    \item{"crop_upt_f"}{Numeric-value.  [-]. Crop uptake 
+        factor. Between 0 (no root uptake of the substance) 
+        and 1 (passive uptake of the substance with root 
+        water uptake).} 
+    \item{"diff_coef"}{Numeric-value. [m2/s]. Substance 
+        diffusion coefficient (in water).} 
+    \item{"parent_id"}{Integer-value. Only for metabolites. 
+        Leave empty (\code{NA_integer_}) for substances 
+        that are not the degradation product of another 
+        substance. \code{id} of the parent substance, i.e. 
+        the substance that degrades into the metabolite 
+        described in this row. For secondary metabolites 
+        (and further), the "parent" will also be a 
+        metabolite.} 
+    \item{"g_per_mol"}{Numeric-value. [g/mol]. Molar mass 
+        of the substance. Only needed when the substance 
+        is degrading into a degradation product or is 
+        the degradation product of another substance. 
+         Leave empty (\code{NA_integer_}) otherwise.} 
+    \item{"g_as_per_ha"}{Numeric-value or, in case of 
+        multiple applications, character string. [g/ha]. 
+        Application 
+        rate (in g substance per hectare) of the substance. 
+        Set to 0 g/ha if the substance is a degradation 
+        product. In case of several applications per year, 
+        give the values separated with a vertical bar 
+        (see https://en.wikipedia.org/wiki/Vertical_bar). 
+        Do quote the values. For example, for two 
+        applications of 1000g/ha and 90g/ha, respectively, 
+        type \code{"1000|900"}.} 
+    \item{"app_j_day"}{Integer-value or, in case of 
+        multiple applications, character string. Between 
+        1 and 365. 
+        [Julian day]. Application date of the substance. 
+        Use the application date of the applied substance 
+        (the top parent) if the substance is a 
+        degradation product. In case of several 
+        applications per year, give the values separated 
+        with a vertical bar (see https://en.wikipedia.org/wiki/Vertical_bar). 
+        Do quote the values. For example, for two 
+        applications on Julian days 298 and 305, 
+        respectively, type \code{"298|305"}} 
+    \item{"f_int"}{Numeric-value. [-]. Fraction of the 
+        applied product that is intercepted by the crop 
+        canopy.} 
+}   
+The columns \code{"parent_id"} and \code{"g_per_mol"} can 
+be entirely skipped (missing), and should at least be 
+only \code{NA} when no metabolite is to be simulated.}
 
 \item{\dots}{Additional parameters passed to specific methods. 
 Currently not used.}
