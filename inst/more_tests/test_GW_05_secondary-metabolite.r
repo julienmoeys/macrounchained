@@ -15,7 +15,7 @@ rm(list=ls(all=TRUE))
 
 prj_name  <- "macrounchained" 
 pkg_name  <- "macrounchained"
-test_name <- "test_GW_04_two-applications"
+test_name <- "test_GW_05_secondary-metabolite"
 
 if( as.logical( as.integer( Sys.getenv( "macrounchained_developer", unset = "0" ) ) ) ){
     rPackagesDir <- Sys.getenv( "rPackagesDir", unset = NA_character_ )
@@ -40,7 +40,7 @@ param <- data.frame(
     "dt50"              = c(     23,      19,       136 ), 
     "dt50_ref_temp"     = c(     20,      20,        20 ), 
     "dt50_pf"           = c(      2,       2,         2 ), 
-    "exp_temp_resp"     = c(  0.079,   0.079,     0.079 ), 
+    "exp_temp_resp"     = c( 0.0948,  0.0948,    0.0948 ), 
     "exp_moist_resp"    = c(   0.49,    0.49,      0.49 ), 
     "crop_upt_f"        = c(    0.5,     0.5,       0.5 ), 
     "diff_coef"         = c(  5E-10,   5E-10,     5E-10 ), 
@@ -52,6 +52,23 @@ param <- data.frame(
     stringsAsFactors    = FALSE 
 )   
 
+#   Results obtained on 2019/01/11 with MACRO In FOCUS 5.5.4 
+#   macrounchained 0.9.0 (git revision: 9178595), 
+#   rmacrolite 0.9.2 (git revision: b792510) and 
+#   macroutils2 2.2.1 (git revision: fafcc2b)
+expected_results_s <- data.frame(
+    "name"                  = c( "GW-M", "Met-M1", "Met-M2" ), 
+    "target_ug_per_L_rnd"   = c(  0.108,  0.00194,   0.0346 ), 
+    "target_index_period1"  = c(      6,        7,       15 ), 
+    "target_index_period2"  = c(     14,       15,        8 ), 
+    stringsAsFactors        = FALSE ) 
+
+expected_results_w <- data.frame(
+    "name"                  = c(    "GW-M",  "Met-M1",  "Met-M2" ), 
+    "perc_period1_mm"       = c( 202.45740, 256.35559,  38.68237 ), 
+    "perc_period2_mm"       = c( 234.07593,  38.68237, 237.01477 ), 
+    stringsAsFactors        = FALSE ) 
+
 
 
 parfile <- system.file( "par-files", 
@@ -62,8 +79,87 @@ parfile <- system.file( "par-files",
 res <- macrounchainedFocusGW( 
     s         = param, 
     parfile   = parfile, 
-    overwrite = TRUE ) 
+    overwrite = TRUE, 
+    run       = TRUE ) 
 
-# parfile = "inst/par-files/chat_winCer_GW-X_900gHa_d182_1910-1911.par", 
 
-res
+
+
+
+
+modelVar  <- rmacrolite::rmacroliteGetModelVar() 
+log_file  <- file.path( output_dir, 
+    sprintf( "%s_results.txt", test_name ) )
+path      <- rmacrolite::rmacroliteGetModelVar()[["path"]]
+log_width <- rmacrolite::getRmlPar( "log_width" )
+verbose   <- TRUE 
+
+file.copy(
+    from = file.path( path, res[["extra_files"]]["log_file"] ), 
+    to   = log_file, 
+    overwrite = TRUE )   
+
+
+
+macrounchained:::.muc_logMessage( m = "Benchmark (results)", 
+    frame = "*", verbose = verbose, log_width = log_width, 
+    logfiles = log_file, append = TRUE )
+
+obtained_results <- res[[ "analyse_summary_output" ]]
+
+macrounchained:::.muc_logMessage( m = "Expected results (water):", 
+    verbose = verbose, log_width = log_width, 
+    logfiles = log_file, append = TRUE )
+
+macrounchained:::.muc_print( x = expected_results_w, 
+    verbose = verbose, log_width = log_width, 
+    logfiles = log_file, append = TRUE )
+
+macrounchained:::.muc_logMessage( m = "Expected results (solute):", 
+    verbose = verbose, log_width = log_width, 
+    logfiles = log_file, append = TRUE )
+
+macrounchained:::.muc_print( x = expected_results_s, 
+    verbose = verbose, log_width = log_width, 
+    logfiles = log_file, append = TRUE )
+
+macrounchained:::.muc_logMessage( m = "Obtained results (water and solute):", 
+    verbose = verbose, log_width = log_width, 
+    logfiles = log_file, append = TRUE )
+
+macrounchained:::.muc_print( x = obtained_results, 
+    verbose = verbose, log_width = log_width, 
+    logfiles = log_file, append = TRUE )
+
+obtained_results_s <- obtained_results[, colnames( obtained_results ) 
+    %in% colnames( expected_results_s ) ] 
+
+obtained_results_w <- obtained_results[, colnames( obtained_results ) 
+    %in% colnames( expected_results_w ) ] 
+
+diff_w_percent <- ( (expected_results_w[, c( "perc_period1_mm", "perc_period2_mm" ) ] - 
+                obtained_results[, c( "perc_period1_mm", "perc_period2_mm" ) ]) / 
+            expected_results_w[, c( "perc_period1_mm", "perc_period2_mm" ) ] ) * 100 
+
+macrounchained:::.muc_logMessage( m = "Differences in percolation: %s to %s %% of the expected percolation", 
+    verbose = verbose, log_width = log_width, 
+    logfiles = log_file, append = TRUE, 
+    values = list( round( min( diff_w_percent ), 2L ), round( max( diff_w_percent ), 2L ) ) ) 
+
+test_s <- all.equal( obtained_results_s, expected_results_s, 
+    check.attributes = FALSE )
+
+if( all( is.logical( test_s ) ) ){
+    macrounchained:::.muc_logMessage( m = "Test conclusions (solute): ALL EQUAL", 
+        verbose = verbose, log_width = log_width, 
+        logfiles = log_file, append = TRUE ) 
+    
+}else{
+    macrounchained:::.muc_logMessage( m = "Test conclusions (solute): DIFFERENCES DETECTED", 
+        verbose = verbose, log_width = log_width, 
+        logfiles = log_file, append = TRUE )
+}   
+
+macrounchained:::.muc_logMessage( m = "END", 
+    verbose = verbose, log_width = log_width, 
+    logfiles = log_file, append = TRUE )
