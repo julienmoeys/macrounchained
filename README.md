@@ -42,10 +42,12 @@ Features
     climate and the crop cannot be modified by `macrounchained`.
     MACRO In FOCUS users need to export a template 
     `.par`-file for the right scenario, crop, number of 
-    applications and number of years between applications.
+    applications and number of years between applications 
+    before using `macrounchained`.
     
 *   Several sets of substance properties can be simulated 
-    in the same batch (up to 998 sets per batch).
+    in the same batch (up to 998 sets per batch). The sets 
+    of substance properties don't need to be related.
     
 *   Several `.par`-file templates can be used in the same 
     batch of simulations.
@@ -74,12 +76,15 @@ Features
     
 *   The results of `macrounchainedFocusGW()` have been 
     successfully tested against the results of the 
-    "version control" of MACRO In FOCUS 5.5.4 , and give the 
+    "version control" of MACRO In FOCUS 5.5.4, and give the 
     same PECgw for all the simulations included in the version 
     control. The function has also been successfully tested 
     against the results of MACRO In FOCUS 5.5.4 for other 
     cases (two application per year; two years interval 
-    between applications).
+    between applications). The tests are "build-in" the package, 
+    and they can be run each time an important change is 
+    made to the package. The test results can be 
+    checked here: [https://github.com/julienmoeys/macrounchained/tree/master/inst/more_tests][]
     
 *   As the interface of MACRO In FOCUS only allow the 
     parametrization of 1st-order metabolites, the package 
@@ -87,6 +92,27 @@ Features
     of 2nd-order metabolites have not been compared with 
     a reference value (because of the lack of a public 
     benchmark).
+    
+*   `macrounchained()` and `macrounchainedFocusGW()` output 
+    an operation log informing the users of the operations 
+    being performed. `macrounchainedFocusGW()` also 
+    output a summary of the simulation results (including 
+    the PECgw) in the operation log, and in separate files.
+    
+*   `macrounchained()` and `macrounchainedFocusGW()` produce 
+    a `tar.gz` archive containing all the relevant input 
+    and output files of the simulation batch.
+    
+*   The packages do not include any MACRO executable, and 
+    instead use an existing MACRO or MACRO In FOCUS installation.
+    
+*   Extensive traceability, with MACRO-version, packages-versions 
+    and revision (i.e. a machine generated code linking the 
+    package to the code version control system), but also with 
+    MD5 checksum for the packages and MACRO-files, reported 
+    to the user, so that it is in principle possible to check 
+    if a simulation was performed with an official release of 
+    the packages or of the MACRO executable, or not.
 
 
 
