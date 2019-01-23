@@ -688,6 +688,10 @@ macrounchained <- function(
         .muc_internals[[ "package" ]] <- utils::packageName()
     }   
     
+    if( is.null( .muc_internals[[ "timeStart" ]] ) ){
+        .muc_internals[[ "timeStart" ]] <- Sys.time()
+    }   
+    
     UseMethod( generic = "macrounchained" )
 }   
 
@@ -774,6 +778,10 @@ macrounchained.data.frame <- function(
     
     if( is.null( .muc_internals[[ "package" ]] ) ){
         .muc_internals[[ "package" ]] <- utils::packageName()
+    }   
+    
+    if( is.null( .muc_internals[[ "timeStart" ]] ) ){
+        .muc_internals[[ "timeStart" ]] <- Sys.time()
     }   
     
     
@@ -2169,6 +2177,9 @@ macrounchained.data.frame <- function(
     
     
     
+    #   Save the start time, for later use
+    timeStart <- .muc_internals[[ "timeStart" ]]
+    
     .muc_logMessage( m = "Internal clean-up", 
         verbose = verbose, log_width = log_width, 
         logfiles = log_file, append = TRUE ) 
@@ -2178,13 +2189,23 @@ macrounchained.data.frame <- function(
     
     
     
+    duration  <- as.numeric( difftime( Sys.time(),  timeStart, 
+        units = "mins" ) ) 
+    
+    .muc_logMessage( m = "Total operation time at this point: %s mins", 
+        verbose = verbose, log_width = log_width, 
+        logfiles = log_file, append = TRUE, 
+        values = round( duration, 3 ) ) 
+    
+    
+    
     if( archive ){
-        .muc_logMessage( m = "LAST: Calculate md5-checksums for generated files (%s) and archive them (%s)", 
+        .muc_logMessage( m = "FINAL STEP: Calculate md5-checksums for generated files (%s) and archive them (%s)", 
             verbose = verbose, log_width = log_width, 
             logfiles = log_file, append = TRUE, 
             values = list( md5_file, archive_file ) ) 
     }else{
-        .muc_logMessage( m = "LAST: Calculate md5-checksums for generated files (%s)", 
+        .muc_logMessage( m = "FINAL STEP: Calculate md5-checksums for generated files (%s)", 
             verbose = verbose, log_width = log_width, 
             logfiles = log_file, append = TRUE, 
             values = list( md5_file ) ) 
@@ -2501,6 +2522,8 @@ macrounchainedFocusGW <- function(
     
     .muc_internals[[ "package" ]] <- utils::packageName()
     
+    .muc_internals[[ "timeStart" ]] <- Sys.time() 
+    
     UseMethod( generic = "macrounchainedFocusGW" )
 }   
 
@@ -2546,6 +2569,10 @@ macrounchainedFocusGW.data.frame <- function(
     
     if( is.null( .muc_internals[[ "package" ]] ) ){
         .muc_internals[[ "package" ]] <- utils::packageName()
+    }   
+    
+    if( is.null( .muc_internals[[ "timeStart" ]] ) ){
+        .muc_internals[[ "timeStart" ]] <- Sys.time()
     }   
     
     
