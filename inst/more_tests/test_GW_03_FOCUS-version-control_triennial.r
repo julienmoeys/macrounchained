@@ -51,17 +51,17 @@ param <- data.frame(
     "app_j_day"         = 119L, 
     stringsAsFactors    = FALSE ) 
 
-expected_results <- data.frame(
+expected_results_s <- data.frame(
     "name"                  = "GW-D", 
     "target_ug_per_L_rnd"   = 0.0174, 
-    "target_index_period1"  = 2 
+    "target_index_period1"  = 2,
     "target_index_period2"  = 13, 
     stringsAsFactors        = FALSE ) 
 
 expected_results_w <- data.frame(
     "name"                  = "GW-D", 
-    "perc_period1_mm"       = 326.7, 
-    "perc_period2_mm"       = 202.34, 
+    "perc_period1_mm"       = 326.7*3, 
+    "perc_period2_mm"       = 202.34*3, 
     stringsAsFactors        = FALSE ) 
 
 expected_parfiles <- data.frame(
@@ -87,7 +87,7 @@ res <- macrounchainedFocusGW(
     s         = param, 
     parfile   = parfile, 
     overwrite = TRUE, 
-    run       = FALSE ) 
+    run       = TRUE ) 
 
 
 
