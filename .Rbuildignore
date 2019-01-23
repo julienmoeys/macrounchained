@@ -1,6 +1,7 @@
 _package_binaries
 _package_preparation
 _package_preparation_public
+inst/more_tests/results
 .gitattributes
 .gitignore
 package_build.r
