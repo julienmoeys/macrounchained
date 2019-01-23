@@ -306,51 +306,61 @@ NULL
 ### or with sprintf( output )
 .muc_anonymisePath <- function( path, anonymise = TRUE, x2 = FALSE ){
     #   Normalise the path
-    path <- normalizePath( path = path, mustWork = FALSE )
     
-    if( anonymise ){
-        #   Fetch user name, profile and home path
-        user_profile <-  Sys.getenv( "USERPROFILE", 
-            unset = NA_character_ ) 
-        
-        home_path <-  Sys.getenv( "HOMEPATH", 
-            unset = NA_character_ ) 
-        
-        user_name <- Sys.getenv( "USERNAME", 
-            unset = NA_character_ ) 
-        
-        if( !is.na( user_profile ) ){
-            path <- gsub( 
-                pattern     = user_profile, 
-                replacement = ifelse( x2, "%%USERPROFILE%%", 
-                    "%USERPROFILE%" ), 
-                x           = path, 
-                # ignore.case = TRUE, 
-                fixed       = TRUE )
+    path <- unlist( lapply(
+        X   = path, 
+        FUN = function(p){
+            if( !is.na( p ) ){
+                p <- normalizePath( path = p, mustWork = FALSE )
+            }   
+            
+            if( anonymise ){
+                #   Fetch user name, profile and home path
+                user_profile <-  Sys.getenv( "USERPROFILE", 
+                    unset = NA_character_ ) 
+                
+                home_path <-  Sys.getenv( "HOMEPATH", 
+                    unset = NA_character_ ) 
+                
+                user_name <- Sys.getenv( "USERNAME", 
+                    unset = NA_character_ ) 
+                
+                if( !is.na( user_profile ) ){
+                    p <- gsub( 
+                        pattern     = user_profile, 
+                        replacement = ifelse( x2, "%%USERPROFILE%%", 
+                            "%USERPROFILE%" ), 
+                        x           = p, 
+                        # ignore.case = TRUE, 
+                        fixed       = TRUE )
+                }   
+                
+                if( !is.na( home_path ) ){
+                    p <- gsub( 
+                        pattern     = home_path, 
+                        replacement = ifelse( x2, "%%HOMEPATH%%", 
+                            "%HOMEPATH%" ), 
+                        x           = p, 
+                        # ignore.case = TRUE, 
+                        fixed       = TRUE )
+                }   
+                
+                if( !is.na( user_name ) ){
+                    p <- gsub( 
+                        pattern     = user_name, 
+                        replacement = ifelse( x2, "%%USERNAME%%", 
+                            "%USERNAME%" ), 
+                        x           = p, 
+                        # ignore.case = TRUE, 
+                        fixed       = TRUE )
+                }   
+            }   
+            
+            return( p )
         }   
-        
-        if( !is.na( home_path ) ){
-            path <- gsub( 
-                pattern     = home_path, 
-                replacement = ifelse( x2, "%%HOMEPATH%%", 
-                    "%HOMEPATH%" ), 
-                x           = path, 
-                # ignore.case = TRUE, 
-                fixed       = TRUE )
-        }   
-        
-        if( !is.na( user_name ) ){
-            path <- gsub( 
-                pattern     = user_name, 
-                replacement = ifelse( x2, "%%USERNAME%%", 
-                    "%USERNAME%" ), 
-                x           = path, 
-                # ignore.case = TRUE, 
-                fixed       = TRUE )
-        }   
-    }   
+    ) ) 
     
-    return( path )
+    return( path ) 
 }   
 
 
@@ -494,7 +504,85 @@ NULL
 #'@param s
 #'  A \code{\link[base]{data.frame}} containing different sets 
 #'  of substance properties and application patterns to be 
-#'  simulated.
+#'  simulated. Each row is a substance. The order of the 
+#'  column has no importance, but the order of the row 
+#'  will steer the simulation order. Substances deriving 
+#'  from the same applied substance will nonetheless be 
+#'  simulated together. The following columns 
+#'  must or can be provided 
+#'  \itemize{
+#'      \item{"id"}{Integer-value, between 1 and 998. Unique 
+#'          identifier of the substance. Will also be used as 
+#'          a Run ID.} 
+#'      \item{"name"}{Character-string. Name of the substance. 
+#'          Names don't need to be unique, but it may be a 
+#'          good idea if they are.} 
+#'      \item{"kfoc"}{Numeric-value. [L/kg]. Freundlich 
+#'          adsorption coefficient of the substance.} 
+#'      \item{"nf"}{Numeric-value. [-]. Freundlich exponent 
+#'          of the substance.} 
+#'      \item{"dt50"}{Numeric-value. [days]. Half-life of 
+#'          the substance in soil.} 
+#'      \item{"dt50_ref_temp"}{Numeric-value. [Degrees Celsius]. 
+#'          Reference temperature at which the half-life was 
+#'          measured.} 
+#'      \item{"dt50_pf"}{Integer-value. [log10(cm)]. pF at 
+#'          which the DT50 was measured.} 
+#'      \item{"exp_temp_resp"}{Numeric-value. [-]. Exponent 
+#'          of the temperature response (effect of temperature 
+#'          on degradation).} 
+#'      \item{"exp_moist_resp"}{Numeric-value. [-]. Exponent 
+#'          of the moisture response (effect of soil water 
+#'          content on degradation).} 
+#'      \item{"crop_upt_f"}{Numeric-value.  [-]. Crop uptake 
+#'          factor. Between 0 (no root uptake of the substance) 
+#'          and 1 (passive uptake of the substance with root 
+#'          water uptake).} 
+#'      \item{"diff_coef"}{Numeric-value. [m2/s]. Substance 
+#'          diffusion coefficient (in water).} 
+#'      \item{"parent_id"}{Integer-value. Only for metabolites. 
+#'          Leave empty (\code{NA_integer_}) for substances 
+#'          that are not the degradation product of another 
+#'          substance. \code{id} of the parent substance, i.e. 
+#'          the substance that degrades into the metabolite 
+#'          described in this row. For secondary metabolites 
+#'          (and further), the "parent" will also be a 
+#'          metabolite.} 
+#'      \item{"g_per_mol"}{Numeric-value. [g/mol]. Molar mass 
+#'          of the substance. Only needed when the substance 
+#'          is degrading into a degradation product or is 
+#'          the degradation product of another substance. 
+#'           Leave empty (\code{NA_integer_}) otherwise.} 
+#'      \item{"g_as_per_ha"}{Numeric-value or, in case of 
+#'          multiple applications, character string. [g/ha]. 
+#'          Application 
+#'          rate (in g substance per hectare) of the substance. 
+#'          Set to 0 g/ha if the substance is a degradation 
+#'          product. In case of several applications per year, 
+#'          give the values separated with a vertical bar 
+#'          (see https://en.wikipedia.org/wiki/Vertical_bar). 
+#'          Do quote the values. For example, for two 
+#'          applications of 1000g/ha and 90g/ha, respectively, 
+#'          type \code{"1000|900"}.} 
+#'      \item{"app_j_day"}{Integer-value or, in case of 
+#'          multiple applications, character string. Between 
+#'          1 and 365. 
+#'          [Julian day]. Application date of the substance. 
+#'          Use the application date of the applied substance 
+#'          (the top parent) if the substance is a 
+#'          degradation product. In case of several 
+#'          applications per year, give the values separated 
+#'          with a vertical bar (see https://en.wikipedia.org/wiki/Vertical_bar). 
+#'          Do quote the values. For example, for two 
+#'          applications on Julian days 298 and 305, 
+#'          respectively, type \code{"298|305"}} 
+#'      \item{"f_int"}{Numeric-value. [-]. Fraction of the 
+#'          applied product that is intercepted by the crop 
+#'          canopy.} 
+#'  }   
+#'  The columns \code{"parent_id"} and \code{"g_per_mol"} can 
+#'  be entirely skipped (missing), and should at least be 
+#'  only \code{NA} when no metabolite is to be simulated.
 #'
 #'@param parfile
 #'  A \code{macroParFile}, as imported with 
@@ -625,6 +713,7 @@ macrounchained <- function(
 #'@importFrom rmacrolite rmacroliteDegradation<-
 #'@importFrom rmacrolite rmacroliteCropUptF<-
 #'@importFrom rmacrolite rmacroliteDiffCoef<-
+#'@importFrom rmacrolite rmacroliteApplications
 #'@importFrom rmacrolite rmacroliteApplications<-
 #'@importFrom rmacrolite rmacroliteInfo<-
 #'@importFrom rmacrolite rmacroliteRun
@@ -647,86 +736,6 @@ macrounchained.data.frame <- function(
     ... 
     # .internal = list() 
 ){  
-    #   Fetch the original arguments =======================
-    dotdotdot <- list( ... ) 
-    
-    if( length( list(...) ) > 0L ){
-        warning( sprintf(  
-            "Additional arguments passed via '...', while '...' currently not in use (%s)", 
-            paste( names( dotdotdot ), collapse = ", " )
-        ) ) 
-    }   
-    
-    
-    if( is.null( .muc_internals[[ "match_call" ]] ) ){
-        .muc_internals[[ "match_call" ]] <- match.call()
-    }   
-    
-    if( is.null( .muc_internals[[ "package" ]] ) ){
-        .muc_internals[[ "package" ]] <- utils::packageName()
-    }   
-    
-    
-    # analyse_call <- deparse( substitute( analyse ) )
-    # analyse_summary_call <- deparse( substitute( analyse_summary ) )
-    
-    # original_call0 <- .internal[[ "match_call" ]] 
-    # original_call  <- match.call() 
-    
-    # original_args <- 
-        # as.list( formals( as.character( 
-            # as.list( original_call )[[ 1L ]] ) ) ) 
-    
-    
-    # original_args_names <- names( original_args ) 
-    # original_args_names <- original_args_names[ 
-        # original_args_names != "parfile" ]
-    
-    # original_args_names0 <- original_args_names[ 
-        # !(original_args_names %in% c( "parfile", "..." )) ]
-    
-    # for( i in 1:length( original_args_names0 ) ){
-        # f_i_not_missing <- !do.call( what = missing, 
-            # args = list( original_args_names0[ i ] ) )
-        
-        # if( f_i_not_missing ){
-            # original_args[[ original_args_names0[ i ] ]] <- 
-                # get( x = original_args_names0[ i ] ) 
-        # }   
-        
-        # rm(f_i_not_missing)
-    # }   
-    
-    # if( "..." %in% original_args_names ){
-        # if( length(dotdotdot) > 0L ){
-            # original_args[[ "..." ]] <- dotdotdot
-        # }   
-    # }   
-    
-    # rm( dotdotdot, original_args_names, original_args_names0 ) 
-    # #   End fetch the original arguments
-    
-    
-    if( missing( "parfile" ) ){
-        stop( "Argument 'parfile' is missing" )
-        
-    }else if( is.character( parfile ) ){
-        .muc_logMessage( m = "Import the par-file: %s", 
-            verbose = verbose, values = list( .muc_anonymisePath( 
-            path = parfile, anonymise = anonymise ) ) )
-        
-        parfile <- rmacroliteImportParFile( file = parfile, 
-            verbose = verbose - 1L ) 
-        
-    }else if( !("macroParFile" %in% class( parfile )) ){
-        stop( sprintf(
-            "Argument 'parfile' should be a character string or a macroParFile-object. Now %s", 
-            paste( class( parfile ), collapse = ", " )
-        ) ) 
-    }   
-    
-    
-    
     log_width <- getRmlPar( "log_width" )
     
     #   Create a temporary log-file
@@ -745,13 +754,33 @@ macrounchained.data.frame <- function(
             frame = "*", logfiles = temp_log, append = TRUE )
         
         if( !indump ){
-            stop( "Argument 'indump' nust be TRUE when 'run' is TRUE." )
+            stop( "Argument 'indump' must be TRUE when 'run' is TRUE." )
         }   
     }else{
         .muc_logMessage( m = "Parametrise MACRO simulations", 
             verbose = verbose, log_width = log_width, 
             frame = "*", logfiles = temp_log, append = TRUE )
     }   
+    
+    
+    
+    # ======================================================
+    # Traceability
+    # ======================================================
+    
+    if( is.null( .muc_internals[[ "match_call" ]] ) ){
+        .muc_internals[[ "match_call" ]] <- match.call()
+    }   
+    
+    if( is.null( .muc_internals[[ "package" ]] ) ){
+        .muc_internals[[ "package" ]] <- utils::packageName()
+    }   
+    
+    
+    
+    # ======================================================
+    # Check parameter table 's'
+    # ======================================================
     
     .muc_logMessage( m = "Check input parameter-table ('s')", 
         verbose = verbose, log_width = log_width, 
@@ -925,6 +954,187 @@ macrounchained.data.frame <- function(
     }   
     
     
+    
+    #   Does 's' contains a column 'parfile'?
+    parfile_in_s <- "parfile" %in% colnames( s ) 
+    
+    parfile_table_template <- data.frame(
+        "parfile_id" = NA_integer_, 
+        "path"       = NA_character_, 
+        stringsAsFactors = FALSE )   
+    
+    if( parfile_in_s ){
+        if( !missing( parfile ) ){
+            stop( "'s' contains a column 'parfile' while argument 'parfile' is given too. Provide one but not both." )
+        }   
+        
+        if( !("character" %in% class( s[, "parfile" ] )) ){
+            stop( sprintf( 
+                "Column 'parfile' in 's' should be character-class. Now class %s", 
+               paste( class( s[, "parfile" ] ), collapse = " " ) ) ) 
+        }   
+        
+        parfile_table <- unique( s[, "parfile" ] ) 
+        parfile_table <- data.frame(
+            "parfile_id" = 1:length( parfile_table ), 
+            "path"       = parfile_table, 
+            stringsAsFactors = FALSE ) 
+        rownames( parfile_table ) <- parfile_table[, "path" ] 
+        
+        #   Add a column 'parfile_id' to 's' and remove the 
+        #   column 'parfile'
+        s[, "parfile_id" ] <- as.integer( parfile_table[ 
+            parfile_table[, "path" ], 
+            "parfile_id" ] ) 
+        
+        rownames( parfile_table ) <- NULL 
+        
+        s <- s[, colnames( s ) != "parfile" ] 
+    }   
+    
+    
+    
+    # ======================================================
+    # Check other parameters
+    # ======================================================
+    
+    dotdotdot <- list( ... ) 
+    
+    if( length( list(...) ) > 0L ){
+        warning( sprintf(  
+            "Additional arguments passed via '...', while '...' currently not in use (%s)", 
+            paste( names( dotdotdot ), collapse = ", " )
+        ) ) 
+    }   
+    
+    
+    
+    # ======================================================
+    # Import the parfiles, if needed
+    # ======================================================
+    
+    if( !parfile_in_s ){
+        if( missing( "parfile" ) ){
+            stop( "Argument 'parfile' is missing and no column 'parfile' in 's'. One must be given." )
+            
+        }else if( is.character( parfile ) ){
+            parfile_table <- data.frame(
+                "parfile_id" = 1L, 
+                "path"       = parfile, 
+                stringsAsFactors = FALSE ) 
+            
+            s[, "parfile_id" ] <- parfile_table[, "parfile_id" ]
+            
+            
+        }else if( !("macroParFile" %in% class( parfile )) ){
+            stop( sprintf(
+                "Argument 'parfile' should be a character string or a macroParFile-object. Now %s", 
+                paste( class( parfile ), collapse = ", " )
+            ) ) 
+        }else{
+            parfile_table <- data.frame(
+                "parfile_id" = 1L, 
+                "path"       = NA_character_, 
+                stringsAsFactors = FALSE ) 
+            
+            s[, "parfile_id" ] <- parfile_table[, "parfile_id" ]
+            
+            parfile_list <- list( parfile )
+        }   
+    }   
+    
+    #   Import all the parfiles
+    if( !exists( "parfile_list" ) ){
+        parfile_list <- lapply(
+            X   = 1:nrow( parfile_table ), 
+            FUN = function(i){
+                .muc_logMessage( m = "Import par-file id %s (%s)", 
+                    verbose = verbose, values = list( 
+                    parfile_table[ i, "parfile_id" ], 
+                    .muc_anonymisePath( path = 
+                    parfile_table[ i, "path" ], 
+                    anonymise = anonymise ) ), 
+                    log_width = log_width, logfiles = temp_log, 
+                    append = TRUE )
+                
+                return( rmacroliteImportParFile( 
+                    file = parfile_table[ i, "path" ], 
+                    verbose = verbose - 1L ) ) 
+            }   
+        )   
+    }   #   parfile
+    
+    #   Find how many applications there are for each 
+    #   par-file
+    .muc_logMessage( 
+        m = "Check that the number of applications is coherent between 's' and the par-file(s)", 
+        verbose = verbose, log_width = log_width, 
+        logfiles = temp_log, append = TRUE )
+    
+    #   Number of applications in the par-file(s)
+    parfile_table[, "nb_appln" ] <- unlist( lapply(
+        X   = parfile_list, 
+        FUN = function(pl){
+            appln <- rmacroliteApplications( x = pl ) 
+            appln <- unique( appln )
+            
+            #   Remove applications without solute
+            if( !all( appln[, "g_as_per_ha" ] == 0 ) ){
+                appln <- appln[ appln[, "g_as_per_ha" ] != 0, ]
+            }   
+            
+            return( nrow( appln ) ) 
+        }   
+    ) ) 
+    
+    #   Number of applications in 's'
+    nb_appln_in_s <- unlist( lapply(
+        X   = 1:nrow(s), 
+        FUN = function(i){
+            g_as_per_ha <- s[ i, "g_as_per_ha" ] 
+            
+            if( any( c( "AsIs", "list" ) %in% class( g_as_per_ha ) ) ){
+                g_as_per_ha <- g_as_per_ha[[ 1L ]]
+            }   
+            
+            nb_doses <- length( g_as_per_ha ) 
+            
+            app_j_day <- s[ i, "app_j_day" ]
+            
+            nb_app_j_day <- length( app_j_day )
+            
+            if( any( c( "AsIs", "list" ) %in% class( app_j_day ) ) ){
+                app_j_day <- app_j_day[[ 1L ]]
+            }   
+            
+            f_int <- s[ i, "f_int" ]
+            
+            if( any( c( "AsIs", "list" ) %in% class( f_int ) ) ){
+                f_int <- f_int[[ 1L ]]
+            }   
+            
+            nb_f_int <- length( f_int ) 
+            
+            return( max( c( nb_doses, nb_app_j_day, nb_f_int ) ) )
+        }   
+    ) )
+    
+    rownames( parfile_table ) <- as.character( 
+        parfile_table[, "parfile_id" ] ) 
+    
+    test_nb_appln <- parfile_table[ as.character( s[, "parfile_id" ] ), "nb_appln" ] == nb_appln_in_s
+    
+    if( !all( test_nb_appln ) ){
+        stop( "The number of applications in the par-file(s) does not match the number of applications in 's' (at least for some rows)." )
+    }   
+    rm( test_nb_appln, nb_appln_in_s )
+    rownames( parfile_table ) <- NULL 
+    
+    
+    
+    # ======================================================
+    # Define the operation register
+    # ======================================================
     
     fileNameTemplate <- getRmlPar( "fileNameTemplate" ) 
     idWidth <- getRmlPar( "idWidth" ) 
@@ -1299,6 +1509,21 @@ macrounchained.data.frame <- function(
     
     
     .muc_logMessage( 
+        m = "Table of par-file(s):", 
+        verbose = verbose, log_width = log_width, 
+        logfiles = temp_log, append = TRUE ) 
+    
+    parfile_table0 <- parfile_table
+    parfile_table0[, "path" ] <- .muc_anonymisePath( 
+        path = parfile_table0[, "path" ], anonymise = anonymise  )
+    
+    .muc_print( x = parfile_table0, verbose = verbose, 
+        log_width = log_width, logfiles = temp_log, 
+        append = TRUE )
+    rm( parfile_table0 )
+    
+    
+    .muc_logMessage( 
         m = "Operations register:", 
         verbose = verbose, log_width = log_width, 
         logfiles = temp_log, append = TRUE ) 
@@ -1333,7 +1558,10 @@ macrounchained.data.frame <- function(
         "%s_operation_register", from_to ), "csv" ) 
     
     par_template_file <- sprintf( fileNameTemplate[[ "r" ]], sprintf( 
-        "%s_par_template", from_to ), "par" ) 
+        "%s_par_template_id%s", from_to, formatC( 
+        x = parfile_table[, "parfile_id" ], 
+        width = max( nchar( parfile_table[, "parfile_id" ] ) ), 
+        flag = "0" ) ), "par" ) 
     
     analyse_summary_file <- sprintf( fileNameTemplate[[ "r" ]], sprintf( 
         "%s_summary", from_to ), "txt" ) 
@@ -1445,17 +1673,24 @@ macrounchained.data.frame <- function(
     
     
     
-    
-    
     .muc_logMessage( 
-        m = "Exporting par-file template: %s", 
+        m = "Exporting par-file template(s):", 
         verbose = verbose, log_width = log_width, 
-        values = list( par_template_file ), 
+        # values = list( par_template_file ), 
         logfiles = log_file, append = TRUE ) 
     
-    rmacroliteExportParFile( x = parfile, 
-        f = file.path( modelVar[[ "path" ]], par_template_file ), 
-        verbose = verbose - 1L )
+    for( i in 1:nrow( parfile_table ) ){
+        .muc_logMessage( 
+            m = "* parfile id %s (%s)", 
+            verbose = verbose, log_width = log_width, 
+            values = list( parfile_table[ i, "parfile_id" ], 
+            par_template_file[ i ] ), 
+            logfiles = log_file, append = TRUE ) 
+        
+        rmacroliteExportParFile( x = parfile_list[[ i ]], 
+            f = file.path( modelVar[[ "path" ]], 
+            par_template_file[ i ] ), verbose = verbose - 1L )
+    }   
     
     
     
@@ -1508,7 +1743,7 @@ macrounchained.data.frame <- function(
         }   
         
         #   Copy the template parametrisation
-        x_o <- parfile 
+        x_o <- parfile_list[[ s[ sel_subst, "parfile_id" ] ]] 
         
         .muc_logMessage( m = "Set substance properties:", 
             verbose = verbose, log_width = log_width, 
