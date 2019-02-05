@@ -315,10 +315,9 @@ NULL
     path <- unlist( lapply(
         X   = path, 
         FUN = function(p){
-            p_is_not_na <- !is.na( p )
-            
-            if( p_is_not_na ){
-                p <- normalizePath( path = p, mustWork = FALSE )
+            if( !is.na( p ) ){
+                p <- normalizePath( path = p, mustWork = FALSE, 
+                    winslash = winslash )
             }   
             
             if( anonymise ){
@@ -333,6 +332,11 @@ NULL
                     unset = NA_character_ ) 
                 
                 if( !is.na( user_profile ) ){
+                    user_profile <- normalizePath( 
+                        path     = user_profile, 
+                        mustWork = FALSE, 
+                        winslash = winslash )
+                    
                     p <- gsub( 
                         pattern     = user_profile, 
                         replacement = ifelse( x2, "%%USERPROFILE%%", 
@@ -343,6 +347,11 @@ NULL
                 }   
                 
                 if( !is.na( home_path ) ){
+                    home_path <- normalizePath( 
+                        path     = home_path, 
+                        mustWork = FALSE, 
+                        winslash = winslash )
+                    
                     p <- gsub( 
                         pattern     = home_path, 
                         replacement = ifelse( x2, "%%HOMEPATH%%", 
@@ -353,6 +362,11 @@ NULL
                 }   
                 
                 if( !is.na( user_name ) ){
+                    user_name <- normalizePath( 
+                        path     = user_name, 
+                        mustWork = FALSE, 
+                        winslash = winslash )
+                    
                     p <- gsub( 
                         pattern     = user_name, 
                         replacement = ifelse( x2, "%%USERNAME%%", 
@@ -361,11 +375,6 @@ NULL
                         # ignore.case = TRUE, 
                         fixed       = TRUE )
                 }   
-            }   
-            
-            if( p_is_not_na ){
-                p <- normalizePath( path = p, mustWork = FALSE, 
-                    winslash = winslash )
             }   
             
             return( p )
