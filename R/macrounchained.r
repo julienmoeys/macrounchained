@@ -1942,11 +1942,15 @@ macrounchained.data.frame <- function(
         
         
         if( indump & run ){
-            .muc_logMessage( m = "Run MACRO simulation", 
+            .muc_logMessage( m = "Generate indump.tmp and run MACRO simulation", 
                 verbose = verbose, log_width = log_width, 
                 logfiles = log_file, append = TRUE ) 
         }else if( indump ){
             .muc_logMessage( m = "Generate indump.tmp", 
+                verbose = verbose, log_width = log_width, 
+                logfiles = log_file, append = TRUE ) 
+        }else{
+            .muc_logMessage( m = "Generate indump.tmp: SKIPPED", 
                 verbose = verbose, log_width = log_width, 
                 logfiles = log_file, append = TRUE ) 
         }   
@@ -1956,6 +1960,12 @@ macrounchained.data.frame <- function(
                 x = normalizePath( file.path( modelVar[[ "path" ]], f ) ), 
                 export = FALSE, verbose = verbose - 1L, 
                 indump = indump, run = run ) 
+        }   
+        
+        if( !run ){
+            .muc_logMessage( m = "Run MACRO simulation: SKIPPED", 
+                verbose = verbose, log_width = log_width, 
+                logfiles = log_file, append = TRUE ) 
         }   
         
         if( indump ){
