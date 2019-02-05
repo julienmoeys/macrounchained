@@ -304,14 +304,20 @@ NULL
 ### in order to preserve the user anonymity.
 ### To be used together with .muc_logMessage(), 
 ### or with sprintf( output )
-.muc_anonymisePath <- function( path, anonymise = TRUE, x2 = FALSE ){
+.muc_anonymisePath <- function( 
+    path, 
+    anonymise = TRUE, 
+    x2 = FALSE, 
+    winslash = "/" 
+){  
     #   Normalise the path
     
     path <- unlist( lapply(
         X   = path, 
         FUN = function(p){
             if( !is.na( p ) ){
-                p <- normalizePath( path = p, mustWork = FALSE )
+                p <- normalizePath( path = p, mustWork = FALSE, 
+                    winslash = winslash )
             }   
             
             if( anonymise ){
