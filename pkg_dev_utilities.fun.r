@@ -299,7 +299,11 @@ pdu_rcmdinstall <- function(
     build = TRUE, 
     compactDocs = TRUE, 
     byteCompile = TRUE, 
-    compileBoth = FALSE 
+    compileBoth = FALSE, 
+    clean = TRUE, 
+    preclean = TRUE, 
+    resaveData = TRUE, 
+    predelete_zip = TRUE 
 ){  
     oldwd <- getwd() 
     on.exit( setwd( oldwd ) )
@@ -319,20 +323,64 @@ pdu_rcmdinstall <- function(
     f <- f[ length(f) ] 
     f <- file.path( buildDir, f )
     
+    if( predelete_zip ){
+        zip <- gsub( x = f, pattern = "\\.tar.gz$", 
+            replacement = ".zip" )
+        
+        zip_old <- gsub( x = f, pattern = "\\.tar.gz$", 
+            replacement = ".old.zip" )
+        
+        if( file.exists( zip ) ){
+            pdu_message( "--- Pre-delete old zip binary\n" )
+            
+            copy_result <- file.copy( from = zip, to = zip_old, 
+                overwrite = TRUE )
+            
+            if( copy_result ){
+                remove_result <- file.remove( zip )
+                
+                if( !remove_result ){
+                    pdu_message( "--- Old zip binary could not be pre-deleted after backup\n" )
+                }   
+                
+            }else{
+                pdu_message( "--- Old zip binary could not be backed up before pre-deleted\n" )
+            }   
+        }else{
+            copy_result <- FALSE 
+        }   
+    }else{
+        copy_result <- FALSE 
+    }   
+    
     # setwd( buildDir )
     
-    .build <- ifelse( build, "--build ", " " )
-    .compactDocs <- ifelse( compactDocs, "--compact-docs ", " " )
-    .byteCompile <- ifelse( build, "--byte-compile ", " " )
-    .compileBoth <- ifelse( compileBoth, "--compile-both ", " " )
+    .build <- ifelse( build, "--build ", "" )
+    .compactDocs <- ifelse( compactDocs, "--compact-docs ", "" )
+    .byteCompile <- ifelse( build, "--byte-compile ", "" )
+    .compileBoth <- ifelse( compileBoth, "--compile-both ", "" )
+    .clean <- ifelse( clean, "--clean ", "" )
+    .preclean <- ifelse( preclean, "--preclean ", "" )
+    .resaveData <- ifelse( resaveData, "--resave-data ", "" )
     
-    cmd <- sprintf( "R CMD INSTALL %s%s%s%s%s", .build, 
-        .compactDocs, .byteCompile, .compileBoth, normalizePath(f) )
+    cmd <- sprintf( "R CMD INSTALL %s%s%s%s%s%s%s%s", .build, 
+        .compactDocs, .byteCompile, .compileBoth, .clean, 
+        .preclean, .resaveData, normalizePath(f) )
     
     pdu_message( sprintf( "COMMAND: %s\n\n", cmd ) )
     
     out <- shell( cmd )
-      
+    
+    if( predelete_zip & copy_result ){
+        pdu_message( "--- Permanently delete old zip binary" )
+        
+        remove_result2 <- file.remove( zip_old )
+        
+        if( !remove_result2 ){
+            pdu_message( "--- Old zip binary could not be permanently deleted" )
+        }   
+    }   
+    
     return( out )
 }   
 
