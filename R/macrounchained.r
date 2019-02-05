@@ -315,9 +315,10 @@ NULL
     path <- unlist( lapply(
         X   = path, 
         FUN = function(p){
-            if( !is.na( p ) ){
-                p <- normalizePath( path = p, mustWork = FALSE, 
-                    winslash = winslash )
+            p_is_not_na <- !is.na( p )
+            
+            if( p_is_not_na ){
+                p <- normalizePath( path = p, mustWork = FALSE )
             }   
             
             if( anonymise ){
@@ -360,6 +361,11 @@ NULL
                         # ignore.case = TRUE, 
                         fixed       = TRUE )
                 }   
+            }   
+            
+            if( p_is_not_na ){
+                p <- normalizePath( path = p, mustWork = FALSE, 
+                    winslash = winslash )
             }   
             
             return( p )
