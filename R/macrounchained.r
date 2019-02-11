@@ -298,6 +298,52 @@ NULL
 
 
 
+# .muc_justify_path ========================================
+
+.muc_justify_path <- function( 
+    txt, 
+    split = "/", 
+    log_width = 60L, 
+    indent = "    " 
+){  
+    txt <- strsplit( x = txt, split = split, fixed = TRUE )[[ 1L ]]
+    txt_nchar <- nchar( txt ) 
+    
+    output <- vector( length = length(txt), mode = "list" )
+    
+    current_row <- 1L
+    
+    for( i in 1:length(txt) ){
+        if( is.null( output[[ current_row ]] ) ){
+            output[[ current_row ]] <- txt[ i ]
+        }else{
+            tmp <- paste( output[[ current_row ]], txt[ i ], 
+                sep = split )
+            
+            if( nchar( tmp ) < log_width ){
+                output[[ current_row ]] <- tmp 
+            }else{
+                current_row <- current_row + 1L 
+                
+                output[[ current_row ]] <- paste( 
+                    indent, txt[ i ], sep = "" )
+            }   
+        }   
+    }   
+    
+    row_not_null <- !unlist( lapply( X = output, 
+        FUN = is.null ) )
+    
+    output <- output[ row_not_null ]
+    
+    output <- paste( unlist( output ), 
+        collapse = sprintf( "%s\n", split ) )
+    
+    return( output )
+}
+
+
+
 # .muc_anonymisePath =======================================
 
 ### remove user name and user profile from a path, 
@@ -308,7 +354,9 @@ NULL
     path, 
     anonymise = TRUE, 
     x2 = FALSE, 
-    winslash = "/" 
+    winslash = "/", 
+    log_width = 60L, 
+    indent = "    " 
 ){  
     #   Normalise the path
     
@@ -376,6 +424,13 @@ NULL
                         fixed       = TRUE )
                 }   
             }   
+            
+            p <- .muc_justify_path( 
+                txt         = p, 
+                split       = winslash, 
+                log_width   = log_width, 
+                indent      = "    " 
+            )   
             
             return( p )
         }   
@@ -769,7 +824,9 @@ macrounchained.data.frame <- function(
     .muc_logMessage( m = "Temporary log-file %s", 
         verbose = verbose, log_width = log_width, 
         values = list( .muc_anonymisePath( path = temp_log, 
-        anonymise = anonymise ) ), logfiles = temp_log, append = FALSE )
+        anonymise = anonymise, winslash = "/", 
+        log_width = log_width ) ), 
+        logfiles = temp_log, append = FALSE )
     
     
     
@@ -1082,7 +1139,8 @@ macrounchained.data.frame <- function(
                     parfile_table[ i, "parfile_id" ], 
                     .muc_anonymisePath( path = 
                     parfile_table[ i, "path" ], 
-                    anonymise = anonymise ) ), 
+                    anonymise = anonymise, winslash = "/", 
+                    log_width = log_width ) ), 
                     log_width = log_width, logfiles = temp_log, 
                     append = TRUE )
                 
@@ -1544,7 +1602,8 @@ macrounchained.data.frame <- function(
     
     parfile_table0 <- parfile_table
     parfile_table0[, "path" ] <- .muc_anonymisePath( 
-        path = parfile_table0[, "path" ], anonymise = anonymise  )
+        path = parfile_table0[, "path" ], anonymise = anonymise, 
+        winslash = "/", log_width = log_width )
     
     .muc_print( x = parfile_table0, verbose = verbose, 
         log_width = log_width, logfiles = temp_log, 
@@ -1665,14 +1724,16 @@ macrounchained.data.frame <- function(
         .muc_logMessage( m = "All output-files will be now saved in %s", 
             verbose = verbose, log_width = log_width, 
             values = list( .muc_anonymisePath( 
-            path = modelVar[["path"]], anonymise = anonymise ) ), 
+            path = modelVar[["path"]], anonymise = anonymise, 
+            winslash = "/", log_width = log_width ) ), 
             logfiles = log_file, append = TRUE ) 
         
         .muc_logMessage( m = "Log-file continues in %s", 
             verbose = verbose, log_width = log_width, 
             values = list( .muc_anonymisePath( path = log_file, 
-            anonymise = anonymise ) ), 
-            logfiles = log_file, append = TRUE ) 
+            anonymise = anonymise, winslash = "/", 
+            log_width = log_width ) ), logfiles = log_file, 
+            append = TRUE ) 
         
     }   
     
