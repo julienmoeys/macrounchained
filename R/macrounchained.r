@@ -356,7 +356,7 @@ NULL
     x2 = FALSE, 
     winslash = "/", 
     log_width = 60L, 
-    indent = " " 
+    sep = " " 
 ){  
     #   Normalise the path
     
@@ -426,10 +426,10 @@ NULL
             }   
             
             p <- .muc_justify_path( 
-                txt         = p, 
-                split       = winslash, 
-                log_width   = log_width, 
-                indent      = indent ) 
+                txt       = p, 
+                split     = winslash, 
+                log_width = log_width, 
+                sep       = sep ) 
             
             return( p )
         }   
