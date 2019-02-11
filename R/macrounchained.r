@@ -304,7 +304,7 @@ NULL
     txt, 
     split = "/", 
     log_width = 60L, 
-    indent = "    " 
+    sep = " " 
 ){  
     txt <- strsplit( x = txt, split = split, fixed = TRUE )[[ 1L ]]
     txt_nchar <- nchar( txt ) 
@@ -326,7 +326,7 @@ NULL
                 current_row <- current_row + 1L 
                 
                 output[[ current_row ]] <- paste( 
-                    indent, txt[ i ], sep = "" )
+                    sep, txt[ i ], sep = "" )
             }   
         }   
     }   
@@ -337,7 +337,7 @@ NULL
     output <- output[ row_not_null ]
     
     output <- paste( unlist( output ), 
-        collapse = sprintf( "%s\n", split ) )
+        collapse = sprintf( "%s", split ) )
     
     return( output )
 }
