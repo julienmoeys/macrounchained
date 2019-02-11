@@ -356,7 +356,7 @@ NULL
     x2 = FALSE, 
     winslash = "/", 
     log_width = 60L, 
-    indent = "    " 
+    indent = " " 
 ){  
     #   Normalise the path
     
@@ -429,8 +429,7 @@ NULL
                 txt         = p, 
                 split       = winslash, 
                 log_width   = log_width, 
-                indent      = "    " 
-            )   
+                indent      = indent ) 
             
             return( p )
         }   
