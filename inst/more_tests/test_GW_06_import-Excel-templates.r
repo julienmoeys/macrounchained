@@ -55,7 +55,7 @@ param2 <- readxl::read_excel(
 as.data.frame( param2 ) 
 
 parfile2 <- system.file( "par-files", 
-    "chat_winCer_GW-X_900gHa_d182_850gHa_d189_900gHa.par", 
+    "chat_winCer_GW-X_2appln.par", 
     package = "rmacrolite" )
 
 res2 <- macrounchainedFocusGW( 
