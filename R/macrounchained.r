@@ -1599,15 +1599,16 @@ macrounchained.data.frame <- function(
         verbose = verbose, log_width = log_width, 
         logfiles = temp_log, append = TRUE ) 
     
-    parfile_table0 <- parfile_table
-    parfile_table0[, "path" ] <- .muc_anonymisePath( 
-        path = parfile_table0[, "path" ], anonymise = anonymise, 
-        winslash = "/", log_width = log_width )
+    # parfile_table0 <- parfile_table
+    # parfile_table0[, "path" ] <- .muc_anonymisePath( 
+        # path = parfile_table0[, "path" ], anonymise = anonymise, 
+        # winslash = "/" )
     
-    .muc_print( x = parfile_table0, verbose = verbose, 
-        log_width = log_width, logfiles = temp_log, 
-        append = TRUE )
-    rm( parfile_table0 )
+    .muc_print( 
+        x = parfile_table[, colnames(parfile_table) != "path" ], 
+        verbose = verbose, log_width = log_width, 
+        logfiles = temp_log, append = TRUE )
+    # rm( parfile_table0 )
     
     
     .muc_logMessage( 

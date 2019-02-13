@@ -4,7 +4,7 @@
 CHANGES IN VERSION 0.9.1
     
     2019/02/05  macrounchained() now indicates 
-        explicitely when the indump.tmp generation or 
+        explicitly when the indump.tmp generation or 
         the simulation is skipped in the operation log.
         
         Changed path separator in .muc_anonymisePath()
@@ -12,6 +12,9 @@ CHANGES IN VERSION 0.9.1
     2019/02/11  .muc_anonymisePath() now also justify paths 
         to avoid Pandoc crashing when processing a vignette 
         with a long path in the output.
+        
+    2019/02/13  As the crash may be caused by a long file name, 
+        trials and errors to avoid Pandoc to crash.
         
 CHANGES IN VERSION 0.9.0
     

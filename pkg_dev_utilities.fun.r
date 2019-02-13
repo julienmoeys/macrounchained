@@ -227,15 +227,16 @@ pdu_rcmdbuild <- function(
     
     setwd( buildDir )
     
-    .noVignettes <- ifelse( noVignettes, "--no-vignettes", "" )
+    .noVignettes <- ifelse( noVignettes, " --no-build-vignettes", "" )
     .compactVignettes <- ifelse( 
         (!noVignettes) & (!is.null(compactVignettes)),  
-        sprintf( '--compact-vignettes="%s"', compactVignettes ), 
+        sprintf( ' --compact-vignettes="%s"', compactVignettes ), 
         "" )
-    .md5 <- ifelse( md5, "--md5", "" )
+    .md5 <- ifelse( md5, " --md5", "" )
     
-    cmd <- sprintf( "R CMD build %s %s %s", .compactVignettes, 
-        .md5, normalizePath(file.path(pkgDir,pkgName)) )
+    cmd <- sprintf( "R CMD build%s%s%s %s", .noVignettes, 
+        .compactVignettes, .md5, 
+        normalizePath(file.path(pkgDir,pkgName)) )
     
     pdu_message( sprintf( "COMMAND: %s\n\n", cmd ) )
     
