@@ -1,12 +1,13 @@
 ---
-title: "macrounchainedFocusGW() manual"
+title: "Running MACROInFOCUS-like groundwater simulations with macrounchainedFocusGW"
 author: "Julien Moeys"
 date: "`r Sys.Date()`"
-output: 
+output:
     rmarkdown::html_vignette:
         toc: true
+        toc_depth: 2
 vignette: >
-  %\VignetteIndexEntry{macrounchainedFocusGW() manual}
+  %\VignetteIndexEntry{Running MACROInFOCUS-like groundwater simulations with macrounchainedFocusGW}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -18,23 +19,60 @@ knitr::opts_chunk$set(
 )
 ```
 
+```{r include = FALSE}
+verbatim <- function(x){return(paste0("`",x,"`"))} 
+anonymise <- function(x){return(macrounchained:::.muc_anonymisePath(x))}
+```
+
+
+
+Preliminary Note
+------------------------------------------------------------
+
+In the text below i use `macrounchained` to indicate 
+the [package][r_packages], and `macrounchained()` to indicate 
+the function named macrounchained in that package.
+
+More generally, names followed by `()` are function names. 
+For example, `macrounchainedFocusGW()` is used for the 
+function named macrounchainedFocusGW.
+
+In code examples, calls such as 
+`macrounchained::macrounchainedFocusGW()`, i.e. two names 
+separated by two colons (`::`), should be understood as 
+"a call to the function `macrounchainedFocusGW` in the package 
+`macrounchained`".
+
+Users not familiar to R should be aware that it is not possible 
+to use backslashes (`\`) as a separator when giving a path. 
+Although backslash is the default separator in Windows, 
+it is a reserved character in R. Instead, slashes (`/`) 
+or double backslashes (`\\`) should be used. As an example, 
+defining a path like this: `path <- "C:\swash\macro"` will 
+cause an error, while `path <- "C:/swash/macro"` or 
+`path <- "C:\\swash\\macro"` are correctly interpreted by R.
+
+In the code examples below, when a path is displayed, 
+some Windows variables like `%USERPROFILE%` may appear instead 
+of the actual path (something like `C:\Users\username`). This 
+is a way to avoid the user name to be displayed in a public 
+document. The same is true for the operation log produced by 
+`macrounchainedFocusGW()`, as the user name is hidden behind 
+relevant Windows variables.
+
 
 
 Introduction
 ============================================================
 
-Note: In the text below i use `macrounchained` to indicate 
-the package, and `macrounchained()` to indicate the function 
-named macrounchained in that package. More generally, names 
-followed by `()` are function names. For example, 
-`macrounchainedFocusGW()` is used for the function named 
-macrounchainedFocusGW.
+`macrounchained` is a [package][r_packages] for the program 
+[R][r].
 
 `macrounchainedFocusGW()` is a higher level function of the 
 package `macrounchained`. It is build on top of the more 
 generic function `macrounchained()`. It is specifically 
-designed to perform groundwater simulations like MACRO In 
-FOCUS. 
+designed to perform **groundwater** simulations like [MACRO 
+In FOCUS][macroinfocus]. 
 
 `macrounchainedFocusGW()` is not as user friendly 
 as the graphical user interface (GUI) of MACRO In FOCUS, but 
@@ -51,22 +89,97 @@ to MACRO In FOCUS GUI, by avoiding to re-run the same
 Installation and system setup
 ============================================================
 
+`macrounchained` is based on a collection of four R packages 
+([codeinfo][], [macroutils2][], [rmacrolite][] and 
+[macrounchained][]). The all need to be installed (see below).
+
+`macrounchained` does not embed any executable for [MACRO][macro] 
+or [MACRO In FOCUS][macroinfocus], and neither for the so 
+called `exeparfile` tool. So MACRO or MACRO In FOCUS need 
+to be installed on the computer for `macrounchained` to work. 
+`macrounchained` also needs to know where MACRO or MACRO in FOCUS 
+is installed, and how the MACRO-executable and the exeparfile 
+are called. `macrounchained` look for this information in 
+the following order:
+
+1.  If the path or the executable names have been manually 
+    set by the user at the beginning of the R cession (see 
+    below), these values are used.
+2.  If the path or the executable names are defined as 
+    Windows Environment Variables (see below), these values 
+    are used.
+3.  The default path or the executable names pre-defined 
+    in the package are used.
+
+It is therefore possible to use (alternatively) different 
+versions of MACRO (for example MACRO In FOCUS or MACRO 5.2) 
+on the same computer.
+
+
+
 Installation
 ------------------------------------------------------------
 
-See [https://github.com/julienmoeys/macrounchained/tree/master/README.md][]
+See [the package README page on GitHub](https://github.com/julienmoeys/macrounchained/tree/master/README.md)
 
 
 
-Use of Windows Environment Variables to permanently save the 
-path of the directory where MACRO or MACRO In FOCUS are 
-installed
+Use of Windows Environment Variables to permanently save the path of the directory where MACRO or MACRO In FOCUS are installed
 ------------------------------------------------------------
+
+It is possible for the user or its system administrator to 
+define three Windows Environment Variables that will be used 
+by `macrounchained` to know where MACRO or MACRO in FOCUS 
+is installed, and how the MACRO-executable and the executables 
+are called.
+
+On Windows 10, the Windows Environment Variables can be 
+accessed via the Control Panel > System and Security > System > 
+Advanced System Settings > Advanced Tab > "Environment Variables..."
+System Variables. There, it is possible to define three variables:
+
+*   `rmacrolite_macro_exe`, for example set to 
+    `r verbatim(rmacrolite::getRmlPar("macro_exe_default"))`.
+*   `rmacrolite_macro_exeparfile`, for example set to 
+    `r verbatim(rmacrolite::getRmlPar("macro_exeparfile_default"))`.
+*   `rmacrolite_macro_path`, for example set to 
+    `r verbatim(anonymise(rmacrolite::getRmlPar("macro_path_default")))`.
+
+Once they have been defined, the values attributed to 
+these variables can be accessed by typing:
+
+```{r}
+Sys.getenv( "rmacrolite_macro_exe" )
+Sys.getenv( "rmacrolite_macro_exeparfile" )
+Sys.getenv( "rmacrolite_macro_path" )
+```
 
 
 
 Alternative to Windows Environment Variables
 ------------------------------------------------------------
+
+Before using `macrounchainedFocusGW()`, the user can manually 
+set the path and/ or the executable names, in R. This setting 
+is only valid for the current R cession (i.e. until R is 
+closed), and must therefore be re-set for every new R cession.
+
+```{r}
+library( "rmacrolite" ) 
+```
+
+```{r eval = FALSE}
+rmacrolite::rmlPar( "macro_path" = "Macro52Model.exe", 
+    "macro_exe" = "exeparfile.exe", 
+    "macro_exeparfile" = "C:/swash/macro" ) 
+```
+
+You may for example replace `"C:/swash/macro"` with 
+`"C:/Program Files (x86)/MACRO52"` if you want to use MACRO 5.2.
+
+As can be seen from the code above, the settings occur to be 
+in the package `rmacrolite` which provide all the lower level 
+functions used by `macrounchained`.
 
 
 
@@ -78,6 +191,7 @@ Preparing a template par-file
 
 A template par-file need to be prepared for each combination 
 of:
+
 *   Scenario (ex. Chateaudun)
 *   Crop (ex. Winter cereals)
 *   Number of application per year
@@ -91,16 +205,579 @@ application-years), and when it is ready, chose the Tools
 menu > Save current run to parameter file and log file. You 
 can choose any dummy substance (ex. GW-A) and any dose and 
 application date(s) for the template, as long as the DT50 is 
-not 0 or extremely short. All the substance and application 
-parameters will be overwritten by `macrounchainedFocusGW()`.
+not small.
+
+All the substance parameters, the application date(s) 
+and the dose(s) will be overwritten by `macrounchainedFocusGW()`.
+
+In the examples below, I use template par-files that are 
+shipped with the packages `macrounchained` or `rmacrolite`
 
 
 
-Simple case
+Examples of template par-file used in this document
 ------------------------------------------------------------
 
+To obtain the path of the template par-files shipped with 
+`rmacrolite`, type the following command in R prompt:
+
+```{r results = "hide"}
+system.file( package = "rmacrolite", "par-files" )
+``` 
+```{r echo = FALSE}
+anonymise( system.file( package = "rmacrolite", "par-files" ) )
+```
+
+and in `macrounchained`
+
+```{r results = "hide"}
+system.file( package = "macrounchained", "par-files" )
+``` 
+```{r echo = FALSE}
+anonymise( system.file( package = "macrounchained", "par-files" ) )
+```
+
+In the examples below, the path to the par-file is defined 
+with a command like
+
+```{r}
+pf <- system.file( 
+    "par-files", "chat_winCer_GW-X_900gHa_d182.par", 
+    package = "rmacrolite" )
+```
+
+The result of this command is a character string containing 
+the path to the example template par-file called 
+`"chat_winCer_GW-X_900gHa_d182.par"`, and save in an R object 
+that I called here `pf` (any name is possible). The output 
+can be inspected:
+
+```{r results = "hide"}
+pf 
+``` 
+```{r echo = FALSE}
+anonymise( pf )
+```
+
+But the user will most of the time want to use his/ her own 
+template, and the code will rather look like:
+
+```{r eval = FALSE}
+pf <- "C:/path/to/userparfile.par"
+```
+
+where `"C:/path/to/userparfile.par"` is the path and the name 
+of a par-file somewhere on the computer.
 
 
-Several application per year
+
+Preparing a table of substance properties and application patterns
 ------------------------------------------------------------
 
+About the example: The example given below is for a parent 
+substance, called here `GW-M`, a primary metabolite `Met-M1`, 
+formed from the degradation of `GW-M`, and a secondary metabolite 
+`Met-M2`, formed from the degradation of `Met-M1`.
+
+Notice that it is perfectly possible to run several simulations 
+with unrelated substances, i.e. just a batch of simulations 
+with different parameters.
+
+
+
+### Options 1: Preparing and importing an Excel file with the properties (with readxl::read_excel)
+
+Some example Excel-files with substance properties and 
+application patterns are shipped with `macrounchained`. The 
+list of Excel examples can be obtained by typing 
+the following command in R prompt:
+
+
+```{r results = "hide"}
+system.file( package = "macrounchained", "xlsx" )
+``` 
+```{r echo = FALSE}
+anonymise( system.file( package = "macrounchained", "xlsx" ) )
+```
+
+and the list of files in this folder can be seen with the 
+following command:
+
+```{r}
+list.files( system.file( package = "macrounchained", "xlsx" ) )
+``` 
+
+Copy one of these files and edit the content of sheet `s` (do 
+not edit directly the file in the package installation 
+directory!).
+
+In order to be able to import an Excel file containing MACRO 
+In FOCUS parameters, the package [readxl](https://CRAN.R-project.org/package=readxl) 
+needs to be installed. You can check if `readxl` is installed 
+by typing the following command in R prompt:
+
+```{r}
+(require("readxl"))
+``` 
+
+If it returns `TRUE`, the package is installed, and if it 
+returns `FALSE`, it is not installed. If needed, it can be 
+installed with the following command:
+
+```{r eval = FALSE}
+install.packages("readxl")
+``` 
+
+The parameters contained in an Excel file can be imported 
+with the following command:
+
+```{r}
+#   Fetch the path to the Excel file and save it in an R 
+#   object called "xl"
+xl <- system.file( package = "macrounchained", "xlsx", 
+    "macrounchainedFocusGW-with-met.xlsx" )
+
+#   Import the sheet 's' in that Excel file
+param1 <- readxl::read_excel( path = xl, sheet = "s" ) 
+
+#   Inspect the content of the table
+as.data.frame( param1 ) 
+``` 
+
+The reason for `as.data.frame( param1 )` is that `param1` is 
+of class `tibble`, which is the format output by 
+`readxl::read_excel()`, but not the standard format in R. 
+macrounchainedFocusGW() can handle both formats, when it 
+comes to input parameters.
+
+A real world Example would rather look like this:
+
+```{r eval = FALSE}
+#   Import the sheet 's' in that Excel file
+param1 <- readxl::read_excel( 
+    path  = "C:/path/to/userexcelfile.xlsx", 
+    sheet = "s" )  
+``` 
+
+where `"C:/path/to/userexcelfile.xlsx"` is the path and the name 
+of an Excel file somewhere on the computer.
+
+
+
+### Option 2: Preparing the table of properties in R (with data.frame)
+
+It is of course possible to create the parameter table directly 
+in R. Here is how to create the same table as the one imported 
+above from an Excel file:
+
+```{r}
+param2 <- data.frame( 
+    "id"                = c(     1L,       2L,       3L ), 
+    "name"              = c( "GW-M", "Met-M1", "Met-M2" ), 
+    "kfoc"              = c(     12,     114,        46 ), 
+    "nf"                = c(      1,     0.9,       0.9 ), 
+    "dt50"              = c(     23,      19,       136 ), 
+    "dt50_ref_temp"     = c(     20,      20,        20 ), 
+    "dt50_pf"           = c(      2,       2,         2 ), 
+    "exp_temp_resp"     = c( 0.0948,  0.0948,    0.0948 ), 
+    "exp_moist_resp"    = c(   0.49,    0.49,      0.49 ), 
+    "crop_upt_f"        = c(    0.5,     0.5,       0.5 ), 
+    "diff_coef"         = c(  5E-10,   5E-10,     5E-10 ), 
+    "parent_id"         = c(     NA,      1L,        2L ), 
+    "g_per_mol"         = c(    381,     183,       140 ), 
+    "transf_f"          = c(     NA,     0.2,       1.0 ), # mol met formed / mol parent degraded
+    "g_as_per_ha"       = c(     6,        0,         0 ), 
+    "app_j_day"         = c(   309L,    309L,      309L ), 
+    stringsAsFactors    = FALSE 
+)   
+``` 
+
+We can check that the two solutions are identical:
+
+```{r}
+all.equal( as.data.frame( param1 ), param2, 
+    check.attributes = FALSE ) 
+``` 
+
+
+
+### Option 3: Preparing the table of properties in R (with read.table)
+
+A 3rd alternative method to prepare a table of parameters 
+is to enter the table as a "fixed width format", with a 
+variable number of spaces as a column separator. It is not 
+the most common way of defining a table in R, but it has the 
+advantage of being more human readable.
+
+```{r}
+param3 <- read.table( header = TRUE, text = "
+    id     name kfoc  nf dt50 dt50_ref_temp dt50_pf exp_temp_resp exp_moist_resp crop_upt_f diff_coef parent_id g_per_mol transf_f g_as_per_ha app_j_day
+     1   'GW-M'   12 1.0   23            20       2        0.0948           0.49        0.5     5e-10        NA       381       NA           6       309
+     2 'Met-M1'  114 0.9   19            20       2        0.0948           0.49        0.5     5e-10         1       183      0.2           0       309
+     3 'Met-M2'   46 0.9  136            20       2        0.0948           0.49        0.5     5e-10         2       140      1.0           0       309
+    ", stringsAsFactors = FALSE )
+``` 
+
+```{r}
+all.equal( as.data.frame( param1 ), param3, 
+    check.attributes = FALSE ) 
+``` 
+
+
+
+Case 1: One application per year, every year
+------------------------------------------------------------
+
+In the code below, the path to an example template par-file 
+fetched and saved in `pf`, table of properties is 
+imported from an example Excel file and saved in `param1`, 
+and finally the function `macrounchainedFocusGW`()` is called. 
+Notice that this is a dry-run, meaning that all the 
+parametrisation is performed, but the three simulations are 
+not run. As a consequence, the results of the simulations 
+is not analysed either (i.e., the PECs are not calculated).
+
+```{r}
+#   Fetch the path to the Excel file and save it in an R 
+#   object called "xl"
+xl <- system.file( package = "macrounchained", "xlsx", 
+    "macrounchainedFocusGW-with-met.xlsx" )
+
+#   Import the sheet 's' in that Excel file
+param1 <- readxl::read_excel( path = xl, sheet = "s" ) 
+
+#   Fetch the path to an example template par-file:
+pf <- system.file( 
+    "par-files", "chat_winCer_GW-X_900gHa_d182.par", 
+    package = "rmacrolite" )
+
+library("macrounchained")
+
+#   Dry run: 
+res <- macrounchainedFocusGW( 
+    s         = param1, 
+    parfile   = pf, 
+    overwrite = TRUE, 
+    run       = FALSE ) # Set to TRUE to run the simulations
+``` 
+
+When the simulations are run, that is when the argument 
+`run` is set to `TRUE` or omitted (default value is `TRUE`), 
+more output will be visible in the operation log, and the 
+simulation results is analysed "on the fly" and shown. The 
+results will then include something like:
+
+```
+<2019-01-23|18:03:43> MACRO runtime 23.13 min
+<2019-01-23|18:03:43> Rename MACRO output from MACRO001.BIN to rml_001.bin
+<2019-01-23|18:03:43> Analyse simulation results:
+$info_general
+  conc_percentile rank_period1 rank_period2 method nb_sim_yrs_used
+1              80           16           17  focus              20
+  nb_yrs_per_period nb_yrs_warmup neg_conc_set_to_0
+1                 1             6              TRUE
+
+$info_period
+   period_index from_year to_year
+1             1      1907    1907
+2             2      1908    1908
+3             3      1909    1909
+4             4      1910    1910
+5             5      1911    1911
+6             6      1912    1912
+7             7      1913    1913
+8             8      1914    1914
+9             9      1915    1915
+10           10      1916    1916
+11           11      1917    1917
+12           12      1918    1918
+13           13      1919    1919
+14           14      1920    1920
+15           15      1921    1921
+16           16      1922    1922
+17           17      1923    1923
+18           18      1924    1924
+19           19      1925    1925
+20           20      1926    1926
+
+$water_target_layer_by_period
+   period_index     mm_mic mm_mac     mm_tot
+1             1 235.470763      0 235.470763
+2             2  25.219577      0  25.219577
+3             3 249.413842      0 249.413842
+4             4 210.212175      0 210.212175
+5             5 313.436020      0 313.436020
+6             6 203.400054      0 203.400054
+7             7 256.735007      0 256.735007
+8             8 237.177154      0 237.177154
+9             9 142.302469      0 142.302469
+10           10 313.514879      0 313.514879
+11           11 102.166490      0 102.166490
+12           12 133.547061      0 133.547061
+13           13 185.370237      0 185.370237
+14           14 228.786978      0 228.786978
+15           15  45.906557      0  45.906557
+16           16   8.512096      0   8.512096
+17           17  85.944210      0  85.944210
+18           18 113.385342      0 113.385342
+19           19  73.593095      0  73.593095
+20           20  99.801542      0  99.801542
+
+$solute_target_layer_by_period
+   period_index mg_per_m2_mic mg_per_m2_mac mg_per_m2_tot   ug_per_L
+1             1  0.0130986457             0  0.0130986457 0.05562748
+2             2 -0.0012073002             0 -0.0012073002 0.00000000
+3             3  0.0303878063             0  0.0303878063 0.12183689
+4             4  0.0326010108             0  0.0326010108 0.15508622
+5             5  0.0640291599             0  0.0640291599 0.20428143
+6             6  0.0289145618             0  0.0289145618 0.14215612
+7             7  0.0360325941             0  0.0360325941 0.14034936
+8             8  0.0185321498             0  0.0185321498 0.07813632
+9             9  0.0194373138             0  0.0194373138 0.13659154
+10           10  0.0301531842             0  0.0301531842 0.09617784
+11           11  0.0096938342             0  0.0096938342 0.09488272
+12           12  0.0111410579             0  0.0111410579 0.08342421
+13           13  0.0120960097             0  0.0120960097 0.06525325
+14           14  0.0318550546             0  0.0318550546 0.13923456
+15           15  0.0009124727             0  0.0009124727 0.01987674
+16           16 -0.0033259016             0 -0.0033259016 0.00000000
+17           17  0.0011909045             0  0.0011909045 0.01385672
+18           18  0.0020206876             0  0.0020206876 0.01782142
+19           19  0.0039686604             0  0.0039686604 0.05392708
+20           20  0.0056017143             0  0.0056017143 0.05612853
+
+$water_perc_by_period
+   period_index        mm
+1             1 236.47974
+2             2  19.49554
+3             3 250.39844
+4             4 200.46625
+5             5 318.68542
+6             6 202.45740
+7             7 256.35547
+8             8 237.01562
+9             9 153.94165
+10           10 307.54321
+11           11 107.05884
+12           12 127.01587
+13           13 186.15771
+14           14 234.07593
+15           15  38.68237
+16           16  15.55029
+17           17  88.74512
+18           18 109.76221
+19           19  71.59131
+20           20 102.41870
+
+$conc_target_layer
+  ug_per_L ug_per_L_rnd index_period1 index_period2 f_solute_mac f_solute_mic
+1 0.139792         0.14            14             7            0            1
+
+--------------------------------------------------------------------------------
+<2019-01-23|18:03:43> Simulation 2/5
+--------------------------------------------------------------------------------
+```
+
+Where `ug_per_L_rnd` in the item `conc_target_layer` is the 
+PECgw as MACRO In FOCUS would calculate it (rounded to three 
+significant figures).
+
+The commands for a real-world example may rather look like 
+this:
+
+```{r eval = FALSE}
+param1 <- readxl::read_excel( 
+    path  = "C:/path/to/userexcelfile.xlsx", 
+    sheet = "s" )
+
+library("macrounchained")
+
+#   Run all the simulations: 
+res <- macrounchainedFocusGW( 
+    s         = param1, 
+    parfile   = "C:/path/to/userparfile.par", 
+    overwrite = TRUE ) 
+``` 
+
+
+
+Case 2: Several application per year, every year
+------------------------------------------------------------
+
+Compared to the case above (one application per year, every 
+year), the case of several application per year, every year 
+will:
+
+*   Need a template par-file that contains the correct 
+    number of applications per year (here two).
+*   Differ in the way the columns `g_as_per_ha` and 
+    `app_j_day` in the parameter table are specified.
+    
+The example Excel file 
+`macrounchainedFocusGW-multiple-applications.xlsx` shows 
+how this must be done in Excel (enter several values in the 
+same cell by separating with with a vertical bar `|`).
+
+In R, the parameter table can be entered as follow:
+
+```{r}
+param2 <- data.frame(
+    id             = c(          1,         2 ), 
+    name           = c(     "GW-C",   "Met-C" ), 
+    kfoc           = c(        172,        52 ), 
+    nf             = c(        0.9,       0.9 ), 
+    dt50           = c(         20,       100 ), 
+    dt50_ref_temp  = c(         20,        20 ), 
+    dt50_pf        = c(          2,         2 ), 
+    exp_temp_resp  = c(      0.079,     0.079 ), 
+    exp_moist_resp = c(       0.49,       0.7 ), 
+    crop_upt_f     = c(        0.5,       0.5 ), 
+    diff_coef      = c(      5e-10,     5e-10 ), 
+    parent_id      = c(         NA,         1 ), 
+    g_per_mol      = c(        200,       150 ), 
+    transf_f       = c(         NA,   .53/.75 ), 
+    g_as_per_ha    = c( "1000|950",     "0|0" ), 
+    app_j_day      = c(  "298|305", "298|305" ), 
+    stringsAsFactors = FALSE ) 
+``` 
+
+The columns `g_as_per_ha` and `app_j_day` now contains 
+character strings in which several values have been written, 
+separated by a vertical bar (`|`). `macrounchainedFocusGW()` 
+will internally convert these into numeric values.
+
+```{r}
+param3 <- read.table( header = TRUE, text = "
+    id    name kfoc  nf dt50 dt50_ref_temp dt50_pf exp_temp_resp exp_moist_resp crop_upt_f diff_coef parent_id g_per_mol  transf_f     g_as_per_ha app_j_day
+     1  'GW-C'  172 0.9   20            20       2         0.079           0.49        0.5     5e-10        NA       200        NA    '1000|950'   '298|305'
+     2 'Met-C'   52 0.9  100            20       2         0.079           0.70        0.5     5e-10         1       150 0.7066667         '0|0'   '298|305'
+    ", stringsAsFactors = FALSE )
+``` 
+
+In the example below, the parameter table is imported from 
+Excel and `macrounchainedFocusGW()` is called with these 
+parameters and a relevant par-file:
+
+```{r}
+#   Fetch the path to the Excel file and save it in an R 
+#   object called "xl"
+xl <- system.file( package = "macrounchained", "xlsx", 
+    "macrounchainedFocusGW-multiple-applications.xlsx" )
+
+#   Import the sheet 's' in that Excel file
+param1 <- readxl::read_excel( path = xl, sheet = "s" ) 
+
+#   Fetch the path to an example template par-file:
+pf <- system.file( 
+    "par-files", 
+    "chat_winCer_GW-X_2appln.par", 
+    package = "rmacrolite" )
+
+library("macrounchained")
+
+#   Dry run: 
+res <- macrounchainedFocusGW( 
+    s         = param1, 
+    parfile   = pf, 
+    overwrite = TRUE, 
+    run       = FALSE ) # Set to TRUE to run the simulations
+``` 
+
+
+
+Case 3: one application per year, every two years
+------------------------------------------------------------
+
+Compared to the first case (one application per year, every 
+year), the case of one application per year, every two years 
+will only differ by the input par-file. It needs to contain 
+the correct number of years without application in between 
+years with application.
+
+```{r}
+#   Fetch the path to the Excel file and save it in an R 
+#   object called "xl"
+xl <- system.file( package = "macrounchained", "xlsx", 
+    "macrounchainedFocusGW-with-met.xlsx" )
+
+#   Import the sheet 's' in that Excel file
+param1 <- readxl::read_excel( path = xl, sheet = "s" ) 
+
+#   Fetch the path to an example template par-file:
+pf <- system.file( 
+    "par-files", "chat_pot_GW-X_900gHa_d182_biennial.par", 
+    package = "macrounchained" )
+
+library("macrounchained")
+
+#   Dry run: 
+res <- macrounchainedFocusGW( 
+    s         = param1, 
+    parfile   = pf, 
+    overwrite = TRUE, 
+    run       = FALSE ) # Set to TRUE to run the simulations
+``` 
+
+
+
+System information (for traceability & reproducibility)
+============================================================
+
+As visible in the operation log outputs of 
+`macrounchainedFocusGW()`, above, the package `macrounchained` 
+gives quite extensive information on R-version, the system 
+on which the code was run, and not least on the version 
+of the different key R packages. Besides the package version, 
+are also returned package revision and a package MD5-checksum. 
+The version is defined by the package developer(s). The 
+revision is machine generated [hash](https://git-scm.com/book/en/v2/Git-Tools-Revision-Selection) 
+that can be related to a version of the source code on GitHub. 
+The package [MD5 checksum](https://en.wikipedia.org/wiki/MD5) 
+can be used to make sure that the original code was not altered 
+on the computer used for the calculations.
+
+In `macrounchainedFocusGW()` operation log is also indicated 
+`Call from package: 'macrounchained'`. The later would be 
+different (likely `'GlobalEnv'` instead of `'macrounchained'`) 
+if the function `macrounchainedFocusGW()` would have been defined 
+by an R script instead of a package.
+
+Finally, the operation log  also contains the version and the 
+MD5 checksum of the MACRO executable that was used to run 
+the simulations. 
+
+None of these features are fully error- or fool-proof, but 
+they altogether should provide a rather robust way to trace 
+what version of  `macrounchainedFocusGW()` and MACRO were 
+used to generate the simulation results.
+
+The user can obtain the same information by using the function 
+`codeinfo()` in the package `codeinfo`:
+
+```{r}
+library("codeinfo")
+
+codeinfo( r = TRUE, packages = c( "macrounchained", 
+    "rmacrolite", "macroutils2", "codeinfo" ) ) 
+``` 
+
+
+
+<!-- LIST OF LINKS -->
+
+[r]: https://www.r-project.org/ "The R Project for Statistical Computing"
+[r_packages]: https://en.wikipedia.org/wiki/R_(programming_language)#Packages "R packages (Wikipedia)"
+[macro]: https://www.slu.se/en/Collaborative-Centres-and-Projects/centre-for-chemical-pesticides-ckb1/models/macro-52/ "MACRO 5.2 (SLU/CKB)"
+[macroinfocus]: https://esdac.jrc.ec.europa.eu/projects/macro "MACRO In FOCUS (FOCUS DG SANTE)"
+[slu]: https://www.slu.se/ "Swedish University of Agricultural Sciences (SLU)"
+[ckb]: https://www.slu.se/ckb "Centre for Chemical Pesticides (CKB)"
+[codeinfo]: https://github.com/julienmoeys/codeinfo "R package codeinfo (GitHub)"
+[macroutils2]: https://github.com/julienmoeys/macroutils2 "R package macroutils2 (GitHub)"
+[rmacrolite]: https://github.com/julienmoeys/rmacrolite "R package rmacrolite (GitHub)"
+[macrounchained]: https://github.com/julienmoeys/macrounchained "R package macrounchained (GitHub)"
+[macroutils]: https://github.com/julienmoeys/macroutils "R package macroutils (GitHub)"
+[github]: https://github.com/ "GitHub development platform"
+[focusdgsante]: https://esdac.jrc.ec.europa.eu/projects/focus-dg-sante "FOrum for the Co-ordination of pesticide fate models and their USe"
+[devtools]: https://CRAN.R-project.org/package=devtools "R package devtools (CRAN)"
+[cran]: https://cran.r-project.org/ "The Comprehensive R Archive Network" 
+[kemi]: https://www.kemi.se/en "Swedish Chemicals Agency"
