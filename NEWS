@@ -1,6 +1,16 @@
     
     package: 'macrounchained'
 
+CHANGES IN VERSION 0.9.2
+    
+    2019/02/15  The first version of the package vignette 
+        is now ready (macrounchainedfocusgw-manual.Rmd) 
+        and added to the version control.
+        
+        A package site is create with pkgdown and added 
+        to the version control (not shipped with the 
+        package)
+    
 CHANGES IN VERSION 0.9.1
     
     2019/02/05  macrounchained() now indicates 
