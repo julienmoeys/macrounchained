@@ -1,3 +1,5 @@
+^docs$
+^_pkgdown\.yml$
 _package_binaries
 _package_preparation
 _package_preparation_public
