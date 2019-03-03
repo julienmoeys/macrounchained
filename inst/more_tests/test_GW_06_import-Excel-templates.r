@@ -55,7 +55,7 @@ param2 <- readxl::read_excel(
 as.data.frame( param2 ) 
 
 parfile2 <- system.file( "par-files", 
-    "chat_winCer_GW-X_2appln.par", 
+    "chat_winCer_GW-X_900gHa_d182.par", 
     package = "rmacrolite" )
 
 res2 <- macrounchainedFocusGW( 
@@ -63,4 +63,29 @@ res2 <- macrounchainedFocusGW(
     parfile   = parfile2, 
     overwrite = TRUE, 
     run       = FALSE ) # Dry run 
+
+
+
+
+xlsx3 <- system.file( "xlsx", 
+    "macrounchainedFocusGW-every-other-year.xlsx", 
+    package = "macrounchained" ) 
+
+param3 <- readxl::read_excel( 
+    path = xlsx3, 
+    sheet = "s" )
+
+#   Inspect
+as.data.frame( param3 ) 
+
+parfile3 <- system.file( "par-files", 
+    "chat_winCer_GW-X_900gHa_d182.par", 
+    package = "rmacrolite" )
+
+res2 <- macrounchainedFocusGW( 
+    s         = param3, 
+    parfile   = parfile3, 
+    overwrite = TRUE, 
+    run       = FALSE ) # Dry run 
+
 

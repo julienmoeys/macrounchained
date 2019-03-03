@@ -49,6 +49,7 @@ param <- data.frame(
     "transf_f"          = NA, # mol met formed / mol parent degraded
     "g_as_per_ha"       = 1000, 
     "app_j_day"         = 119L, 
+    "years_interval"    = 3L, 
     stringsAsFactors    = FALSE ) 
 
 expected_results_s <- data.frame(
@@ -79,7 +80,8 @@ expected_parfiles[, "parfile" ] <- system.file(
 
 
 parfile <- system.file( "par-files", 
-    "chat_pot_GW-X_900gHa_d182_triennial.par", package = "macrounchained" )
+    "chat_winCer_GW-X_900gHa_d182.par", 
+    package = "macrounchained" )
 
 
 

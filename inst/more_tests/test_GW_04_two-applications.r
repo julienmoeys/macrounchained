@@ -78,7 +78,7 @@ expected_parfiles[, "parfile" ] <- system.file(
 
 
 parfile <- system.file( "par-files", 
-    "chat_winCer_GW-X_2appln.par", 
+    "chat_winCer_GW-X_900gHa_d182.par", 
     package = "rmacrolite" )
 
 

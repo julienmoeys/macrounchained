@@ -72,7 +72,8 @@ expected_results_w <- data.frame(
 
 
 parfile <- system.file( "par-files", 
-    "chat_winCer_GW-X_900gHa_d182.par", package = "rmacrolite" )
+    "chat_winCer_GW-X_900gHa_d182.par", 
+    package = "rmacrolite" )
 
 
 
