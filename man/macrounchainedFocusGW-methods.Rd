@@ -11,7 +11,7 @@ macrounchainedFocusGW(s, ...)
 \method{macrounchainedFocusGW}{data.frame}(s, parfile, verbose = 1L,
   indump = TRUE, run = TRUE, overwrite = FALSE,
   analyse_args = list(quiet = TRUE), dt50_depth_f = NULL,
-  keep0conc = TRUE, anonymise = TRUE, archive = TRUE, ...)
+  anonymise = TRUE, archive = TRUE, ...)
 }
 \arguments{
 \item{s}{See \code{\link[macrounchained]{macrounchained-methods}}, 
@@ -38,8 +38,6 @@ List of additional arguments passed to
 \code{\link[macroutils2:macroutilsFocusGWConc-methods]{macroutilsFocusGWConc}}.}
 
 \item{dt50_depth_f}{See \code{\link[rmacrolite:rmacroliteDegradation-methods]{rmacroliteDegradation}}.}
-
-\item{keep0conc}{See \code{\link[rmacrolite:rmacroliteApplications-methods]{rmacroliteApplications}}.}
 
 \item{anonymise}{See \code{\link[macrounchained]{macrounchained-methods}}.}
 

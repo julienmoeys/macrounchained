@@ -11,7 +11,8 @@ macrounchained(s, ...)
 \method{macrounchained}{data.frame}(s, parfile, verbose = 1L,
   indump = TRUE, run = TRUE, overwrite = FALSE, analyse = NULL,
   analyse_args = NULL, analyse_summary = NULL, dt50_depth_f = NULL,
-  keep0conc = TRUE, anonymise = TRUE, archive = TRUE, ...)
+  keep0conc = TRUE, focus_mode = "no", anonymise = TRUE,
+  archive = TRUE, ...)
 }
 \arguments{
 \item{s}{A \code{\link[base]{data.frame}} containing different sets 
@@ -149,6 +150,8 @@ to be used here.}
 \item{dt50_depth_f}{See \code{\link[rmacrolite:rmacroliteDegradation-methods]{rmacroliteDegradation}}.}
 
 \item{keep0conc}{See \code{\link[rmacrolite:rmacroliteApplications-methods]{rmacroliteApplications}}.}
+
+\item{focus_mode}{See \code{\link[rmacrolite:rmacroliteApplications-methods]{rmacroliteApplications}}.}
 
 \item{anonymise}{Single boolean value. If \code{TRUE}, the function 
 tries to replace USERNAME, HOMEPATH and USERPROFILE 
