@@ -1,6 +1,21 @@
     
     package: 'macrounchained'
 
+CHANGES IN VERSION 0.9.3
+    
+    2019/03/03  macrounchained() now has and 
+        argument focus_mode, that can be set to "gw" to 
+        use improvements in rmacrolite::rmacroliteApplications()
+        and rmacrolite::rmacroliteInfo() to modify automatically 
+        the par-file for the right number of applications per 
+        application years and the right number of years 
+        interval between applications. 
+        
+        macrounchainedFocusGW() now use this option internally.
+        As a consequence, the user now just need a template
+        par-file with the right scenario and crop. The rest 
+        is accounted for internally.
+    
 CHANGES IN VERSION 0.9.2
     
     2019/02/15  The first version of the package vignette 
