@@ -37,13 +37,16 @@ Features
     a MACRO simulation) from MACRO or MACRO In FOCUS, and 
     will use that template as an input for `macrounchained`
     to modify the substance properties and application 
-    patterns (dose, application date, ...). All other parameters 
-    such as those concerting the soil properties, the 
-    climate and the crop cannot be modified by `macrounchained`.
+    patterns (dose, application date, ...). For MACRO In FOCUS, 
+    the number of application per year and the number of 
+    years interval are part of the parameters handled by the 
+    package. 
+    All other parameters such as those concerting the soil 
+    properties, the climate and the crop cannot be modified 
+    by `macrounchained`.
     MACRO In FOCUS users need to export a template 
-    `.par`-file for the right scenario, crop, number of 
-    applications and number of years between applications 
-    before using `macrounchained`.
+    `.par`-file for the right scenario and crop before 
+    using `macrounchained`.
     
 *   Several sets of substance properties can be simulated 
     in the same batch (up to 998 sets per batch). The sets 
