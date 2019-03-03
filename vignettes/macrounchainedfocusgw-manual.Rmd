@@ -194,21 +194,19 @@ of:
 
 *   Scenario (ex. Chateaudun)
 *   Crop (ex. Winter cereals)
-*   Number of application per year
-*   Number of years interval between application-years 
-    (application every year, every two years, every three years)
 
 This template need to be prepared with MACRO In FOCUS. Prepare 
-a groundwater simulation (with the right scenario, crop, Number 
-of application per year and Number of years interval between 
-application-years), and when it is ready, chose the Tools 
+a groundwater simulation (with the right scenario and crop), 
+and when it is ready, chose the Tools 
 menu > Save current run to parameter file and log file. You 
 can choose any dummy substance (ex. GW-A) and any dose and 
 application date(s) for the template, as long as the DT50 is 
 not small.
 
 All the substance parameters, the application date(s) 
-and the dose(s) will be overwritten by `macrounchainedFocusGW()`.
+and the dose(s), the number of application per application-year, 
+and the number of years interval between application-years 
+will be overwritten by `macrounchainedFocusGW()`.
 
 In the examples below, I use template par-files that are 
 shipped with the packages `macrounchained` or `rmacrolite`
@@ -259,7 +257,7 @@ pf
 anonymise( pf )
 ```
 
-But the user will most of the time want to use his/ her own 
+The user will most of the time want to use his/ her own 
 template, and the code will rather look like:
 
 ```{r eval = FALSE}
@@ -282,6 +280,16 @@ formed from the degradation of `GW-M`, and a secondary metabolite
 Notice that it is perfectly possible to run several simulations 
 with unrelated substances, i.e. just a batch of simulations 
 with different parameters.
+
+In the examples below, the substance is applied every year. 
+In this case, the user does not need to indicate the number 
+of years interval between application-years, and it will be 
+set internally to one year (application every year, the 
+default). For applications every other year or every third 
+year, an additional column needs to be given in the parameter 
+table, `years_interval`, set to 2 or 3, respectively. It can 
+vary from substance to substance. An example is given further 
+down.
 
 
 
@@ -668,9 +676,8 @@ xl <- system.file( package = "macrounchained", "xlsx",
 param1 <- readxl::read_excel( path = xl, sheet = "s" ) 
 
 #   Fetch the path to an example template par-file:
-pf <- system.file( 
-    "par-files", 
-    "chat_winCer_GW-X_2appln.par", 
+pf <- system.file( "par-files", 
+    "chat_winCer_GW-X_900gHa_d182.par", 
     package = "rmacrolite" )
 
 library("macrounchained")
@@ -698,15 +705,15 @@ years with application.
 #   Fetch the path to the Excel file and save it in an R 
 #   object called "xl"
 xl <- system.file( package = "macrounchained", "xlsx", 
-    "macrounchainedFocusGW-with-met.xlsx" )
+    "macrounchainedFocusGW-every-other-year.xlsx" )
 
 #   Import the sheet 's' in that Excel file
 param1 <- readxl::read_excel( path = xl, sheet = "s" ) 
 
 #   Fetch the path to an example template par-file:
-pf <- system.file( 
-    "par-files", "chat_pot_GW-X_900gHa_d182_biennial.par", 
-    package = "macrounchained" )
+pf <- system.file( "par-files", 
+    "chat_winCer_GW-X_900gHa_d182.par", 
+    package = "rmacrolite" )
 
 library("macrounchained")
 

@@ -733,6 +733,9 @@ NULL
 #'@param keep0conc
 #'  See \code{\link[rmacrolite:rmacroliteApplications-methods]{rmacroliteApplications}}.
 #'
+#'@param focus_mode
+#'  See \code{\link[rmacrolite:rmacroliteApplications-methods]{rmacroliteApplications}}.
+#'
 #'@param \dots
 #'  Additional parameters passed to specific methods. 
 #'  Currently not used.
@@ -810,6 +813,7 @@ macrounchained.data.frame <- function(
     analyse_summary = NULL, 
     dt50_depth_f = NULL, 
     keep0conc = TRUE, 
+    focus_mode = "no", 
     anonymise = TRUE, 
     archive = TRUE, 
     ... 
@@ -871,6 +875,12 @@ macrounchained.data.frame <- function(
         verbose = verbose, log_width = log_width, 
         logfiles = temp_log, append = TRUE )
     
+    if( !(focus_mode %in% c( "no", "gw" )) ){
+        stop( sprintf( 
+            "Argument 'focus_mode' can either be 'no' or 'gw' (currently %s)", 
+            focus_mode ) )
+    }   
+    
     #   List of compulsory columns in s
     columns_subst <- c( "id", "kfoc", "nf", "dt50", 
         "dt50_ref_temp", "dt50_pf", "exp_temp_resp", 
@@ -894,6 +904,15 @@ macrounchained.data.frame <- function(
         stop( sprintf( 
             "'s' must be a data.frame. Now class %s", 
             paste( class(s), collapse = ", " ) ) ) 
+    }   
+    
+    if( focus_mode == "gw" ){
+        columns_appln <- c( columns_appln, "years_interval" )
+        
+        if( !("years_interval" %in% colnames( s )) ){
+            s <- data.frame( s, "years_interval" = 1L, 
+                stringsAsFactors = FALSE )
+        }   
     }   
     
     test_columns <- c( columns_subst, columns_appln ) %in% 
@@ -1150,70 +1169,73 @@ macrounchained.data.frame <- function(
         )   
     }   #   parfile
     
-    #   Find how many applications there are for each 
-    #   par-file
-    .muc_logMessage( 
-        m = "Check that the number of applications is coherent between 's' and the par-file(s)", 
-        verbose = verbose, log_width = log_width, 
-        logfiles = temp_log, append = TRUE )
-    
-    #   Number of applications in the par-file(s)
-    parfile_table[, "nb_appln" ] <- unlist( lapply(
-        X   = parfile_list, 
-        FUN = function(pl){
-            appln <- rmacroliteApplications( x = pl ) 
-            appln <- unique( appln )
-            
-            #   Remove applications without solute
-            if( !all( appln[, "g_as_per_ha" ] == 0 ) ){
-                appln <- appln[ appln[, "g_as_per_ha" ] != 0, ]
+    if( focus_mode != "gw" ){
+        #   Find how many applications there are for each 
+        #   par-file
+        .muc_logMessage( 
+            m = "Check that the number of applications is coherent between 's' and the par-file(s)", 
+            verbose = verbose, log_width = log_width, 
+            logfiles = temp_log, append = TRUE )
+        
+        #   Number of applications in the par-file(s)
+        parfile_table[, "nb_appln" ] <- unlist( lapply(
+            X   = parfile_list, 
+            FUN = function(pl){
+                appln <- rmacroliteApplications( x = pl ) 
+                appln <- unique( appln )
+                
+                #   Remove applications without solute
+                if( !all( appln[, "g_as_per_ha" ] == 0 ) ){
+                    appln <- appln[ appln[, "g_as_per_ha" ] != 0, ]
+                }   
+                
+                return( nrow( appln ) ) 
             }   
-            
-            return( nrow( appln ) ) 
+        ) ) 
+        
+        #   Number of applications in 's'
+        nb_appln_in_s <- unlist( lapply(
+            X   = 1:nrow(s), 
+            FUN = function(i){
+                g_as_per_ha <- s[ i, "g_as_per_ha" ] 
+                
+                if( any( c( "AsIs", "list" ) %in% class( g_as_per_ha ) ) ){
+                    g_as_per_ha <- g_as_per_ha[[ 1L ]]
+                }   
+                
+                nb_doses <- length( g_as_per_ha ) 
+                
+                app_j_day <- s[ i, "app_j_day" ]
+                
+                nb_app_j_day <- length( app_j_day )
+                
+                if( any( c( "AsIs", "list" ) %in% class( app_j_day ) ) ){
+                    app_j_day <- app_j_day[[ 1L ]]
+                }   
+                
+                f_int <- s[ i, "f_int" ]
+                
+                if( any( c( "AsIs", "list" ) %in% class( f_int ) ) ){
+                    f_int <- f_int[[ 1L ]]
+                }   
+                
+                nb_f_int <- length( f_int ) 
+                
+                return( max( c( nb_doses, nb_app_j_day, nb_f_int ) ) )
+            }   
+        ) )
+        
+        rownames( parfile_table ) <- as.character( 
+            parfile_table[, "parfile_id" ] ) 
+        
+        test_nb_appln <- parfile_table[ as.character( s[, "parfile_id" ] ), "nb_appln" ] == nb_appln_in_s
+        
+        if( !all( test_nb_appln ) ){
+            stop( "The number of applications in the par-file(s) does not match the number of applications in 's' (at least for some rows)." )
         }   
-    ) ) 
-    
-    #   Number of applications in 's'
-    nb_appln_in_s <- unlist( lapply(
-        X   = 1:nrow(s), 
-        FUN = function(i){
-            g_as_per_ha <- s[ i, "g_as_per_ha" ] 
-            
-            if( any( c( "AsIs", "list" ) %in% class( g_as_per_ha ) ) ){
-                g_as_per_ha <- g_as_per_ha[[ 1L ]]
-            }   
-            
-            nb_doses <- length( g_as_per_ha ) 
-            
-            app_j_day <- s[ i, "app_j_day" ]
-            
-            nb_app_j_day <- length( app_j_day )
-            
-            if( any( c( "AsIs", "list" ) %in% class( app_j_day ) ) ){
-                app_j_day <- app_j_day[[ 1L ]]
-            }   
-            
-            f_int <- s[ i, "f_int" ]
-            
-            if( any( c( "AsIs", "list" ) %in% class( f_int ) ) ){
-                f_int <- f_int[[ 1L ]]
-            }   
-            
-            nb_f_int <- length( f_int ) 
-            
-            return( max( c( nb_doses, nb_app_j_day, nb_f_int ) ) )
-        }   
-    ) )
-    
-    rownames( parfile_table ) <- as.character( 
-        parfile_table[, "parfile_id" ] ) 
-    
-    test_nb_appln <- parfile_table[ as.character( s[, "parfile_id" ] ), "nb_appln" ] == nb_appln_in_s
-    
-    if( !all( test_nb_appln ) ){
-        stop( "The number of applications in the par-file(s) does not match the number of applications in 's' (at least for some rows)." )
+        rm( test_nb_appln, nb_appln_in_s )
     }   
-    rm( test_nb_appln, nb_appln_in_s )
+    
     rownames( parfile_table ) <- NULL 
     
     
@@ -1885,10 +1907,20 @@ macrounchained.data.frame <- function(
             f_int <- f_int[[ 1L ]]
         }   
         
-        rmacroliteApplications( x = x_o, keep0conc = keep0conc ) <- list(
-            "g_as_per_ha" = g_as_per_ha,
-            "app_j_day"   = app_j_day,
-            "f_int"       = f_int ) 
+        if( focus_mode == "gw" ){
+            rmacroliteApplications( x = x_o, keep0conc = keep0conc, 
+                focus_mode = focus_mode ) <- list(
+                "g_as_per_ha"    = g_as_per_ha,
+                "app_j_day"      = app_j_day,
+                "f_int"          = f_int, 
+                "years_interval" = s[ sel_subst, "years_interval" ] ) 
+        }else{
+            rmacroliteApplications( x = x_o, keep0conc = keep0conc, 
+                focus_mode = focus_mode ) <- list(
+                "g_as_per_ha" = g_as_per_ha,
+                "app_j_day"   = app_j_day,
+                "f_int"       = f_int ) 
+        }   
         
         rm( g_as_per_ha, app_j_day, f_int )
         
@@ -1997,11 +2029,20 @@ macrounchained.data.frame <- function(
             verbose = verbose, log_width = log_width, 
             logfiles = log_file, append = TRUE ) 
         
-        rmacroliteInfo( x = x_o ) <- c( 
+        
+        new_info <- list( 
             "output_file" = file.path( modelVar[["path"]], 
-            tolower( operation_register[ o, "output_macro" ] ), 
-            fsep = "\\" ), "type" = type_text, 
+                tolower( operation_register[ o, "output_macro" ] ), 
+                fsep = "\\" ), 
+            "type" = type_text, 
             "compound" = s[ sel_subst, "name" ] )
+        
+        if( focus_mode == "gw" ){
+            new_info <- c( new_info, list( "years_interval" = 
+                s[ sel_subst, "years_interval" ] ) )
+        }   
+        
+        rmacroliteInfo( x = x_o ) <- new_info
         
         
         
@@ -2588,9 +2629,6 @@ macroutilsFocusGWConc_summary.list <- function(
 #'@param archive
 #'  See \code{\link[macrounchained]{macrounchained-methods}}.
 #'
-#'@param keep0conc
-#'  See \code{\link[rmacrolite:rmacroliteApplications-methods]{rmacroliteApplications}}.
-#'
 #'@param \dots
 #'  See \code{\link[macrounchained]{macrounchained-methods}}.
 #'
@@ -2639,7 +2677,7 @@ macrounchainedFocusGW.data.frame <- function(
     analyse_args = list( "quiet" = TRUE ), 
     # analyse_summary = NULL, 
     dt50_depth_f = NULL, 
-    keep0conc = TRUE, 
+    # keep0conc = TRUE, 
     anonymise = TRUE, 
     archive = TRUE, 
     ... 
@@ -2695,7 +2733,8 @@ macrounchainedFocusGW.data.frame <- function(
         analyse_args    = analyse_args, 
         analyse_summary = macroutilsFocusGWConc_summary, 
         dt50_depth_f    = dt50_depth_f, 
-        keep0conc       = keep0conc, 
+        # keep0conc       = keep0conc, 
+        focus_mode      = "gw", 
         anonymise       = anonymise, 
         archive         = TRUE, 
         ... 
