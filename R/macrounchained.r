@@ -2742,3 +2742,347 @@ macrounchainedFocusGW.data.frame <- function(
 }   
 
 
+
+# Utility functions for FOCUS scenario parametrisation
+# ==========================================================
+
+.muc_sanitize <- function( x, from = "", to = "ASCII//TRANSLIT" ){
+    x <- tolower( x = x ) 
+    
+    return( iconv( 
+        x    = x, 
+        from = "", 
+        to   = "ASCII//TRANSLIT" ) )
+}   
+
+
+
+.muc_sanitize_more <- function( x, from = "", to = "ASCII//TRANSLIT" ){
+    x <- .muc_sanitize( x = x, from = from, to = to ) 
+    
+    #   Replace minus signs by spaces
+    x <- gsub( pattern = "-", replacement = "", x = x, 
+        fixed = TRUE ) 
+    
+    #   Replace minus signs by spaces
+    x <- gsub( pattern = " ", replacement = "", x = x, 
+        fixed = TRUE ) 
+    
+    #   Replace comma by nothing
+    x <- gsub( pattern = ",", replacement = " ", x = x, 
+        fixed = TRUE ) 
+    
+    return( x )
+}   
+
+
+
+.muc_grepl <- function( input, match_list ){
+    output <- lapply(
+        X   = input, 
+        FUN = function(p){
+            return( grepl( pattern = p, x = match_list, 
+                fixed = TRUE ) )
+        }   
+    )   
+    
+    output <- do.call( what = "rbind", args = output )
+    
+    return( output )
+}   
+
+    # .muc_grepl( input = c( "chat", "onn" ),  match_list = c( "chateaudun", "onnestad", "D1" ) )
+
+
+
+.muc_match_soil <- function( soil, soil_list, soil_list_enc = "UTF-8" ){
+    # soil_sanitized <- enc2utf8( x = soil )
+    soil_sanitized <- .muc_sanitize( x = soil )
+    
+    soil_list_sanitized <- .muc_sanitize( 
+        x    = soil_list, 
+        from = soil_list_enc, 
+        to   = "ASCII//TRANSLIT" ) 
+    
+    grepl_res <- .muc_grepl( input = soil_sanitized, 
+        match_list = soil_list_sanitized ) 
+    
+    rowsums_grepl_res <- rowSums( grepl_res ) 
+    
+    if( any( sel <- rowsums_grepl_res == 0L ) ){
+        soil <- soil[ sel ] 
+        soil <- paste0( '"', soil, '"' )
+        soil <- paste( soil, collapse = ", " ) 
+        
+        soil_list <- paste0( '"', soil_list, '"' )
+        soil_list <- paste( soil_list, collapse = ", " ) 
+        
+        stop( sprintf( 
+            "The name(s) %s is/are not matched by any known scenario (%s).", 
+            soil, soil_list ) )
+    };  rm( sel )
+    
+    if( any( sel <- rowsums_grepl_res > 1L ) ){
+        #   Report the first case matched by multiple scenario
+        soil <- soil[ sel ] 
+        soil <- paste0( '"', soil, '"' )
+        soil <- paste( soil, collapse = ", " ) 
+        
+        if( sum( sel ) == 1L ){
+            soil_list <- soil_list[ as.logical( grepl_res[ 
+                which( sel )[ 1L ], ] ) ] 
+            soil_list <- paste0( '"', soil_list, '"' )
+            soil_list <- paste( soil_list, collapse = ", " ) 
+            
+            stop( sprintf( 
+                "The name %s is (partially) matched by several scenario (%s).", 
+                soil, soil_list ) )
+        }else{
+            rowsums_grepl_res <- rowsums_grepl_res[ sel ] 
+            rowsums_grepl_res <- paste( rowsums_grepl_res, 
+                collapse = ", " ) 
+            
+            stop( sprintf( 
+                "The names %s are (partially) matched by several scenario (by %s scenario, respectively).", 
+                soil, rowsums_grepl_res ) )
+        }   
+    };  rm( sel )
+    
+    rm( rowsums_grepl_res ) 
+    
+    focus_soil_index <- unlist( lapply(
+        X   = 1:length( soil ), 
+        FUN = function(i){
+            return( which( grepl_res[ i, ] ) )
+        }   
+    ) ) 
+    
+    output <- list(
+        "rows" = data.frame(
+            "soil" = soil, 
+            "soil_sanitized" = soil_sanitized, 
+            "focus_soil" = soil_list[ focus_soil_index ], 
+            "focus_soil_index" = focus_soil_index, 
+            stringsAsFactors = FALSE ), 
+        "columns"   = data.frame(
+            "soil_list"           = soil_list, 
+            "soil_list_sanitized" = soil_list_sanitized, 
+            stringsAsFactors      = FALSE ), 
+        "matches"   = grepl_res 
+    )   
+    
+    return( output )
+}   
+
+    # unique_location <- unique( read.csv( 
+        # file = sprintf( "%s/macrounchained/macrounchained/_package_preparation/focus_scenario/5.5.4/crops/crops_utf8.csv", Sys.getenv( "rPackagesDir" ) ), 
+        # stringsAsFactors = FALSE, fileEncoding = "UTF-8" )[, "location" ] )
+    
+    # unique_location
+    # # [1] "Chateaudun" "D1"         "D2"         "D3"         "D4"         "D5"         "D6"         "Karup"      "Krusenberg" "Langvad"    "Näsbygård"  "Önnestad"
+
+    # .muc_match_soil( soil = c( "chat", "chât", "Chateaudun", "onn" ), soil_list = unique_location )
+
+    # #   Error: Multiple matches (1)
+    # .muc_match_soil( soil = "D", soil_list = unique_location )
+
+    # #   Error: Multiple matches (2)
+    # .muc_match_soil( soil = c( "D", "ar" ), soil_list = unique_location )
+
+    # #   Error: No match
+    # .muc_match_soil( soil = "nowhere", soil_list = unique_location )
+
+
+
+.muc_match_soil_crop <- function( soil_crop, soil_crop_list, soil_crop_list_enc = "UTF-8" ){
+    match_soil <- .muc_match_soil( 
+        soil          = soil_crop[, "soil" ], 
+        soil_list     = unique( soil_crop_list[, "focus_soil" ] ), 
+        soil_list_enc = soil_crop_list_enc )
+    
+    soil_crop[, "focus_soil" ] <- 
+        match_soil[[ "rows" ]][, "focus_soil" ]
+    
+    soil_sanitized <- match_soil[[ "rows" ]][, "soil_sanitized" ]
+    
+    soil_crop_list[, "focus_index" ] <- 1:nrow( soil_crop_list )
+    
+    crop_sanitized <- .muc_sanitize_more( 
+        x = soil_crop[, "crop" ] )
+    
+    crop_sanitized2 <- strsplit( x = crop_sanitized, 
+        split = " ", fixed = TRUE ) 
+    
+    soil_crop <- data.frame(
+        soil_crop, 
+        "crop_sanitized2" = I( crop_sanitized2 ), 
+        stringsAsFactors = FALSE ) 
+    
+    crop_list_sanitized <- .muc_sanitize_more( 
+        x    = soil_crop_list[, "focus_crop" ], 
+        from = soil_crop_list_enc, 
+        to   = "ASCII//TRANSLIT" ) 
+    
+    crop_list_sanitized2 <- strsplit( x = crop_list_sanitized, 
+        split = " ", fixed = TRUE ) 
+    
+    soil_crop_list <- data.frame(
+        soil_crop_list, 
+        "crop_list_sanitized2" = I( crop_list_sanitized2 ), 
+        stringsAsFactors = FALSE )
+        
+    soil_crop_list_split <- split( 
+        x = soil_crop_list, 
+        f = soil_crop_list[, "focus_soil" ] )
+    
+    output <- lapply(
+        X   = 1:nrow( soil_crop ), 
+        FUN = function(i){
+            focus_soil_i <- match_soil[[ "rows" ]][ i, "focus_soil" ]
+            
+            # browser()
+            
+            crop_list_sanitized2b <- 
+                soil_crop_list_split[[ focus_soil_i ]][, "crop_list_sanitized2" ]
+            
+            out_i <- unlist( lapply(
+                X   = 1:length( crop_list_sanitized2b ), 
+                FUN = function(j){
+                    out_j <- lapply(
+                        X   = 1:length( crop_sanitized2[[ i ]] ), 
+                        FUN = function(k){
+                            out_k <- grep( 
+                                pattern = crop_sanitized2[[ i ]][ k ], 
+                                x       = crop_list_sanitized2b[[ j ]], 
+                                fixed   = TRUE, 
+                                value   = FALSE ) 
+                            
+                            return( out_k )
+                        }   
+                    ) 
+                    
+                    # if( any(crop_sanitized2[[ i ]] == "sugarbeets") & (j == 11L) ){
+                        # browser()
+                    # }   
+                    
+                    #   Some element of crop_sanitized2[[ i ]] 
+                    #   not matched by anything in 
+                    #   crop_list_sanitized2b[[ j ]]?
+                    out_j_length_0 <- unlist( lapply( 
+                        X = out_j, 
+                        FUN = function(x){length(x)==0L} ) )
+                    
+                    out_j <- unique( unlist( out_j ) ) 
+                    
+                    out_j <- 
+                        all( (1:length(crop_list_sanitized2b[[ j ]])) %in% out_j ) & 
+                        !any( out_j_length_0 ) 
+                    
+                    return( out_j )
+                    #   TRUE indicates that crop_sanitized2[[ i ]] 
+                    #   matches all elements of crop_list_sanitized2[[ j ]]
+                    #   FALSE may indicates no matches or 
+                    #   only some elements of crop_list_sanitized2[[ j ]]
+                }   
+            ) ) 
+            
+            if( sum( out_i ) == 0L ){
+                crop <- soil_crop[ i, "crop" ]
+                crop <- paste0( '"', crop, '"' )
+                crop <- paste( crop, collapse = ", " ) 
+                
+                crop_list <- soil_crop_list_split[[ focus_soil_i ]][, "focus_crop" ]
+                crop_list <- paste0( '"', crop_list, '"' )
+                crop_list <- paste( crop_list, collapse = ", " ) 
+                
+                stop( sprintf( 
+                    "The name(s) %s is/are not matched by any known FOCUS-crop for FOCUS-scenario \"%s\" (%s).", 
+                    crop, focus_soil_i, crop_list ) )
+            }   
+            
+            if( sum( out_i ) > 1L ){
+                #   Report the first case matched by multiple crop
+                crop <- soil_crop[ i, "crop" ] 
+                crop <- paste0( '"', crop, '"' )
+                crop <- paste( crop, collapse = ", " ) 
+                
+                crop_list <- soil_crop_list_split[[ focus_soil_i ]][ out_i, "focus_crop" ]
+                crop_list <- paste0( '"', crop_list, '"' )
+                crop_list <- paste( crop_list, collapse = ", " ) 
+                
+                stop( sprintf( 
+                    "The name %s is (partially) matched by several FOCUS-crop for FOCUS-scenario \"%s\" (%s).", 
+                    crop, focus_soil_i, crop_list ) )
+            }   
+            
+            return( soil_crop_list_split[[ focus_soil_i ]][ out_i, c( "focus_soil", "focus_crop", "focus_index" ) ] )
+        }   
+    )   
+    
+    output <- do.call( what = "rbind", args = output ) 
+    
+    output <- data.frame(
+        "crop" = soil_crop[, "crop" ], 
+        "soil" = soil_crop[, "soil" ], 
+        # "crop_sanitized" = crop_sanitized, 
+        # "soil_sanitized" = soil_sanitized, 
+        output, 
+        stringsAsFactors = FALSE )
+    
+    rownames( output ) <- NULL 
+    
+    return( output )
+}   
+
+    # soil_crop_list0 <- unique( read.csv( 
+        # file = sprintf( "%s/macrounchained/macrounchained/_package_preparation/focus_scenario/5.5.4/crops/crops_utf8.csv", Sys.getenv( "rPackagesDir" ) ), 
+        # stringsAsFactors = FALSE, fileEncoding = "UTF-8" )[, c( "location", "name" ) ] )
+    
+    # colnames( soil_crop_list0 )[ colnames( soil_crop_list0 ) == "location" ] <- "focus_soil"
+    # colnames( soil_crop_list0 )[ colnames( soil_crop_list0 ) == "name" ]     <- "focus_crop"
+    
+    # soil_crop0 <- data.frame(
+        # "soil"  = c(     "chat",        "onn",   "nas" ), 
+        # "crop"  = c( "cer, win", "sugarbeets", "grass" ), 
+        # stringsAsFactors = FALSE 
+    # )   
+    
+    # .muc_match_soil_crop( soil_crop = soil_crop0, soil_crop_list = soil_crop_list0 )
+    
+    # #   Error: No match (soils)
+    # soil_crop0b <- data.frame(
+        # "soil"  = c(  "nowhere",        "onn" ), 
+        # "crop"  = c( "cer, win", "sugarbeets" ), 
+        # stringsAsFactors = FALSE 
+    # )   
+    
+    # .muc_match_soil_crop( soil_crop = soil_crop0b, soil_crop_list = soil_crop_list0 )
+
+    # #   Error: No match (crop)
+    # soil_crop0c <- data.frame(
+        # "soil"  = c( "chat",          "onn" ), 
+        # "crop"  = c( "banana", "sugarbeets" ), 
+        # stringsAsFactors = FALSE 
+    # )   
+    
+    # .muc_match_soil_crop( soil_crop = soil_crop0c, soil_crop_list = soil_crop_list0 )
+
+    # #   Error: Multiple match (soils)
+    # soil_crop0d <- data.frame(
+        # "soil"  = c(        "D",        "onn" ), 
+        # "crop"  = c( "cer, win", "sugarbeets" ), 
+        # stringsAsFactors = FALSE 
+    # )   
+    
+    # .muc_match_soil_crop( soil_crop = soil_crop0d, soil_crop_list = soil_crop_list0 )
+
+    # #   Error: Multiple match (crop)
+    # soil_crop0e <- data.frame(
+        # "soil"  = c(    "chat",        "onn" ), 
+        # "crop"  = c( "ea, in", "sugarbeets" ), 
+        # stringsAsFactors = FALSE 
+    # )   
+    
+    # .muc_match_soil_crop( soil_crop = soil_crop0e, soil_crop_list = soil_crop_list0 )
+    
+
