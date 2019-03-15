@@ -270,8 +270,45 @@ pdu_rcmdcheck <- function(
     f <- list.files( path = buildDir, pattern = ".tar.gz" )
     f <- f[ grepl( pattern = pkgName, x = f, ignore.case = FALSE, 
         fixed = TRUE ) ]
-    f <- sort( f ) 
-    f <- f[ length(f) ] 
+    
+    #   Extract version
+    v <- gsub( 
+        x = f, 
+        pattern = paste0( pkgName, "_" ), 
+        replacement = "", 
+        fixed = TRUE )
+    
+    v <- gsub( 
+        x = v, 
+        pattern = ".tar.gz", 
+        replacement = "", 
+        fixed = TRUE )
+    
+    f <- f[ order( v ) ] 
+    v <- v[ order( v ) ] 
+    names( f ) <- v 
+    
+    # f <- sort( f ) 
+    # f <- f[ length(f) ] 
+    
+    if( length( v ) > 1L ){
+        v0 <- v[ length(v) ] 
+        
+        for( i in (length( v )-1L):1L ){
+            cv <- utils::compareVersion( a = v0, b = v[ i ] )
+            #   +1: a is later
+            #   -1: b is later
+            #    0: a and b are equal
+            
+            if( cv == -1 ){
+                v0 <- v[ i ] 
+            }   
+        }   
+        
+        v <- v0; rm( v0, i )
+    }   
+    
+    f <- as.character( f[ v ] ) 
     f <- file.path( buildDir, f )
     
     # setwd( buildDir )
@@ -320,8 +357,45 @@ pdu_rcmdinstall <- function(
     f <- list.files( path = buildDir, pattern = ".tar.gz" )
     f <- f[ grepl( pattern = pkgName, x = f, ignore.case = FALSE, 
         fixed = TRUE ) ]
-    f <- sort( f ) 
-    f <- f[ length(f) ] 
+    
+    #   Extract version
+    v <- gsub( 
+        x = f, 
+        pattern = paste0( pkgName, "_" ), 
+        replacement = "", 
+        fixed = TRUE )
+    
+    v <- gsub( 
+        x = v, 
+        pattern = ".tar.gz", 
+        replacement = "", 
+        fixed = TRUE )
+    
+    f <- f[ order( v ) ] 
+    v <- v[ order( v ) ] 
+    names( f ) <- v 
+    
+    # f <- sort( f ) 
+    # f <- f[ length(f) ] 
+    
+    if( length( v ) > 1L ){
+        v0 <- v[ length(v) ] 
+        
+        for( i in (length( v )-1L):1L ){
+            cv <- utils::compareVersion( a = v0, b = v[ i ] )
+            #   +1: a is later
+            #   -1: b is later
+            #    0: a and b are equal
+            
+            if( cv == -1 ){
+                v0 <- v[ i ] 
+            }   
+        }   
+        
+        v <- v0; rm( v0, i )
+    }   
+    
+    f <- as.character( f[ v ] ) 
     f <- file.path( buildDir, f )
     
     if( predelete_zip ){
