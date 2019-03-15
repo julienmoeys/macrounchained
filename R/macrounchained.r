@@ -613,16 +613,16 @@ NULL
 #'          used, and casing is ignored. Important qualifiers 
 #'          such as \code{"winter"} and \code{"spring"} (for 
 #'          cereals and oil seed rape), or \code{"bulb"}, 
-#'          \code{"fruiting"}, \code{"leafy"} and \code{"root"}, 
-#'          should be separated from the crop name by a comma 
-#'          (as in MACRO In FOCUS),  
-#'          but the can come either before or after the crop 
-#'          name. Spaces are otherwise ignored. Input like 
-#'          \code{"Cereals, Winter"}, \code{"cereals, winter"}, 
-#'          \code{"cer, win"} or even \code{"win, cer"} will 
-#'          all refer to the same Winter cereals FOCUS-crop. 
-#'          \code{"Sugar beets"} is equivalent to 
-#'          \code{"sugarbeets"}
+#'          \code{"fruiting"}, \code{"leafy"} and \code{"root"} 
+#'          (for vegetables), should be separated from the 
+#'          crop name by a comma (as in MACRO In FOCUS user 
+#'          interface), but the can come either before or 
+#'          after the crop name. Spaces are otherwise ignored. 
+#'          Input like \code{"Cereals, Winter"}, 
+#'          \code{"cereals, winter"}, \code{"cer, win"} or 
+#'          even \code{"win, cer"} will all refer to the same 
+#'          Winter cereals FOCUS-crop. \code{"Sugar beets"} 
+#'          is equivalent to \code{"sugarbeets"}.
 #'          An \code{\link[base:stop]{error}} will be raised in 
 #'          case of multiple matches or no match.
 #'      \item{"id"}{Integer-value, between 1 and 998. Unique 
