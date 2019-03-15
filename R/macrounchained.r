@@ -919,7 +919,7 @@ macrounchained.data.frame <- function(
         logfiles = temp_log, append = TRUE ) 
     
     macro_version <- rmacroliteMacroVersion( 
-        path = modelVar[[ "path" ]] )¨
+        path = modelVar[[ "path" ]] ) 
     
     
     
