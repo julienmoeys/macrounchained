@@ -1030,7 +1030,7 @@ macrounchained.data.frame <- function(
         
         if( !test_focus_model ){
             stop( sprintf( 
-                "The model name ('%s') does not seems to be a FOCUS model, while the columns 'soil' and 'crop' are provided in 's'." 
+                "The model name ('%s') does not seems to be a FOCUS model, while the columns 'soil' and 'crop' are provided in 's'.", 
                 macro_version[ "name" ] ) ) 
             
         }else{
