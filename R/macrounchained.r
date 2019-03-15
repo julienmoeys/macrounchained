@@ -1019,7 +1019,7 @@ macrounchained.data.frame <- function(
             }   
         };  rm( i )
         
-        if( focus_mode != "no" ){
+        if( focus_mode == "no" ){
             stop( "The argument 'focus_mode' cannot be 'no' when the columns 'soil' and 'crop' are provided in 's'." )
         }   
         
