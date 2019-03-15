@@ -586,6 +586,45 @@ NULL
 #'  simulated together. The following columns 
 #'  must or can be provided 
 #'  \itemize{
+#'      \item{"soil"}{(optional) Name of the FOCUS-scenario (soil/ site) 
+#'          to be used for the parameter set. Can only be 
+#'          used when the argument \code{focus_mode} is set 
+#'          to \code{"gw"}. When provided, the column 
+#'          \code{"crop"} should be provided too (see below), 
+#'          but the argument \code{parfile} should not be 
+#'          used, and neither the optional column 
+#'          \code{"parfile"}, as the template 
+#'          par-file is determined internally. 
+#'          \code{\link[base:pmatch]{Partial matching}}} and 
+#'          \code{\link[base:iconv]{transliteration}} are 
+#'          used, and casing is ignored, and so that input 
+#'          like \code{"Ch\^{a}teaudun"}, \code{"chateaudun"} or
+#'          \code{"chat"} will all refer to the same 
+#'          \code{"Ch\^{a}teaudun"} FOCUS-scenario. An 
+#'          \code{\link[base:stop]{error}} will be raised in 
+#'          case of multiple matches or no match.
+#'      \item{"crop"}{(optional) Name of the FOCUS-crop 
+#'          to be used for the parameter set. Can only be 
+#'          used when the argument \code{focus_mode} is set 
+#'          to \code{"gw"}. When provided, the column 
+#'          \code{"soil"} should be provided too (see above). 
+#'          \code{\link[base:pmatch]{Partial matching}}} and 
+#'          \code{\link[base:iconv]{transliteration}} are 
+#'          used, and casing is ignored. Important qualifiers 
+#'          such as \code{"winter"} and \code{"spring"} (for 
+#'          cereals and oil seed rape), or \code{"bulb"}, 
+#'          \code{"fruiting"}, \code{"leafy"} and \code{"root"}, 
+#'          should be separated from the crop name by a comma 
+#'          (as in MACRO In FOCUS),  
+#'          but the can come either before or after the crop 
+#'          name. Spaces are otherwise ignored. Input like 
+#'          \code{"Cereals, Winter"}, \code{"cereals, winter"}, 
+#'          \code{"cer, win"} or even \code{"win, cer"} will 
+#'          all refer to the same Winter cereals FOCUS-crop. 
+#'          \code{"Sugar beets"} is equivalent to 
+#'          \code{"sugarbeets"}
+#'          An \code{\link[base:stop]{error}} will be raised in 
+#'          case of multiple matches or no match.
 #'      \item{"id"}{Integer-value, between 1 and 998. Unique 
 #'          identifier of the substance. Will also be used as 
 #'          a Run ID.} 
@@ -3308,8 +3347,8 @@ macrounchainedFocusGW.data.frame <- function(
     output <- data.frame(
         "crop" = soil_crop[, "crop" ], 
         "soil" = soil_crop[, "soil" ], 
-        "crop_sanitized" = crop_sanitized, 
-        "soil_sanitized" = soil_sanitized, 
+        # "crop_sanitized" = crop_sanitized, 
+        # "soil_sanitized" = soil_sanitized, 
         output, 
         stringsAsFactors = FALSE )
     
