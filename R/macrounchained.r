@@ -998,23 +998,23 @@ macrounchained.data.frame <- function(
         #   Check that none of the required scenario column contains NA
         #   (application pattern)
         for( i in 1:length( column_scen ) ){
-            test_class <- "character" %in% class( s[, columns_appln[ i ] ] ) 
+            test_class <- "character" %in% class( s[, column_scen[ i ] ] ) 
             
             if( !test_class ){
                 stop( sprintf( 
                     "Column '%s' in 's' must be of class 'character'. Now %s", 
-                    columns_appln[ i ], 
-                    paste( class( s[, columns_appln[ i ] ] ), 
+                    column_scen[ i ], 
+                    paste( class( s[, column_scen[ i ] ] ), 
                         collapse = " " )
                 ) ) 
             }   
             
             rm( test_class ) 
             
-            if( any( is.na( unlist( s[, columns_appln[ i ] ] ) ) ) ){ 
+            if( any( is.na( unlist( s[, column_scen[ i ] ] ) ) ) ){ 
                           # unlist() required here for AsIs columns
                 stop( sprintf( "NA-values detected in s[,'%s']. Missing values not allowed.", 
-                    columns_appln[ i ] 
+                    column_scen[ i ] 
                 ) ) 
             }   
         };  rm( i )
