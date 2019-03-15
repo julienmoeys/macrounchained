@@ -1049,7 +1049,7 @@ macrounchained.data.frame <- function(
                 fixed       = TRUE )
             
             macroinfocus_version0 <- gsub( 
-                x           = macroinfocus_version, 
+                x           = macroinfocus_version0, 
                 pattern     = "-", 
                 replacement = "", 
                 fixed       = TRUE )
