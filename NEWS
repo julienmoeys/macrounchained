@@ -1,6 +1,12 @@
     
     package: 'macrounchained'
 
+CHANGES IN VERSION 0.10.0
+    
+    2019/03/15  Start implementing user input of FOCUS-scenario 
+        and FOCUS-crop rather than the user providing a template 
+        parameter file for their MACRO In FOCUS simulations.
+    
 CHANGES IN VERSION 0.9.3
     
     2019/03/03  macrounchained() now has and 
