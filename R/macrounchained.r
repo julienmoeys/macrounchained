@@ -1059,7 +1059,7 @@ macrounchained.data.frame <- function(
             
             if( test_macroinfocus_version ){ 
                 stop( sprintf( 
-                    "Failed to extract MACRO In FOCUS version from the name '%s'." 
+                    "Failed to extract MACRO In FOCUS version from the name '%s'.", 
                     macro_version[ "name" ] ) ) 
             }   
             
