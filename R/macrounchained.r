@@ -1450,7 +1450,7 @@ macrounchained.data.frame <- function(
     # Import the parfiles, if needed
     # ======================================================
     
-    if( !parfile_in_s ){
+    if( !( parfile_in_s | scenario_provided ) ){
         if( missing( "parfile" ) ){
             stop( "Argument 'parfile' is missing and no column 'parfile' in 's'. One must be given." )
             
