@@ -3486,13 +3486,23 @@ macrounchainedFocusGW.data.frame <- function(
         
         if( is.na( value ) ){ value <- 0  }
         
+        value <- round( value, 6L )
+        
+        if( par_map[ i, "category" ] == "CROP PARAMETERS" ){
+            pTag <- "%s\t1\t%s"
+        }else{ 
+            pTag <- "%s\t%s"
+        }   
+        
+        pTag <- sprintf( pTag, par_map[ i, "name_in_parfile" ], 
+            "%s" ) 
+        
         x <- rmacroliteChange1Param( 
             x     = x, 
-            pTag  = sprintf( "%s\t%s", 
-                par_map[ i, "name_in_parfile" ], "%s" ), 
+            pTag  = pTag, 
             type  = par_map[ i, "category" ], 
             value = value ) 
-    };  rm( i, value )
+    };  rm( i, value, pTag )
     
     
     
