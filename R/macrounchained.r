@@ -1287,7 +1287,7 @@ macrounchained.data.frame <- function(
             logfiles = temp_log, append = TRUE, values = list(
             macroinfocus_version ) ) 
         
-        focus_scen_path <- system.files( "focus_scenario", 
+        focus_scen_path <- system.file( "focus_scenario", 
             package = "macrounchained" ) 
         
         if( !file.exists( focus_scen_path ) ){
@@ -1422,8 +1422,8 @@ macrounchained.data.frame <- function(
                 logfiles = temp_log, append = TRUE )
             
             scenario_match[, "parfile" ] <- file.path(
-                focus_scen_path, "soils", .muc_sanitize( 
-                x = scenario_match[, "focus_soil" ] ) ) 
+                focus_scen_path, "soils", sprintf( "%s.par", 
+                .muc_sanitize( x = scenario_match[, "focus_soil" ] ) ) ) 
             
             test_parfile <- file.exists( 
                 scenario_match[, "parfile" ] )
@@ -1442,6 +1442,25 @@ macrounchained.data.frame <- function(
                     "focus_index", "parfile" ) ], 
                 stringsAsFactors = FALSE )
         }   
+        
+        parfile_table <- unique( s[, "parfile" ] ) 
+        parfile_table <- data.frame(
+            "parfile_id" = 1:length( parfile_table ), 
+            "path"       = parfile_table, 
+            stringsAsFactors = FALSE ) 
+        rownames( parfile_table ) <- parfile_table[, "path" ] 
+        
+        #   Add a column 'parfile_id' to 's' and remove the 
+        #   column 'parfile'
+        s[, "parfile_id" ] <- as.integer( parfile_table[ 
+            parfile_table[, "path" ], 
+            "parfile_id" ] ) 
+        
+        rownames( parfile_table ) <- NULL 
+        
+        s <- s[, colnames( s ) != "parfile" ] 
+        
+        parfile_in_s <- TRUE 
     }   
     
     
