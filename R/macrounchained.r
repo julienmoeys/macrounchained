@@ -3458,6 +3458,7 @@ macrounchainedFocusGW.data.frame <- function(
 
 
 
+#'@importFrom rmacrolite rmacroliteChange1Param 
 .muc_parametrise_macroinfocus_crop <- function(
     x,          # An imported par-file
     crop_par,   # Single row data.frame with all crop parameters
