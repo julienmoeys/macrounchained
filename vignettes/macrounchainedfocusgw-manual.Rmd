@@ -745,7 +745,7 @@ on the computer used for the calculations.
 
 In `macrounchainedFocusGW()` operation log is also indicated 
 `Call from package: 'macrounchained'`. The later would be 
-different (likely `'GlobalEnv'` instead of `'macrounchained'`) 
+different (likely `'R_GlobalEnv'` instead of `'macrounchained'`) 
 if the function `macrounchainedFocusGW()` would have been defined 
 by an R script instead of a package.
 
