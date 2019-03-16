@@ -1441,6 +1441,8 @@ macrounchained.data.frame <- function(
                 scenario_match[, c( "focus_soil", "focus_crop", 
                     "focus_index", "parfile" ) ], 
                 stringsAsFactors = FALSE )
+            
+            rm( scenario_match )
         }   
         
         parfile_table <- unique( s[, "parfile" ] ) 
@@ -2199,6 +2201,21 @@ macrounchained.data.frame <- function(
                 logfiles = log_file, append = TRUE ) 
         }   
         
+        
+        
+        if( scenario_provided ){
+            .muc_logMessage( m = "FOCUS: %s; %s; %s", 
+                verbose = verbose, log_width = log_width, 
+                logfiles = log_file, append = TRUE, 
+                values = list( s[ sel_subst, "focus_soil" ], 
+                s[ sel_subst, "focus_crop" ], 
+                ifelse( 
+                    test = crop_params[ s[ sel_subst, "focus_index" ], "is_irrigated" ], 
+                    yes  = "Irrigated", no = "Not irrigated" ) ) ) 
+        }   
+        
+        
+        
         #   Copy the template parametrisation
         x_o <- parfile_list[[ s[ sel_subst, "parfile_id" ] ]] 
         
@@ -2367,6 +2384,18 @@ macrounchained.data.frame <- function(
         
         rmacroliteDiffCoef( x = x_o ) <- s[ sel_subst, "diff_coef" ]
         
+        
+        
+        if( scenario_provided ){
+            .muc_logMessage( m = "* Set FOCUS-crop parameters", 
+                verbose = verbose, log_width = log_width, 
+                logfiles = log_file, append = TRUE ) 
+            
+            x_o <- .muc_parametrise_macroinfocus_crop(
+                x        = x_o, 
+                crop_par = crop_params[ s[ sel_subst, "focus_index" ],, drop = FALSE ], 
+                par_map  = crop_param_map )
+        }   
         
         
         .muc_logMessage( 
@@ -3426,5 +3455,69 @@ macrounchainedFocusGW.data.frame <- function(
     # )   
     
     # .muc_match_soil_crop( soil_crop = soil_crop0e, soil_crop_list = soil_crop_list0 )
+
+
+
+.muc_parametrise_macroinfocus_crop <- function(
+    x,          # An imported par-file
+    crop_par,   # Single row data.frame with all crop parameters
+    par_map     # data.frame containing the parameter map
+){  
+    #   Keep only the relevant parameters in the map
+    par_map <- par_map[ par_map[, "is_param" ], ]
     
+    colnames_crop_par <- colnames( crop_par )
+    
+    test_columns <- par_map[, "name_in_db" ] %in% colnames( crop_par ) 
+    
+    if( !all( test_columns ) ){
+        stop( sprintf(
+            "Some parameter names in the parameter-map could not be found in the parameter table: %s", 
+            paste( par_map[ test_columns, "name_in_db" ], 
+            collapse = "; " ) ) ) 
+    }   
+    
+    
+    
+    #   Loop over each parameter in the map
+    for( i in 1:nrow( par_map ) ){
+        x <- rmacroliteChange1Param( 
+            x     = x, 
+            pTag  = sprintf( "%s\t%s", 
+                par_map[ i, "name_in_parfile" ], "%s" ), 
+            type  = par_map[ i, "category" ], 
+            value = crop_par[ 1L, par_map[ i, "name_in_db" ] ] ) 
+    };  rm( i )
+    
+    
+    
+    #   Change also METFILE and RAINFALLFILE in SETUP
+    for( p in c( "METFILE", "RAINFALLFILE" ) ){
+        x <- rmacroliteChange1Param( 
+            x     = x, 
+            pTag  = sprintf( "%s\t%s", p, "%s" ), 
+            type  = "SETUP", 
+            value = crop_par[ 1L, p ] ) 
+    };  rm( p )
+    
+    
+    
+    #   Change the crop and irrigation info in the 
+    #   INFORMATION section
+    if( "INFORMATION" %in% x[[ "par" ]][, "category" ] ){
+        sel_row <- (x[["par"]][, "category" ] == "INFORMATION") & 
+            grepl( x = tolower( x[[ "par" ]][, "parFile" ] ), 
+            pattern = "crop :", fixed = TRUE )
+        
+        x[[ "par" ]][ sel_row, "parFile" ] <- sprintf( 
+            "Crop : %s, %s", crop_par[ 1L, "focus_crop" ], 
+            ifelse( test = crop_par[ 1L, "is_irrigated" ], 
+            yes = "irrigated", no = "not irrigated" ) )
+        
+        rm( sel_row )
+    }   
+    
+    return( x ) 
+}   
+
 
