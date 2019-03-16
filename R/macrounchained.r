@@ -3482,13 +3482,17 @@ macrounchainedFocusGW.data.frame <- function(
     
     #   Loop over each parameter in the map
     for( i in 1:nrow( par_map ) ){
+        value <- crop_par[ 1L, par_map[ i, "name_in_db" ] ]
+        
+        if( is.na( value ) ){ value <- 0  }
+        
         x <- rmacroliteChange1Param( 
             x     = x, 
             pTag  = sprintf( "%s\t%s", 
                 par_map[ i, "name_in_parfile" ], "%s" ), 
             type  = par_map[ i, "category" ], 
-            value = crop_par[ 1L, par_map[ i, "name_in_db" ] ] ) 
-    };  rm( i )
+            value = value ) 
+    };  rm( i, value )
     
     
     
