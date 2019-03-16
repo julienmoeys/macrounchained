@@ -33,22 +33,24 @@ if( as.logical( as.integer( Sys.getenv( "macrounchained_developer", unset = "0" 
 library( "macrounchained" )
 
 param <- data.frame( 
+    "soil"              = "chateaudun", 
+    "crop"              = "cereals, winter", 
     "id"                = c(     1L,     2L,     3L,      4L,     5L ), 
     "name"              = c( "GW-A", "GW-B", "GW-C", "Met_C", "GW-D" ), 
     "kfoc"              = c(    103,     17,    172,      52,     60 ), 
-    "nf"                = c(    0.9,    0.9,    0.9,     0.9,    0.9 ), 
+    "nf"                = 0.9, 
     "dt50"              = c(     60,     20,     20,     100,     20 ), 
-    "dt50_ref_temp"     = c(     20,     20,     20,      20,     20 ), 
-    "dt50_pf"           = c(      2,      2,      2,       2,      2 ), 
-    "exp_temp_resp"     = c(  0.079,  0.079,  0.079,   0.079,  0.079 ), 
-    "exp_moist_resp"    = c(   0.49,   0.49,   0.49,    0.70,   0.49 ), 
-    "crop_upt_f"        = c(    0.5,    0.5,    0.5,     0.5,    0.5 ), 
-    "diff_coef"         = c(  5E-10,  5E-10,  5E-10,   5E-10,  5E-10 ), 
+    "dt50_ref_temp"     = 20, 
+    "dt50_pf"           = 2, 
+    "exp_temp_resp"     = 0.079, 
+    "exp_moist_resp"    = 0.49, 
+    "crop_upt_f"        = 0.5, 
+    "diff_coef"         = 5E-10, 
     "parent_id"         = c(     NA,     NA,     NA,      3L,     NA ), 
     "g_per_mol"         = c(    300,    300,    200,     150,    300 ), 
     "transf_f"          = c(     NA,     NA,     NA, .53/.75,     NA ), # mol met formed / mol parent degraded
     "g_as_per_ha"       = c(   1000,   1000,   1000,       0,   1000 ), 
-    "app_j_day"         = c(   298L,   298L,   298L,    298L,   298L ), 
+    "app_j_day"         = 298L, 
     stringsAsFactors    = FALSE ) 
 
 expected_results_s <- data.frame(
@@ -85,14 +87,8 @@ expected_parfiles[, "parfile" ] <- system.file(
 
 
 
-parfile <- system.file( "par-files", 
-    "chat_winCer_GW-X_900gHa_d182.par", package = "rmacrolite" )
-
-
-
 res <- macrounchainedFocusGW( 
     s         = param, 
-    parfile   = parfile, 
     overwrite = TRUE, 
     run       = TRUE ) 
 
