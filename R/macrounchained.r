@@ -1376,6 +1376,12 @@ macrounchained.data.frame <- function(
                 # x = crop_params[, "METFILE" ], pattern = ".bin", 
                 # replacement = ".BIN", fixed = TRUE )
             
+            crop_params[, "METFILE" ] <- gsub( 
+                x = crop_params[, "METFILE" ], pattern = "/", 
+                replacement = "\\", fixed = TRUE )
+            
+            
+            
             crop_params[, "RAINFALLFILE" ] <- file.path( 
                 modelVar[[ "path" ]], 
                 "bin", 
@@ -1388,6 +1394,12 @@ macrounchained.data.frame <- function(
             # crop_params[, "RAINFALLFILE" ] <- gsub( 
                 # x = crop_params[, "RAINFALLFILE" ], pattern = ".bin", 
                 # replacement = ".BIN", fixed = TRUE )
+            
+            crop_params[, "RAINFALLFILE" ] <- gsub( 
+                x = crop_params[, "RAINFALLFILE" ], pattern = "/", 
+                replacement = "\\", fixed = TRUE )
+            
+            
             
             #   Keep only the scenario with the relevant 
             #   target (GW or SW)
@@ -3769,7 +3781,7 @@ macrounchainedFocusGW.data.frame <- function(
         x     = x, 
         pTag  = "FAWC\t1\t%s", 
         type  = "CROP PARAMETERS", 
-        value = FAWC ) 
+        value = round( FAWC, 7L ) ) 
     
     return( x )
 }   
