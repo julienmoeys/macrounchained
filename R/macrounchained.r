@@ -3743,7 +3743,7 @@ macrounchainedFocusGW.data.frame <- function(
     
     .resid <- as.numeric( rmacroliteGet1Param( 
         x    = x, 
-        pTag = "XMPOR\t1\t%s", 
+        pTag = "RESID\t1\t%s", 
         type = "PHYSICAL PARAMETERS" ) )
     
     waten <- as.numeric( rmacroliteGet1Param( 
@@ -3770,8 +3770,6 @@ macrounchainedFocusGW.data.frame <- function(
         pTag  = "FAWC\t1\t%s", 
         type  = "CROP PARAMETERS", 
         value = FAWC ) 
-    
-    print( FAWC )
     
     return( x )
 }   
