@@ -1368,26 +1368,26 @@ macrounchained.data.frame <- function(
                 "bin", 
                 sprintf( "%set.BIN", crop_params[, "rname" ] ) )
             
-            crop_params[, "METFILE" ] <- normalizePath( 
-                path = crop_params[, "METFILE" ], 
-                mustWork = FALSE )
+            # crop_params[, "METFILE" ] <- normalizePath( 
+                # path = crop_params[, "METFILE" ], 
+                # mustWork = FALSE )
             
-            crop_params[, "METFILE" ] <- gsub( 
-                x = crop_params[, "METFILE" ], pattern = ".bin", 
-                replacement = ".BIN", fixed = TRUE )
+            # crop_params[, "METFILE" ] <- gsub( 
+                # x = crop_params[, "METFILE" ], pattern = ".bin", 
+                # replacement = ".BIN", fixed = TRUE )
             
             crop_params[, "RAINFALLFILE" ] <- file.path( 
                 modelVar[[ "path" ]], 
                 "bin", 
                 sprintf( "%sp.BIN", crop_params[, "rname" ] ) )
             
-            crop_params[, "RAINFALLFILE" ] <- normalizePath( 
-                path = crop_params[, "RAINFALLFILE" ], 
-                mustWork = FALSE )
+            # crop_params[, "RAINFALLFILE" ] <- normalizePath( 
+                # path = crop_params[, "RAINFALLFILE" ], 
+                # mustWork = FALSE )
             
-            crop_params[, "RAINFALLFILE" ] <- gsub( 
-                x = crop_params[, "RAINFALLFILE" ], pattern = ".bin", 
-                replacement = ".BIN", fixed = TRUE )
+            # crop_params[, "RAINFALLFILE" ] <- gsub( 
+                # x = crop_params[, "RAINFALLFILE" ], pattern = ".bin", 
+                # replacement = ".BIN", fixed = TRUE )
             
             #   Keep only the scenario with the relevant 
             #   target (GW or SW)
@@ -3770,6 +3770,8 @@ macrounchainedFocusGW.data.frame <- function(
         pTag  = "FAWC\t1\t%s", 
         type  = "CROP PARAMETERS", 
         value = FAWC ) 
+    
+    print( FAWC )
     
     return( x )
 }   
