@@ -3492,9 +3492,19 @@ macrounchainedFocusGW.data.frame <- function(
     for( i in 1:nrow( par_map ) ){
         value <- crop_par[ 1L, par_map[ i, "name_in_db" ] ]
         
-        if( is.na( value ) ){ value <- 0  }
+        if( is.na( value ) ){ value <- 0 }
+        
+        #   For some parameters, the value in the database 
+        #   seems to be overwritten and set to 0
+        param_set_to_0 <- c( "HMAX", "RSMIN", "ZHMIN" )
+        
+        if( par_map[ i, "name_in_parfile" ] %in% param_set_to_0 ){
+            value <- 0 
+        }   
+        
         
         value <- round( value, 6L )
+        
         
         if( par_map[ i, "category" ] == "CROP PARAMETERS" ){
             pTag <- "%s\t1\t%s"
@@ -3511,6 +3521,11 @@ macrounchainedFocusGW.data.frame <- function(
             type  = par_map[ i, "category" ], 
             value = value ) 
     };  rm( i, value, pTag )
+    
+    
+    
+    #   Change FWAC (overwrite database value)
+    x <- .muc_FAWC( x = x )
     
     
     
@@ -3541,6 +3556,221 @@ macrounchainedFocusGW.data.frame <- function(
     }   
     
     return( x ) 
+}   
+
+
+
+.muc_fun.vangenuchten.se.h <- function(# van Genuchten 1980's function for soil relative saturation.
+### Calculate the relative saturation Se of a soil at a given 
+### tension h with the Van Genuchten water retention function.
+##references<< van Genuchten M. Th., 1980. A closed form equation 
+## for predicting the hydraulic conductivity of unsaturated soils. 
+## Soil Science Society of America Journal, 44:892-898.
+## Kutilek M. & Nielsen D.R., 1994. Soil hydrology. 
+## Catena-Verlag, GeoEcology textbook, Germany. ISBN: 
+## 9-923381-26-3., 370 p.
+
+ h,
+### Vector of numerical. Pressure head of the soil, in [m]. Matrix 
+### potential values will also work, as in practice abs(h) is used.
+
+ alpha,
+### Single numerical. alpha (shape) parameter of the Van Genuchten 
+### water retention function, in [m-1] (inverse length unit of h).
+
+ n,
+### Single numerical. n shape parameter of the Van Genuchten water 
+### retention function, dimensionless [-]. See also the 'cPar' 
+### parameter that, along with 'n', is used to calculate van Genuchten's 
+### m parameter.
+
+ cPar=1
+### Single numerical. Value of the c parameter of the Van Genuchten 
+### water retention function, that allows to calculate the m parameter 
+### so m = (1 - cPar/n). Dimensionless [-]. Usually fixed / constant.
+
+){  #
+    m <- (1 - (cPar / n)) 
+    #
+    return( 1 / ( ( 1 + ( alpha * abs(h) )^n )^m ) ) 
+### The function returns the relative water content (degree of 
+### saturation, Se, [-]).
+}   #
+
+
+
+.muc_fun.vangenuchten.theta.h <- function(# van Genuchten 1980's function theta(h) (water retension). 
+### Calculate the water content theta at a given tension h with 
+### the Van Genuchten water retention function.
+##references<< van Genuchten M. Th., 1980. A closed form equation 
+## for predicting the hydraulic conductivity of unsaturated soils. 
+## Soil Science Society of America Journal, 44:892-898.
+## Kutilek M. & Nielsen D.R., 1994. Soil hydrology. 
+## Catena-Verlag, GeoEcology textbook, Germany. ISBN: 
+## 9-923381-26-3., 370 p.
+
+ h,
+### Vector of numerical. Pressure head of the soil, in [m]. Matrix 
+### potential values will also work, as in practice abs(h) is used.
+
+ alpha,
+### Single numerical. alpha (shape) parameter of the Van Genuchten 
+### water retention function, in [m-1] (inverse length unit of h).
+
+ n,
+### Single numerical. n shape parameter of the Van Genuchten water 
+### retention function, dimensionless [-]. See also the 'cPar' 
+### parameter that, along with 'n', is used to calculate van Genuchten's 
+### m parameter.
+
+ cPar=1, 
+### Single numerical. Value of the c parameter of the Van Genuchten 
+### water retention function, that allows to calculate the m parameter 
+### so m = (1 - cPar/n). Dimensionless [-].
+
+ thetaS, 
+### Single numerical. Saturated water content of the soil, in [-] 
+### or [m3 of water.m-3 of bulk soil].
+
+ thetaR
+### Single numerical. Residual water content of the soil, in [-] 
+### or [m3 of water.m-3 of bulk soil].
+
+){  #
+    Se <- .muc_fun.vangenuchten.se.h( 
+        h     = h, 
+        alpha = alpha, 
+        n     = n,
+        cPar  = cPar  
+    )   #
+    
+    return( Se * ( thetaS - thetaR ) + thetaR ) 
+### The function returns the water content [m3.m-3] at the given 
+### tension h.
+}   #
+
+
+
+.muc_thetaS_star <- function( 
+    CTEN, 
+    ALPHA, 
+    N, 
+    XMPOR, 
+    RESID 
+){  
+    se_CTEN <- .muc_fun.vangenuchten.se.h(
+        h       = CTEN / 100, 
+        alpha   = ALPHA * 100,  
+        n       = N )
+    
+    return( ((XMPOR/100) - (RESID/100))/se_CTEN + (RESID/100) )
+}   
+
+
+
+.muc_FAWC0 <- function( 
+    CTEN, 
+    ALPHA, 
+    N, 
+    XMPOR, 
+    RESID, 
+    WATEN, 
+    WILT
+){  
+    thetaS_star <- .muc_thetaS_star( CTEN = CTEN, ALPHA = ALPHA, 
+        N = N, XMPOR = XMPOR, RESID = RESID )
+    
+    
+    theta_waten <- .muc_fun.vangenuchten.theta.h( 
+        h      = WATEN, 
+        alpha  = ALPHA * 100, 
+        n      = N, 
+        thetaS = thetaS_star, 
+        thetaR = RESID/100 )
+    
+    return( 1 - (theta_waten - WILT/100)/(XMPOR/100 - WILT/100) )
+}   
+
+    # #   Chateaudun, winter cereals
+    # chat_winCer <- .muc_FAWC0( 
+        # CTEN    = c(   20,   20,    20,    40 ), 
+        # ALPHA   = c( 0.05, 0.05, 0.015, 0.015 ), 
+        # N       = c( 1.07, 1.09,  1.09,  1.14 ), 
+        # XMPOR   = c(   41,   43,    43,    43 ), 
+        # RESID   = 0, 
+        # WATEN   = 50, 
+        # WILT    = c( 25.8, 23.7,  23.7,  18.8 ) ) 
+
+    # chat_winCer
+    # # [1] 0.7800206 0.7929357 0.6884745 0.7525619
+
+    # #   ROOTMAX 0.8 m
+    # #   HTHICK  25, 25, 10, 40 cm
+
+    # #   Mean weighted by horizon thickness
+    # sum(chat_winCer * c( 25, 25, 10, 20 ))/80
+    # # [1] 0.7657486
+
+    # #   Conclusion: FAWC for layer 1 is closest to MACRO In FOCUS 
+    # #       parameter value for FAWC (0.7800209)
+    # #
+    # #   ((0.7800209 - 0.7800206)/0.7800209)*100 = 3.846051e-05
+    # #   3.846051e-05 % of error relative to the original value
+
+
+
+.muc_FAWC <- function( x ){  
+    cten <- as.numeric( rmacroliteGet1Param( 
+        x    = x, 
+        pTag = "CTEN\t1\t%s", 
+        type = "PHYSICAL PARAMETERS" ) )
+    
+    alpha <- as.numeric( rmacroliteGet1Param( 
+        x    = x, 
+        pTag = "ALPHA\t1\t%s", 
+        type = "PHYSICAL PARAMETERS" ) )
+    
+    n <- as.numeric( rmacroliteGet1Param( 
+        x    = x, 
+        pTag = "N\t1\t%s", 
+        type = "PHYSICAL PARAMETERS" ) )
+    
+    xmpor <- as.numeric( rmacroliteGet1Param( 
+        x    = x, 
+        pTag = "XMPOR\t1\t%s", 
+        type = "PHYSICAL PARAMETERS" ) )
+    
+    .resid <- as.numeric( rmacroliteGet1Param( 
+        x    = x, 
+        pTag = "XMPOR\t1\t%s", 
+        type = "PHYSICAL PARAMETERS" ) )
+    
+    waten <- as.numeric( rmacroliteGet1Param( 
+        x    = x, 
+        pTag = "WATEN\t1\t%s", 
+        type = "CROP PARAMETERS" ) )
+    
+    wilt <- as.numeric( rmacroliteGet1Param( 
+        x    = x, 
+        pTag = "WILT\t1\t%s", 
+        type = "PHYSICAL PARAMETERS" ) )
+    
+    FAWC <- .muc_FAWC0( 
+        CTEN    = cten, 
+        ALPHA   = alpha, 
+        N       = n, 
+        XMPOR   = xmpor, 
+        RESID   = .resid, 
+        WATEN   = waten, 
+        WILT    = wilt ) 
+    
+    x <- rmacroliteChange1Param( 
+        x     = x, 
+        pTag  = "FAWC\t1\t%s", 
+        type  = "CROP PARAMETERS", 
+        value = FAWC ) 
+    
+    return( x )
 }   
 
 
