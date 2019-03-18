@@ -3719,6 +3719,7 @@ macrounchainedFocusGW.data.frame <- function(
 
 
 
+#'@importFrom rmacrolite rmacroliteGet1Param
 .muc_FAWC <- function( x ){  
     cten <- as.numeric( rmacroliteGet1Param( 
         x    = x, 
