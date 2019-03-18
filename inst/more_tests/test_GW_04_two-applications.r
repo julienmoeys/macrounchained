@@ -32,6 +32,8 @@ if( as.logical( as.integer( Sys.getenv( "macrounchained_developer", unset = "0" 
 library( "macrounchained" )
 
 param <- data.frame( 
+    "soil"              = "chateaudun", 
+    "crop"              = "cereals, winter", 
     "id"                = 1L, 
     "name"              = "GW-A", 
     "kfoc"              = 103, 
@@ -50,6 +52,10 @@ param <- data.frame(
     "app_j_day"         = "298|305", 
     stringsAsFactors    = FALSE ) 
 
+
+
+
+
 expected_results_s <- data.frame(
     "name"                  = "GW-A", 
     "target_ug_per_L_rnd"   = 6.15, 
@@ -66,7 +72,7 @@ expected_results_w <- data.frame(
 expected_parfiles <- data.frame(
     "name"      = "GW-A", 
     "is_inter"  = FALSE, 
-    "nb_diff"   = 0L, 
+    "nb_diff"   = 1L, 
     "parfile"   = "chat_winCer_GW-A_1000gHa_d298_950gHa_d305.par", 
     stringsAsFactors        = FALSE ) 
 
@@ -77,15 +83,11 @@ expected_parfiles[, "parfile" ] <- system.file(
 
 
 
-parfile <- system.file( "par-files", 
-    "chat_winCer_GW-X_900gHa_d182.par", 
-    package = "rmacrolite" )
 
 
 
 res <- macrounchainedFocusGW( 
     s         = param, 
-    parfile   = parfile, 
     overwrite = TRUE, 
     run       = TRUE ) 
 

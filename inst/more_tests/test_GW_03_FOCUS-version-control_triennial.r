@@ -33,6 +33,8 @@ if( as.logical( as.integer( Sys.getenv( "macrounchained_developer", unset = "0" 
 library( "macrounchained" )
 
 param <- data.frame( 
+    "soil"              = "chateaudun", 
+    "crop"              = "potatoes", 
     "id"                = 1L, 
     "name"              = "GW-D", 
     "kfoc"              = 60, 
@@ -52,6 +54,8 @@ param <- data.frame(
     "years_interval"    = 3L, 
     stringsAsFactors    = FALSE ) 
 
+
+
 expected_results_s <- data.frame(
     "name"                  = "GW-D", 
     "target_ug_per_L_rnd"   = 0.0174, 
@@ -68,7 +72,7 @@ expected_results_w <- data.frame(
 expected_parfiles <- data.frame(
     "name"      = "GW-D", 
     "is_inter"  = FALSE, 
-    "nb_diff"   = 0L, 
+    "nb_diff"   = 1L, 
     "parfile"   = "chat_pot_GW-D_1kgHa_d119_triennial.par", 
     stringsAsFactors        = FALSE ) 
 
@@ -79,15 +83,11 @@ expected_parfiles[, "parfile" ] <- system.file(
 
 
 
-parfile <- system.file( "par-files", 
-    "chat_winCer_GW-X_900gHa_d182.par", 
-    package = "macrounchained" )
 
 
 
 res <- macrounchainedFocusGW( 
     s         = param, 
-    parfile   = parfile, 
     overwrite = TRUE, 
     run       = TRUE ) 
 

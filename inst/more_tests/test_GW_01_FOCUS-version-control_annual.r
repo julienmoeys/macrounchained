@@ -43,7 +43,7 @@ param <- data.frame(
     "dt50_ref_temp"     = 20, 
     "dt50_pf"           = 2, 
     "exp_temp_resp"     = 0.079, 
-    "exp_moist_resp"    = 0.49, 
+    "exp_moist_resp"    = c(   0.49,   0.49,   0.49,    0.7,    0.49 ), 
     "crop_upt_f"        = 0.5, 
     "diff_coef"         = 5E-10, 
     "parent_id"         = c(     NA,     NA,     NA,      3L,     NA ), 
@@ -52,6 +52,11 @@ param <- data.frame(
     "g_as_per_ha"       = c(   1000,   1000,   1000,       0,   1000 ), 
     "app_j_day"         = 298L, 
     stringsAsFactors    = FALSE ) 
+
+
+
+
+
 
 expected_results_s <- data.frame(
     "name"                  = c( "GW-A", "GW-B",  "GW-C", "Met_C", "GW-D" ), 
@@ -69,7 +74,7 @@ expected_results_w <- data.frame(
 expected_parfiles <- data.frame(
     "name"      = c( "GW-A", "GW-B", "GW-C", "GW-C", "Met_C", "GW-D" ), 
     "is_inter"  = c(  FALSE,  FALSE,  FALSE,   TRUE,   FALSE,  FALSE ), 
-    "nb_diff"   = c(     0L,     0L,     0L,     0L,      2L,     0L ), 
+    "nb_diff"   = c(     1L,     1L,     1L,     1L,      3L,     1L ), 
     "parfile"   = c( 
         "chat_winCer_GW-A_1kgHa_d298.par", 
         "chat_winCer_GW-B_1kgHa_d298.par", 
@@ -84,6 +89,9 @@ expected_parfiles[, "parfile" ] <- system.file(
     "par-files", 
     expected_parfiles[, "parfile" ], 
     package = "macrounchained" )
+
+
+
 
 
 
@@ -123,7 +131,7 @@ op_reg <- merge(
     all.x = TRUE ) 
 
 for( i in 1:nrow( expected_parfiles ) ){
-    #   i <- 1L
+    #   i <- 5L
     
     sel_subset <- 
         (op_reg[, "name" ] == expected_parfiles[ i, "name" ]) & 

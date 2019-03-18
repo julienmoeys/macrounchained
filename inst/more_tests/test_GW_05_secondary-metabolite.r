@@ -33,6 +33,8 @@ if( as.logical( as.integer( Sys.getenv( "macrounchained_developer", unset = "0" 
 library( "macrounchained" )
 
 param <- data.frame( 
+    "soil"              = "chateaudun", 
+    "crop"              = "cereals, winter", 
     "id"                = c(     1L,       2L,       3L ), 
     "name"              = c( "GW-M", "Met-M1", "Met-M2" ), 
     "kfoc"              = c(     12,     114,        46 ), 
@@ -51,6 +53,12 @@ param <- data.frame(
     "app_j_day"         = c(   309L,    309L,      309L ), 
     stringsAsFactors    = FALSE 
 )   
+
+
+
+
+
+
 
 #   Results obtained on 2019/01/23 with MACRO In FOCUS 5.5.4 
 #   macrounchained 0.9.0 (git revision: cbfe075), 
@@ -71,15 +79,11 @@ expected_results_w <- data.frame(
 
 
 
-parfile <- system.file( "par-files", 
-    "chat_winCer_GW-X_900gHa_d182.par", 
-    package = "rmacrolite" )
 
 
 
 res <- macrounchainedFocusGW( 
     s         = param, 
-    parfile   = parfile, 
     overwrite = TRUE, 
     run       = TRUE ) 
 
