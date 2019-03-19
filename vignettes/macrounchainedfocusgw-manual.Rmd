@@ -91,7 +91,7 @@ Installation and system setup
 
 `macrounchained` is based on a collection of four R packages 
 ([codeinfo][], [macroutils2][], [rmacrolite][] and 
-[macrounchained][]). The all need to be installed (see below).
+[macrounchained][]). All need to be installed (see below).
 
 `macrounchained` does not embed any executable for [MACRO][macro] 
 or [MACRO In FOCUS][macroinfocus], and neither for the so 
@@ -185,87 +185,6 @@ functions used by `macrounchained`.
 
 Running MACRO In FOCUS simulations with macrounchainedFocusGW()
 ============================================================
-
-Preparing a template par-file
-------------------------------------------------------------
-
-A template par-file need to be prepared for each combination 
-of:
-
-*   Scenario (ex. Chateaudun)
-*   Crop (ex. Winter cereals)
-
-This template need to be prepared with MACRO In FOCUS. Prepare 
-a groundwater simulation (with the right scenario and crop), 
-and when it is ready, chose the Tools 
-menu > Save current run to parameter file and log file. You 
-can choose any dummy substance (ex. GW-A) and any dose and 
-application date(s) for the template, as long as the DT50 is 
-not small.
-
-All the substance parameters, the application date(s) 
-and the dose(s), the number of application per application-year, 
-and the number of years interval between application-years 
-will be overwritten by `macrounchainedFocusGW()`.
-
-In the examples below, I use template par-files that are 
-shipped with the packages `macrounchained` or `rmacrolite`
-
-
-
-Examples of template par-file used in this document
-------------------------------------------------------------
-
-To obtain the path of the template par-files shipped with 
-`rmacrolite`, type the following command in R prompt:
-
-```{r results = "hide"}
-system.file( package = "rmacrolite", "par-files" )
-``` 
-```{r echo = FALSE}
-anonymise( system.file( package = "rmacrolite", "par-files" ) )
-```
-
-and in `macrounchained`
-
-```{r results = "hide"}
-system.file( package = "macrounchained", "par-files" )
-``` 
-```{r echo = FALSE}
-anonymise( system.file( package = "macrounchained", "par-files" ) )
-```
-
-In the examples below, the path to the par-file is defined 
-with a command like
-
-```{r}
-pf <- system.file( 
-    "par-files", "chat_winCer_GW-X_900gHa_d182.par", 
-    package = "rmacrolite" )
-```
-
-The result of this command is a character string containing 
-the path to the example template par-file called 
-`"chat_winCer_GW-X_900gHa_d182.par"`, and save in an R object 
-that I called here `pf` (any name is possible). The output 
-can be inspected:
-
-```{r results = "hide"}
-pf 
-``` 
-```{r echo = FALSE}
-anonymise( pf )
-```
-
-The user will most of the time want to use his/ her own 
-template, and the code will rather look like:
-
-```{r eval = FALSE}
-pf <- "C:/path/to/userparfile.par"
-```
-
-where `"C:/path/to/userparfile.par"` is the path and the name 
-of a par-file somewhere on the computer.
 
 
 
@@ -380,25 +299,39 @@ above from an Excel file:
 
 ```{r}
 param2 <- data.frame( 
+    "soil"              = "chateaudun", 
+    "crop"              = "cereals, winter", 
     "id"                = c(     1L,       2L,       3L ), 
     "name"              = c( "GW-M", "Met-M1", "Met-M2" ), 
     "kfoc"              = c(     12,     114,        46 ), 
     "nf"                = c(      1,     0.9,       0.9 ), 
     "dt50"              = c(     23,      19,       136 ), 
-    "dt50_ref_temp"     = c(     20,      20,        20 ), 
-    "dt50_pf"           = c(      2,       2,         2 ), 
-    "exp_temp_resp"     = c( 0.0948,  0.0948,    0.0948 ), 
-    "exp_moist_resp"    = c(   0.49,    0.49,      0.49 ), 
-    "crop_upt_f"        = c(    0.5,     0.5,       0.5 ), 
-    "diff_coef"         = c(  5E-10,   5E-10,     5E-10 ), 
+    "dt50_ref_temp"     = 20, 
+    "dt50_pf"           = 2, 
+    "exp_temp_resp"     = 0.0948, 
+    "exp_moist_resp"    = 0.49, 
+    "crop_upt_f"        = 0.5, 
+    "diff_coef"         = 5E-10, 
     "parent_id"         = c(     NA,      1L,        2L ), 
     "g_per_mol"         = c(    381,     183,       140 ), 
     "transf_f"          = c(     NA,     0.2,       1.0 ), # mol met formed / mol parent degraded
     "g_as_per_ha"       = c(     6,        0,         0 ), 
-    "app_j_day"         = c(   309L,    309L,      309L ), 
+    "app_j_day"         = 309, 
     stringsAsFactors    = FALSE 
 )   
 ``` 
+
+Note (1): In the example above, each input-row represent what 
+will be a column (a variable) in the final table and each column 
+will be a row (a parameter set). It is not necessary to 
+use spaces, nor to align the columns, but it makes the code 
+more readable.
+
+Note (2): In the example above, only one value is given 
+for some variables (instead of three, one per parameter set). 
+These are variables that are identically for all parameter 
+sets, and R will automatically repeat the value for each 
+parameter set.
 
 We can check that the two solutions are identical:
 
@@ -419,12 +352,18 @@ advantage of being more human readable.
 
 ```{r}
 param3 <- read.table( header = TRUE, text = "
-    id     name kfoc  nf dt50 dt50_ref_temp dt50_pf exp_temp_resp exp_moist_resp crop_upt_f diff_coef parent_id g_per_mol transf_f g_as_per_ha app_j_day
-     1   'GW-M'   12 1.0   23            20       2        0.0948           0.49        0.5     5e-10        NA       381       NA           6       309
-     2 'Met-M1'  114 0.9   19            20       2        0.0948           0.49        0.5     5e-10         1       183      0.2           0       309
-     3 'Met-M2'   46 0.9  136            20       2        0.0948           0.49        0.5     5e-10         2       140      1.0           0       309
+            soil              crop id     name kfoc  nf dt50 dt50_ref_temp dt50_pf exp_temp_resp exp_moist_resp crop_upt_f diff_coef parent_id g_per_mol transf_f g_as_per_ha app_j_day
+    'chateaudun' 'cereals, winter'  1   'GW-M'   12 1.0   23            20       2        0.0948           0.49        0.5     5e-10        NA       381       NA           6       309
+    'chateaudun' 'cereals, winter'  2 'Met-M1'  114 0.9   19            20       2        0.0948           0.49        0.5     5e-10         1       183      0.2           0       309
+    'chateaudun' 'cereals, winter'  3 'Met-M2'   46 0.9  136            20       2        0.0948           0.49        0.5     5e-10         2       140      1.0           0       309
     ", stringsAsFactors = FALSE )
 ``` 
+
+Note: In the example above, notice that the the whole input-table 
+is placed between double quotes (`"`). For this reason, text 
+strings in the input-table need to be placed between single 
+quotes (`'`), and not double quotes. It can be done the other 
+way round.
 
 ```{r}
 all.equal( as.data.frame( param1 ), param3, 
@@ -436,10 +375,9 @@ all.equal( as.data.frame( param1 ), param3,
 Case 1: One application per year, every year
 ------------------------------------------------------------
 
-In the code below, the path to an example template par-file 
-fetched and saved in `pf`, table of properties is 
+In the code below, the table of properties is 
 imported from an example Excel file and saved in `param1`, 
-and finally the function `macrounchainedFocusGW`()` is called. 
+and the function `macrounchainedFocusGW`()` is called. 
 Notice that this is a dry-run, meaning that all the 
 parametrisation is performed, but the three simulations are 
 not run. As a consequence, the results of the simulations 
@@ -454,17 +392,11 @@ xl <- system.file( package = "macrounchained", "xlsx",
 #   Import the sheet 's' in that Excel file
 param1 <- readxl::read_excel( path = xl, sheet = "s" ) 
 
-#   Fetch the path to an example template par-file:
-pf <- system.file( 
-    "par-files", "chat_winCer_GW-X_900gHa_d182.par", 
-    package = "rmacrolite" )
-
 library("macrounchained")
 
 #   Dry run: 
 res <- macrounchainedFocusGW( 
     s         = param1, 
-    parfile   = pf, 
     overwrite = TRUE, 
     run       = FALSE ) # Set to TRUE to run the simulations
 ``` 
@@ -603,7 +535,6 @@ library("macrounchained")
 #   Run all the simulations: 
 res <- macrounchainedFocusGW( 
     s         = param1, 
-    parfile   = "C:/path/to/userparfile.par", 
     overwrite = TRUE ) 
 ``` 
 
@@ -614,13 +545,9 @@ Case 2: Several application per year, every year
 
 Compared to the case above (one application per year, every 
 year), the case of several application per year, every year 
-will:
+will differ in the way the columns `g_as_per_ha` and 
+`app_j_day` in the parameter table are specified.
 
-*   Need a template par-file that contains the correct 
-    number of applications per year (here two).
-*   Differ in the way the columns `g_as_per_ha` and 
-    `app_j_day` in the parameter table are specified.
-    
 The example Excel file 
 `macrounchainedFocusGW-multiple-applications.xlsx` shows 
 how this must be done in Excel (enter several values in the 
@@ -630,22 +557,24 @@ In R, the parameter table can be entered as follow:
 
 ```{r}
 param2 <- data.frame(
-    id             = c(          1,         2 ), 
-    name           = c(     "GW-C",   "Met-C" ), 
-    kfoc           = c(        172,        52 ), 
-    nf             = c(        0.9,       0.9 ), 
-    dt50           = c(         20,       100 ), 
-    dt50_ref_temp  = c(         20,        20 ), 
-    dt50_pf        = c(          2,         2 ), 
-    exp_temp_resp  = c(      0.079,     0.079 ), 
-    exp_moist_resp = c(       0.49,       0.7 ), 
-    crop_upt_f     = c(        0.5,       0.5 ), 
-    diff_coef      = c(      5e-10,     5e-10 ), 
-    parent_id      = c(         NA,         1 ), 
-    g_per_mol      = c(        200,       150 ), 
-    transf_f       = c(         NA,   .53/.75 ), 
-    g_as_per_ha    = c( "1000|950",     "0|0" ), 
-    app_j_day      = c(  "298|305", "298|305" ), 
+    "soil"           = "chateaudun", 
+    "crop"           = "cereals, winter", 
+    "id"             = c(          1,         2 ), 
+    "name"           = c(     "GW-C",   "Met-C" ), 
+    "kfoc"           = c(        172,        52 ), 
+    "nf"             = c(        0.9,       0.9 ), 
+    "dt50"           = c(         20,       100 ), 
+    "dt50_ref_temp"  = 20, 
+    "dt50_pf"        = 2, 
+    "exp_temp_resp"  = 0.079, 
+    "exp_moist_resp" = c(       0.49,       0.7 ), 
+    "crop_upt_f"     = 0.5, 
+    "diff_coef"      = c(      5e-10,     5e-10 ), 
+    "parent_id"      = c(         NA,         1 ), 
+    "g_per_mol"      = c(        200,       150 ), 
+    "transf_f"       = c(         NA,   .53/.75 ), 
+    "g_as_per_ha"    = c( "1000|950",     "0|0" ), 
+    "app_j_day"      = c(  "298|305", "298|305" ), 
     stringsAsFactors = FALSE ) 
 ``` 
 
@@ -656,15 +585,15 @@ will internally convert these into numeric values.
 
 ```{r}
 param3 <- read.table( header = TRUE, text = "
-    id    name kfoc  nf dt50 dt50_ref_temp dt50_pf exp_temp_resp exp_moist_resp crop_upt_f diff_coef parent_id g_per_mol  transf_f     g_as_per_ha app_j_day
-     1  'GW-C'  172 0.9   20            20       2         0.079           0.49        0.5     5e-10        NA       200        NA    '1000|950'   '298|305'
-     2 'Met-C'   52 0.9  100            20       2         0.079           0.70        0.5     5e-10         1       150 0.7066667         '0|0'   '298|305'
+            soil              crop id    name kfoc  nf dt50 dt50_ref_temp dt50_pf exp_temp_resp exp_moist_resp crop_upt_f diff_coef parent_id g_per_mol  transf_f     g_as_per_ha app_j_day
+    'chateaudun' 'cereals, winter'  1  'GW-C'  172 0.9   20            20       2         0.079           0.49        0.5     5e-10        NA       200        NA    '1000|950'   '298|305'
+    'chateaudun' 'cereals, winter'  2 'Met-C'   52 0.9  100            20       2         0.079           0.70        0.5     5e-10         1       150 0.7066667         '0|0'   '298|305'
     ", stringsAsFactors = FALSE )
 ``` 
 
 In the example below, the parameter table is imported from 
 Excel and `macrounchainedFocusGW()` is called with these 
-parameters and a relevant par-file:
+parameters:
 
 ```{r}
 #   Fetch the path to the Excel file and save it in an R 
@@ -675,31 +604,30 @@ xl <- system.file( package = "macrounchained", "xlsx",
 #   Import the sheet 's' in that Excel file
 param1 <- readxl::read_excel( path = xl, sheet = "s" ) 
 
-#   Fetch the path to an example template par-file:
-pf <- system.file( "par-files", 
-    "chat_winCer_GW-X_900gHa_d182.par", 
-    package = "rmacrolite" )
-
 library("macrounchained")
 
 #   Dry run: 
 res <- macrounchainedFocusGW( 
     s         = param1, 
-    parfile   = pf, 
     overwrite = TRUE, 
     run       = FALSE ) # Set to TRUE to run the simulations
 ``` 
 
 
 
-Case 3: one application per year, every two years
+Case 3: one application per year, every other year
 ------------------------------------------------------------
 
 Compared to the first case (one application per year, every 
 year), the case of one application per year, every two years 
-will only differ by the input par-file. It needs to contain 
-the correct number of years without application in between 
-years with application.
+will only differ by one column in the table of properties. 
+It needs to contain a column called `"years_interval"` that 
+contains the number of years interval between application 
+years (1 being for applications every year, 2 for applications 
+every other year and 3 for applications every third year). 
+Notice that, in the case of applications every year, the 
+column can be missing and is internally set to 1 (i.e. 
+applications every year is assumed).
 
 ```{r}
 #   Fetch the path to the Excel file and save it in an R 
@@ -710,17 +638,14 @@ xl <- system.file( package = "macrounchained", "xlsx",
 #   Import the sheet 's' in that Excel file
 param1 <- readxl::read_excel( path = xl, sheet = "s" ) 
 
-#   Fetch the path to an example template par-file:
-pf <- system.file( "par-files", 
-    "chat_winCer_GW-X_900gHa_d182.par", 
-    package = "rmacrolite" )
+#   Inspect the table
+as.data.frame( param1 ) 
 
 library("macrounchained")
 
 #   Dry run: 
 res <- macrounchainedFocusGW( 
     s         = param1, 
-    parfile   = pf, 
     overwrite = TRUE, 
     run       = FALSE ) # Set to TRUE to run the simulations
 ``` 
