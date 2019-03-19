@@ -274,7 +274,7 @@ as.data.frame( param1 )
 The reason for `as.data.frame( param1 )` is that `param1` is 
 of class `tibble`, which is the format output by 
 `readxl::read_excel()`, but not the standard format in R. 
-macrounchainedFocusGW() can handle both formats, when it 
+`macrounchainedFocusGW()` can handle both formats, when it 
 comes to input parameters.
 
 A real world Example would rather look like this:
@@ -377,7 +377,7 @@ Case 1: One application per year, every year
 
 In the code below, the table of properties is 
 imported from an example Excel file and saved in `param1`, 
-and the function `macrounchainedFocusGW`()` is called. 
+and the function `macrounchainedFocusGW()` is called. 
 Notice that this is a dry-run, meaning that all the 
 parametrisation is performed, but the three simulations are 
 not run. As a consequence, the results of the simulations 
