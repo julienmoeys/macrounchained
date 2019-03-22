@@ -1370,6 +1370,16 @@ macrounchained.data.frame <- function(
                 "bin", 
                 sprintf( "%set.BIN", crop_params[, "rname" ] ) )
             
+            et_file_exists <- file.exists( crop_params[, "METFILE" ] )
+                
+            if( any( !et_file_exists ) ){
+                crop_params[ !et_file_exists, "METFILE" ] <- 
+                    file.path( 
+                        modelVar[[ "path" ]], 
+                        "bin", 
+                        sprintf( "%set.BIN", crop_params[, "wthname" ] ) )
+            }   
+            
             # crop_params[, "METFILE" ] <- normalizePath( 
                 # path = crop_params[, "METFILE" ], 
                 # mustWork = FALSE )
@@ -2435,7 +2445,8 @@ macrounchained.data.frame <- function(
         
         if( focus_mode == "gw" ){
             new_info <- c( new_info, list( "years_interval" = 
-                s[ sel_subst, "years_interval" ] ) )
+                s[ sel_subst, "years_interval" ], 
+                "focus_soil" = s[ sel_subst, "focus_soil" ] ) )
         }   
         
         rmacroliteInfo( x = x_o ) <- new_info
@@ -3510,7 +3521,7 @@ macrounchainedFocusGW.data.frame <- function(
         
         #   For some parameters, the value in the database 
         #   seems to be overwritten and set to 0
-        param_set_to_0 <- c( "HMAX", "RSMIN", "ZHMIN" )
+        param_set_to_0 <- c( "HMAX", "RSMIN", "ZHMIN", "HCROP", "RSURF" )
         
         if( par_map[ i, "name_in_parfile" ] %in% param_set_to_0 ){
             value <- 0 
