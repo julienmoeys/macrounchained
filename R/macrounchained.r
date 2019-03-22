@@ -1377,7 +1377,7 @@ macrounchained.data.frame <- function(
                     file.path( 
                         modelVar[[ "path" ]], 
                         "bin", 
-                        sprintf( "%set.BIN", crop_params[, "wthname" ] ) )
+                        sprintf( "%set.BIN", crop_params[ !et_file_exists, "wthname" ] ) )
             }   
             
             # crop_params[, "METFILE" ] <- normalizePath( 
