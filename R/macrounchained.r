@@ -3516,6 +3516,9 @@ macrounchainedFocusGW.data.frame <- function(
             value <- 0 
         }   
         
+        if( par_map[ i, "name_in_parfile" ] == "ATTEN" ){
+            value <- 0.6 
+        }   
         
         value <- round( value, 6L )
         
@@ -3694,7 +3697,7 @@ macrounchainedFocusGW.data.frame <- function(
     thetaS_star <- .muc_thetaS_star( CTEN = CTEN, ALPHA = ALPHA, 
         N = N, XMPOR = XMPOR, RESID = RESID )
     
-    
+    #   Note CTEN is in [cm] and WATEN is in [m]
     theta_waten <- .muc_fun.vangenuchten.theta.h( 
         h      = WATEN, 
         alpha  = ALPHA * 100, 
@@ -3734,56 +3737,63 @@ macrounchainedFocusGW.data.frame <- function(
 
 
 #'@importFrom rmacrolite rmacroliteGet1Param
-.muc_FAWC <- function( x ){  
-    cten <- as.numeric( rmacroliteGet1Param( 
-        x    = x, 
-        pTag = "CTEN\t1\t%s", 
-        type = "PHYSICAL PARAMETERS" ) )
-    
-    alpha <- as.numeric( rmacroliteGet1Param( 
-        x    = x, 
-        pTag = "ALPHA\t1\t%s", 
-        type = "PHYSICAL PARAMETERS" ) )
-    
-    n <- as.numeric( rmacroliteGet1Param( 
-        x    = x, 
-        pTag = "N\t1\t%s", 
-        type = "PHYSICAL PARAMETERS" ) )
-    
-    xmpor <- as.numeric( rmacroliteGet1Param( 
-        x    = x, 
-        pTag = "XMPOR\t1\t%s", 
-        type = "PHYSICAL PARAMETERS" ) )
-    
-    .resid <- as.numeric( rmacroliteGet1Param( 
-        x    = x, 
-        pTag = "RESID\t1\t%s", 
-        type = "PHYSICAL PARAMETERS" ) )
-    
+.muc_FAWC <- function( x ){ 
     waten <- as.numeric( rmacroliteGet1Param( 
         x    = x, 
         pTag = "WATEN\t1\t%s", 
         type = "CROP PARAMETERS" ) )
     
-    wilt <- as.numeric( rmacroliteGet1Param( 
-        x    = x, 
-        pTag = "WILT\t1\t%s", 
-        type = "PHYSICAL PARAMETERS" ) )
-    
-    FAWC <- .muc_FAWC0( 
-        CTEN    = cten, 
-        ALPHA   = alpha, 
-        N       = n, 
-        XMPOR   = xmpor, 
-        RESID   = .resid, 
-        WATEN   = waten, 
-        WILT    = wilt ) 
-    
-    x <- rmacroliteChange1Param( 
-        x     = x, 
-        pTag  = "FAWC\t1\t%s", 
-        type  = "CROP PARAMETERS", 
-        value = round( FAWC, 7L ) ) 
+    if( waten > 0 ){
+        cten <- as.numeric( rmacroliteGet1Param( 
+            x    = x, 
+            pTag = "CTEN\t1\t%s", 
+            type = "PHYSICAL PARAMETERS" ) )
+        
+        alpha <- as.numeric( rmacroliteGet1Param( 
+            x    = x, 
+            pTag = "ALPHA\t1\t%s", 
+            type = "PHYSICAL PARAMETERS" ) )
+        
+        n <- as.numeric( rmacroliteGet1Param( 
+            x    = x, 
+            pTag = "N\t1\t%s", 
+            type = "PHYSICAL PARAMETERS" ) )
+        
+        xmpor <- as.numeric( rmacroliteGet1Param( 
+            x    = x, 
+            pTag = "XMPOR\t1\t%s", 
+            type = "PHYSICAL PARAMETERS" ) )
+        
+        .resid <- as.numeric( rmacroliteGet1Param( 
+            x    = x, 
+            pTag = "RESID\t1\t%s", 
+            type = "PHYSICAL PARAMETERS" ) )
+        
+        waten <- as.numeric( rmacroliteGet1Param( 
+            x    = x, 
+            pTag = "WATEN\t1\t%s", 
+            type = "CROP PARAMETERS" ) )
+        
+        wilt <- as.numeric( rmacroliteGet1Param( 
+            x    = x, 
+            pTag = "WILT\t1\t%s", 
+            type = "PHYSICAL PARAMETERS" ) )
+        
+        FAWC <- .muc_FAWC0( 
+            CTEN    = cten, 
+            ALPHA   = alpha, 
+            N       = n, 
+            XMPOR   = xmpor, 
+            RESID   = .resid, 
+            WATEN   = waten, 
+            WILT    = wilt ) 
+        
+        x <- rmacroliteChange1Param( 
+            x     = x, 
+            pTag  = "FAWC\t1\t%s", 
+            type  = "CROP PARAMETERS", 
+            value = round( FAWC, 7L ) ) 
+    }   
     
     return( x )
 }   
