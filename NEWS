@@ -1,6 +1,13 @@
     
     package: 'macrounchained'
 
+CHANGES IN VERSION 0.10.1
+    
+    2019/03/22  Fix various bugs in crop parametrisation revealed 
+        while testing the Swedish GW scenario.
+        
+        Add a test for Swedish groundwater scenario.
+    
 CHANGES IN VERSION 0.10.0
     
     2019/03/15  Start implementing user input of FOCUS-scenario 
