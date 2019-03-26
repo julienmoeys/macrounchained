@@ -1,6 +1,6 @@
 ﻿NUMERICAL LAYERS	200
 GENERAL PARAMETERS
-RUNID	3
+RUNID	1
 NUMERICAL LAYERS	200
 NHORIZON	5
 NLAYER	200
@@ -159,7 +159,7 @@ PF2	0
 SORPRATE	0
 TREF	20
 TRESP	0.079
-KOC	60
+KOC	172
 ZMIX	0.1
 NHORIZONS	5
 AEXC	1	0
@@ -192,11 +192,11 @@ FREUND	2	0.9
 FREUND	3	0.9
 FREUND	4	0.9
 FREUND	5	0.9
-ZKD	1	0.84
-ZKD	2	0.48
-ZKD	3	0.24
-ZKD	4	0.12
-ZKD	5	0.12
+ZKD	1	2.408
+ZKD	2	1.376
+ZKD	3	0.688
+ZKD	4	0.344
+ZKD	5	0.344
 ********************************
 CROP PARAMETERS
 NCROPS	1
@@ -494,7 +494,7 @@ DATEFILE
 DRIVINGFILE	C:\swash\macro\macro999.bin
 DRIVINGPERIOD	1/1/1970-1/1/1996
 ENDDATE	1996-01-01 00:00
-OUTPUTFILE	macro003.bin
+OUTPUTFILE	macro001.bin
 METFILE	C:\swash\macro\bin\vemmenet.BIN
 METPERIOD	1970-01-01 00:00-1996-01-01 00:00
 NUMLAYERS	0
@@ -2065,9 +2065,9 @@ THETAINI	200	0
 *************
 INFORMATION
 MACRO in FOCUS Version 5.5.4
-Output File = C:\swash\macro\macro003.bin
+Output File = C:\swash\macro\macro001.bin
 Type of compound = parent
-Compound : GW-D
+Compound : GW-C
 Scenario : Näsbygård
 Groundwater
 
@@ -2078,4 +2078,4 @@ Crop : Pome/stone fruit, irrigated
 
 Number of applications : 1
 
-Application 1 : 1000 g/ha of GW-D on day 115
+Application 1 : 1000 g/ha of GW-C on day 115
