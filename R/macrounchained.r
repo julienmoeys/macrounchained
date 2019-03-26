@@ -1417,10 +1417,10 @@ macrounchained.data.frame <- function(
             #   target (GW or SW)
             if( focus_mode == "gw" ){
                 crop_params <- crop_params[ 
-                    crop_params[, "target" ] %in% c( "gw", "ww" ), ]
+                    crop_params[, "target2" ] == "GW", ]
             }else if( focus_mode == "sw" ){
                 crop_params <- crop_params[ 
-                    crop_params[, "target" ] == "sw", ]
+                    crop_params[, "target2" ] == "SW", ]
             }else{
                 stop( sprintf( 
                     "Unknown or unsupported value for 'focus_mode' ('%s')", 
