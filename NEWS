@@ -1,6 +1,13 @@
     
     package: 'macrounchained'
 
+CHANGES IN VERSION 0.11.0
+    
+    2019/03/26  Add the two Norwegian groundwater scenario 
+        Rustad and Heia. Adapt the code so that it also can 
+        handle scenario where the PECgw is calculated from 
+        the lower boundary.
+    
 CHANGES IN VERSION 0.10.1
     
     2019/03/22  Fix various bugs in crop parametrisation revealed 
