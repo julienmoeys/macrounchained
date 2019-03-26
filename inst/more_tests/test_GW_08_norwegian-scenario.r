@@ -46,7 +46,7 @@ param <- data.frame(
     "exp_moist_resp"    = c(              0.49,      0.49 ), 
     "crop_upt_f"        = 0.5, 
     "diff_coef"         = 5E-10, 
-    "parent_id"         = c(                NA,        NA ), 
+    # "parent_id"       = c(                NA,        NA ), 
     #"g_per_mol"        = c(               300,       300 ), 
     # "transf_f"        = c(                NA,        NA ), # mol met formed / mol parent degraded
     "g_as_per_ha"       = c(              1000,      1000 ), 
