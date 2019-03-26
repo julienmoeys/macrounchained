@@ -3019,11 +3019,6 @@ macroutilsFocusGWConc_summary.list <- function(
 #'@param overwrite
 #'  See \code{\link[macrounchained]{macrounchained-methods}}.
 #'
-#'@param analyse_args 
-#'  See \code{\link[macrounchained]{macrounchained-methods}}.
-#'  List of additional arguments passed to 
-#'  \code{\link[macroutils2:macroutilsFocusGWConc-methods]{macroutilsFocusGWConc}}.
-#'
 #'@param dt50_depth_f
 #'  See \code{\link[rmacrolite:rmacroliteDegradation-methods]{rmacroliteDegradation}}.
 #'
@@ -3078,7 +3073,7 @@ macrounchainedFocusGW.data.frame <- function(
     run = TRUE, 
     overwrite = FALSE, 
     # analyse = NULL, 
-    analyse_args = list( "quiet" = TRUE ), 
+    # analyse_args = list( "quiet" = TRUE ), 
     # analyse_summary = NULL, 
     dt50_depth_f = NULL, 
     # keep0conc = TRUE, 
@@ -3134,7 +3129,7 @@ macrounchainedFocusGW.data.frame <- function(
         run             = run, 
         overwrite       = overwrite, 
         analyse         = macroutilsFocusGWConc, 
-        analyse_args    = analyse_args, 
+        analyse_args    = list( "quiet" = TRUE ), 
         analyse_summary = macroutilsFocusGWConc_summary, 
         dt50_depth_f    = dt50_depth_f, 
         # keep0conc       = keep0conc, 
