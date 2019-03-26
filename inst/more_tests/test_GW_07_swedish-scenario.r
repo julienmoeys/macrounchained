@@ -36,8 +36,8 @@ param <- data.frame(
     "soil"              = c(    "kruse",  "onne", "nasb" ), 
     "crop"              = c( "oil, spr", "grass", "pome" ), 
     "id"                = c(         1L,      2L,     3L ), 
-    "name"              = c(     "GW-A",  "GW-B", "GW-D" ), 
-    "kfoc"              = c(        103,      17,     60 ), 
+    "name"              = c(     "GW-A",  "GW-B", "GW-C" ), 
+    "kfoc"              = c(        103,      17,    172 ), 
     "nf"                = 0.9, 
     "dt50"              = c(         60,      20,     20 ), 
     "dt50_ref_temp"     = 20, 
@@ -47,7 +47,7 @@ param <- data.frame(
     "crop_upt_f"        = 0.5, 
     "diff_coef"         = 5E-10, 
     "parent_id"         = c(         NA,      NA,     NA ), 
-    "g_per_mol"         = c(        300,     300,    300 ), 
+    "g_per_mol"         = c(        300,     300,    200 ), 
     "transf_f"          = c(         NA,      NA,     NA ), # mol met formed / mol parent degraded
     "g_as_per_ha"       = c(       1000,    1000,   1000 ), 
     "app_j_day"         = c(        138,     115,    115 ), 
@@ -59,26 +59,26 @@ param <- data.frame(
 
 
 expected_results_s <- data.frame(
-    "name"                  = c( "GW-A", "GW-B", "GW-D" ), 
-    "target_ug_per_L_rnd"   = c(   2.86,    7.2,  0.154 ), 
-    "target_index_period1"  = c(      7,      4,     10 ), 
-    "target_index_period2"  = c(      8,      6,      7 ), 
+    "name"                  = c( "GW-A", "GW-B", "GW-C" ), 
+    "target_ug_per_L_rnd"   = c(   33.9,   15.9,  0.188 ), 
+    "target_index_period1"  = c(      2,     10,     14 ), 
+    "target_index_period2"  = c(      3,      4,     11 ), 
     stringsAsFactors        = FALSE ) 
 
 expected_results_w <- data.frame(
-    "name"                  = c( "GW-A", "GW-B", "GW-D" ), 
-    "perc_period1_mm"       = c( 256.42, 200.46, 307.55 ), 
-    "perc_period2_mm"       = c( 237.04, 202.54, 256.42 ), 
+    "name"                  = c( "GW-A", "GW-B", "GW-C" ), 
+    "perc_period1_mm"       = c(  28.96, 284.97,  31.32 ), 
+    "perc_period2_mm"       = c(  20.07, 258.67,  47.32 ), 
     stringsAsFactors        = FALSE ) 
 
 expected_parfiles <- data.frame(
-    "name"      = c( "GW-A", "GW-B", "GW-D" ), 
+    "name"      = c( "GW-A", "GW-B", "GW-C" ), 
     "is_inter"  = c(  FALSE,  FALSE,  FALSE ), 
     "nb_diff"   = c(     1L,     1L,     1L ), 
     "parfile"   = c( 
         "kruse_sprOsr_GW-A_d138_1000gHa.par", 
         "onne_grass_GW-B_d115_1000gHa.par", 
-        "nasb_pome_GW-D_d115_1000gHa.par" ), 
+        "nasb_pome_GW-C_d115_1000gHa.par" ), 
     stringsAsFactors        = FALSE ) 
 
 expected_parfiles[, "parfile" ] <- system.file( 
@@ -94,7 +94,7 @@ expected_parfiles[, "parfile" ] <- system.file(
 res <- macrounchainedFocusGW( 
     s         = param, 
     overwrite = TRUE, 
-    run       = FALSE ) 
+    run       = TRUE ) 
 
 
 
