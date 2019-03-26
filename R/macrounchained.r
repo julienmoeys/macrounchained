@@ -2549,6 +2549,30 @@ macrounchained.data.frame <- function(
                     verbose = verbose, log_width = log_width, 
                     logfiles = log_file, append = TRUE ) 
                 
+                if( (focus_mode == "gw") ){
+                    target_type <- crop_params[ 
+                        s[ sel_subst, "focus_index" ], 
+                        "target_type" ] 
+                    
+                    if( target_type == 1L ){
+                        analyse_args <- c( analyse_args, list( 
+                            "output_water"  = c( "target_l" = TRUE, "lower_b" = TRUE ), 
+                            "output_solute" = c( "target_l" = TRUE, "lower_b" = FALSE ) 
+                        ) ) 
+                        
+                    }else if( target_type == 2L ){
+                        analyse_args <- c( analyse_args, list( 
+                            "output_water"  = c( "target_l" = FALSE, "lower_b" = TRUE ), 
+                            "output_solute" = c( "target_l" = FALSE, "lower_b" = TRUE ) 
+                        ) ) 
+                        
+                    }else{
+                        stop( sprintf( 
+                            "Internal error. Unknown 'target_type' (%s)", 
+                            target_type ) )
+                    }   
+                }   
+                
                 if( length( analyse_args ) > 0L ){
                     analyse_output[[ o ]] <- do.call( 
                         what = "analyse", args = c( list( 
@@ -2909,12 +2933,14 @@ macroutilsFocusGWConc_summary.list <- function(
     }   
     
     template_out <- data.frame(
-        "target_ug_per_L"       = NA_real_, 
-        "target_ug_per_L_rnd"   = NA_real_, 
-        "target_index_period1"  = NA_real_, 
-        "target_index_period2"  = NA_real_, 
-        "perc_period1_mm"       = NA_real_, 
-        "perc_period2_mm"       = NA_real_  
+        "ug_per_L"       = NA_real_, 
+        "ug_per_L_rnd"   = NA_real_, 
+        "index_period1"  = NA_real_, 
+        "index_period2"  = NA_real_, 
+        "perc_period1_mm" = NA_real_, 
+        "perc_period2_mm" = NA_real_, 
+        "output_type"     = NA_character_, 
+        stringsAsFactors  = FALSE 
         # "perc_ug_per_L"         = NA_real_, 
         # "perc_ug_per_L_rnd"     = NA_real_, 
         # "perc_index_period1"    = NA_real_, 
@@ -2935,17 +2961,37 @@ macroutilsFocusGWConc_summary.list <- function(
             }else{
                 out_i <- template_out
                 
-                out_i[, "target_ug_per_L" ] <- 
-                    x[[ i ]][[ "conc_target_layer" ]][ , "ug_per_L" ]
+                if( "conc_target_layer" %in% names( x[[ i ]] ) ){
+                    out_i[, "ug_per_L" ] <- 
+                        x[[ i ]][[ "conc_target_layer" ]][ , "ug_per_L" ]
+                        
+                    out_i[, "ug_per_L_rnd" ] <- 
+                        x[[ i ]][[ "conc_target_layer" ]][ , "ug_per_L_rnd" ]
+                        
+                    out_i[, "index_period1" ] <- 
+                        x[[ i ]][[ "conc_target_layer" ]][ , "index_period1" ]
+                        
+                    out_i[, "index_period2" ] <- 
+                        x[[ i ]][[ "conc_target_layer" ]][ , "index_period2" ]
                     
-                out_i[, "target_ug_per_L_rnd" ] <- 
-                    x[[ i ]][[ "conc_target_layer" ]][ , "ug_per_L_rnd" ]
+                    out_i[, "output_type" ] <- "target_layer"
                     
-                out_i[, "target_index_period1" ] <- 
-                    x[[ i ]][[ "conc_target_layer" ]][ , "index_period1" ]
+                }else{
+                    out_i[, "ug_per_L" ] <- 
+                        x[[ i ]][[ "conc_perc" ]][ , "ug_per_L" ]
+                        
+                    out_i[, "ug_per_L_rnd" ] <- 
+                        x[[ i ]][[ "conc_perc" ]][ , "ug_per_L_rnd" ]
+                        
+                    out_i[, "index_period1" ] <- 
+                        x[[ i ]][[ "conc_perc" ]][ , "index_period1" ]
+                        
+                    out_i[, "index_period2" ] <- 
+                        x[[ i ]][[ "conc_perc" ]][ , "index_period2" ]
                     
-                out_i[, "target_index_period2" ] <- 
-                    x[[ i ]][[ "conc_target_layer" ]][ , "index_period2" ]
+                    out_i[, "output_type" ] <- "lower_boundary"
+                    
+                }   
                 
                 out_i[, "perc_period1_mm" ] <- 
                     x[[ i ]][[ "water_perc_by_period" ]][ 
