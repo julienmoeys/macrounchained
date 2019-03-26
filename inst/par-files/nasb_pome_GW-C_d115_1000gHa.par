@@ -1,6 +1,6 @@
 ﻿NUMERICAL LAYERS	200
 GENERAL PARAMETERS
-RUNID	1
+RUNID	3
 NUMERICAL LAYERS	200
 NHORIZON	5
 NLAYER	200
@@ -494,7 +494,7 @@ DATEFILE
 DRIVINGFILE	C:\swash\macro\macro999.bin
 DRIVINGPERIOD	1/1/1970-1/1/1996
 ENDDATE	1996-01-01 00:00
-OUTPUTFILE	macro001.bin
+OUTPUTFILE	macro003.bin
 METFILE	C:\swash\macro\bin\vemmenet.BIN
 METPERIOD	1970-01-01 00:00-1996-01-01 00:00
 NUMLAYERS	0
@@ -2065,7 +2065,7 @@ THETAINI	200	0
 *************
 INFORMATION
 MACRO in FOCUS Version 5.5.4
-Output File = C:\swash\macro\macro001.bin
+Output File = C:\swash\macro\macro003.bin
 Type of compound = parent
 Compound : GW-C
 Scenario : Näsbygård
