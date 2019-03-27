@@ -3851,3 +3851,250 @@ macrounchainedFocusGW.data.frame <- function(
 }   
 
 
+
+#'@importFrom utils menu
+.muc_menu <- function(
+    title = NULL, 
+    choices, 
+    error_no_choice = "You have not chosen anything. Ending user interface." 
+){  
+    if( is.null( names( choices ) ) ){
+        names( choices ) <- as.character( choices )
+    }   
+    
+    ## Ask the user some choice
+    select_res <- utils::menu( 
+        title       = title,
+        choices     = choices  
+    )   
+    
+    ## Error handling:
+    if( select_res == 0 ){ 
+        stop( error_no_choice ) 
+    }   
+    
+    return( select_res ) 
+}   
+
+    # .muc_menu( title = "Do you want:", choices = c("1"="option 1","2"="option 2") )
+
+
+
+#' Text User Interface for macrounchainedFocusGW
+#'
+#' Text User Interface for 
+#'  \code{\link[macrounchained:macrounchainedFocusGW]{macrounchainedFocusGW-methods}}.
+#'  The interface guide the user through a series of questions, 
+#'  for fetching template Excel files for \code{macrounchainedFocusGW} 
+#'  or picking an Excel file with parameter sets and starting 
+#'  \code{macrounchainedFocusGW}.
+#'
+#'
+#'@return
+#'  See \code{\link[macrounchained:macrounchainedFocusGW]{macrounchainedFocusGW-methods}}.
+#' 
+#'
+#'@export 
+#'
+macrounchainedFocusGW_ui <- function(){
+    if( !interactive() ){ 
+        stop( "'macrounchainedFocusGW_ui()' can only be used in interactive mode" )
+    }   
+    
+    
+    
+    message( ":::: Text User Interface for macrounchainedFocusGW() ::::" )
+    message( "You can type ESC any time to exit the interface" )
+    
+    
+    
+    #   Check if readxl is installed
+    #   Note: the use of do.call is to avoid R CMD check 
+    #       to complain that readxl is not a required 
+    #       package.
+    if( !do.call( what = "require", args = list( package = "readxl" ) ) ){
+        stop( "'macrounchainedFocusGW_ui()' requires the package 'readxl' to be installed. You can type install.packages('readxl') to install it." )
+    }   
+    
+    exit <- FALSE 
+    
+    menuItem1 <- c( 
+        "1" = "Fetch a copy of an example Excel file with input parameters", 
+        "2" = "Use an existing Excel file with input parameters" )   
+            
+    choice1 <- .muc_menu(
+        title     = "Do you want to:", 
+        choices   = menuItem1 ) 
+    
+    if( choice1 == 1L ){
+        xlsx_path <- system.file( "xlsx", package = "macrounchained" )
+        
+        xlsx_files_list <- list.files( xlsx_path ) 
+        xlsx_files_sel  <- grepl( 
+            x = tolower( xlsx_files_list ), 
+            pattern = "\\.xlsx$" ) | grepl( 
+            x = tolower( xlsx_files_list ), 
+            pattern = "\\.xls$" ) 
+        xlsx_files_sel  <-  xlsx_files_sel & grepl( 
+            x = tolower( xlsx_files_list ), 
+            pattern = "macrounchainedfocusgw", 
+            fixed = TRUE )
+        xlsx_files_list <- xlsx_files_list[ xlsx_files_sel ] 
+        rm( xlsx_files_sel ) 
+        names( xlsx_files_list )  <- as.character( 1:length( xlsx_files_list ) )
+        
+        
+        choice2 <- .muc_menu(
+            title     = "Which example example Excel file do you want to fetch:", 
+            choices   = xlsx_files_list ) 
+        
+        xlsx_file <- xlsx_files_list[ choice2 ] 
+        rm( xlsx_files_list )
+        
+        message( sprintf( 
+            "You will now be asked where to save a copy of the file %s", 
+            xlsx_file ) ) 
+        invisible( readline( prompt = "Press [ENTER] to go ahead\n" ) ) 
+        
+        Filters_xlsx <- matrix( 
+            data = c( "Excel files (*.xlsx)", "*.xlsx;*.XLSX" ), 
+            nrow = 1L, 
+            ncol = 2L ) 
+        rownames( Filters_xlsx ) <- "Excel"
+        
+        # xlsx_file_new_caption <- gsub( 
+            # x           = xlsx_file, 
+            # pattern     = "\\.xlsx$", 
+            # replacement = "_copy.xlsx" ) 
+        
+        xlsx_file_new <- choose.files(
+            default = "", 
+            caption = "Save Excel-file as:",
+            multi   = FALSE, 
+            filters = Filters_xlsx,
+            index   = nrow( Filters_xlsx ) ) 
+        
+        if( length( xlsx_file_new ) == 0L ){
+            stop( "You have not chosen any file. Ending user interface." )
+        }   
+        
+        rm( Filters_xlsx ) # xlsx_file_new_caption, 
+        
+        if( file.exists( xlsx_file_new ) ){
+            stop( sprintf( 
+                "The file '%s' already exists.", xlsx_file_new ) )
+        }   
+        
+        copy_success <- file.copy( 
+            from      = file.path( xlsx_path, xlsx_file ), 
+            to        = xlsx_file_new, 
+            overwrite = FALSE )
+        
+        if( !copy_success ){
+            stop( sprintf( 
+                "The file '%s' could not be saved in '%s'.", 
+                file.path( xlsx_path, xlsx_file ), 
+                xlsx_file_new ) )
+        }   
+        
+        
+        message( sprintf( 
+            "The copy was saved in '%s'", 
+            xlsx_file_new ) )
+        
+        out <- xlsx_file_new
+        
+    }else if( choice1 == 2L ){
+        
+        message( "You will now be asked to select the Excel file containing your parameters" ) 
+        invisible( readline( prompt = "Press [ENTER] to go ahead\n" ) ) 
+        
+        Filters_xlsx <- matrix( 
+            data = c( "Excel files (*.xlsx)", "*.xlsx;*.XLSX" ), 
+            nrow = 1L, 
+            ncol = 2L ) 
+        rownames( Filters_xlsx ) <- "Excel"
+        
+        xlsx_param_file <- choose.files(
+            default = "", 
+            caption = "Select Excel-file:",
+            multi   = FALSE, 
+            filters = Filters_xlsx,
+            index   = nrow( Filters_xlsx ) ) 
+        
+        if( length( xlsx_param_file ) == 0L ){
+            stop( "You have not chosen any file. Ending user interface." )
+        }   
+        
+        rm( Filters_xlsx ) # xlsx_file_new_caption, 
+        
+        if( !file.exists( xlsx_param_file ) ){
+            stop( sprintf( 
+                "The file '%s' doesn't exist.", xlsx_param_file ) )
+        }   
+        
+        excel_sheets0 <- do.call( what = "::", args = list( 
+            "pkg" = "readxl", "name" = "excel_sheets" ) )
+        list_of_sheets <- do.call( 
+            what = excel_sheets0, 
+            args = list( "path" = xlsx_param_file ) )
+        
+        names( list_of_sheets ) <- as.character( 1:length( list_of_sheets ) )
+        
+        choice2 <- .muc_menu(
+            title     = "Select the sheet containing the parameters:", 
+            choices   = list_of_sheets ) 
+        
+        param_sheet <- as.character( list_of_sheets[ choice2 ] )
+        rm( list_of_sheets )
+        
+        message( sprintf( 
+            "Importing sheet '%s' from Excel file '%s'", 
+            param_sheet, xlsx_param_file ) )
+        
+        read_excel0 <- do.call( what = "::", args = list( 
+            "pkg" = "readxl", "name" = "read_excel" ) )
+        param <- do.call( 
+            what = read_excel0, 
+            args = list( "path" = xlsx_param_file, 
+                "sheet" = param_sheet ) )
+        
+        param <- as.data.frame( param ) 
+        
+        message( sprintf( 
+            "Imported sheet has %s rows.", 
+            nrow( param ) ) )
+        
+        menuItem3 <- c( 
+            "1" = "Dry run (all operations except MACRO simulations)", 
+            "2" = "Full run (all operations)" )   
+        
+        choice3 <- .muc_menu(
+            title     = "Choose the type of run:", 
+            choices   = menuItem3 ) 
+        
+        run <- ifelse( test = choice3 == 1L, yes = FALSE, 
+            no = TRUE )
+        
+        menuItem4 <- c( 
+            "1" = "Overwrite existing output-files", 
+            "2" = "Do not overwrite existing files" )   
+        
+        choice4 <- .muc_menu(
+            title     = "When some output-files already exist:", 
+            choices   = menuItem4 ) 
+        
+        overwrite <- ifelse( test = choice4 == 1L, yes = TRUE, 
+            no = FALSE )
+        
+        invisible( readline( prompt = "Press [ENTER] to start macrounchainedFocusGW()\n" ) ) 
+        
+        out <- macrounchainedFocusGW( s = param, run = run, 
+            overwrite = overwrite ) 
+    }else{
+        stop( "Internal error (choice1)" )
+    }   
+    
+    return( invisible( out ) )
+}   
+
