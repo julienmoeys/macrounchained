@@ -2838,7 +2838,7 @@ macrounchained.data.frame <- function(
     
     
     
-    return( out )
+    return( invisible( out ) )
 }   
 
 
@@ -3167,7 +3167,7 @@ macrounchainedFocusGW.data.frame <- function(
     }   
     
     
-    return( macrounchained( 
+    return( invisible( macrounchained( 
         s               = s, 
         parfile         = parfile, 
         verbose         = verbose, 
@@ -3183,7 +3183,7 @@ macrounchainedFocusGW.data.frame <- function(
         anonymise       = anonymise, 
         archive         = TRUE, 
         ... 
-    ) ) 
+    ) ) ) 
 }   
 
 
