@@ -395,7 +395,7 @@ param1 <- readxl::read_excel( path = xl, sheet = "s" )
 library("macrounchained")
 
 #   Dry run: 
-res <- macrounchainedFocusGW( 
+macrounchainedFocusGW( 
     s         = param1, 
     overwrite = TRUE, 
     run       = FALSE ) # Set to TRUE to run the simulations
@@ -533,7 +533,7 @@ param1 <- readxl::read_excel(
 library("macrounchained")
 
 #   Run all the simulations: 
-res <- macrounchainedFocusGW( 
+macrounchainedFocusGW( 
     s         = param1, 
     overwrite = TRUE ) 
 ``` 
@@ -607,7 +607,7 @@ param1 <- readxl::read_excel( path = xl, sheet = "s" )
 library("macrounchained")
 
 #   Dry run: 
-res <- macrounchainedFocusGW( 
+macrounchainedFocusGW( 
     s         = param1, 
     overwrite = TRUE, 
     run       = FALSE ) # Set to TRUE to run the simulations
@@ -644,7 +644,7 @@ as.data.frame( param1 )
 library("macrounchained")
 
 #   Dry run: 
-res <- macrounchainedFocusGW( 
+macrounchainedFocusGW( 
     s         = param1, 
     overwrite = TRUE, 
     run       = FALSE ) # Set to TRUE to run the simulations
