@@ -11,3 +11,4 @@ inst/GIT_REVISION
 *.pdf
 *.Rcheck
 
+inst/GIT_REVISION
