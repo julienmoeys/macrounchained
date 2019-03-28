@@ -2555,13 +2555,13 @@ macrounchained.data.frame <- function(
                         "target_type" ] 
                     
                     if( target_type == 1L ){
-                        analyse_args <- c( analyse_args, list( 
+                        analyse_args0 <- c( analyse_args, list( 
                             "output_water"  = c( "target_l" = TRUE, "lower_b" = TRUE ), 
                             "output_solute" = c( "target_l" = TRUE, "lower_b" = FALSE ) 
                         ) ) 
                         
                     }else if( target_type == 2L ){
-                        analyse_args <- c( analyse_args, list( 
+                        analyse_args0 <- c( analyse_args, list( 
                             "output_water"  = c( "target_l" = FALSE, "lower_b" = TRUE ), 
                             "output_solute" = c( "target_l" = FALSE, "lower_b" = TRUE ) 
                         ) ) 
@@ -2571,6 +2571,8 @@ macrounchained.data.frame <- function(
                             "Internal error. Unknown 'target_type' (%s)", 
                             target_type ) )
                     }   
+                }else{
+                    analyse_args0 <- analyse_args 
                 }   
                 
                 if( length( analyse_args ) > 0L ){
