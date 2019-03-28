@@ -1,13 +1,13 @@
 Package: macrounchained
 Version: 0.11.0
-Date: 2019-03-27
+Date: 2019-03-28
 Author: Julien Moeys [aut, cre]
 Authors@R: c( person( given = "Julien", family = "Moeys", "role" = c("aut", "cre"), "email" = "jules_m78-soiltexture@@yahooDOTfr" ) )
 Maintainer: Julien Moeys <jules_m78-soiltexture@yahoo.fr>
 Title: Run batch MACRO and MACRO In FOCUS simulations for sets of substance-properties and application patterns, including metabolites (Nth order)
 Description: Run batch MACRO and MACRO In FOCUS simulations for sets of substance-properties and application patterns, including metabolites (Nth order)
 Depends: 
-    R (>= 3.5.0)
+    R (>= 3.1.0)
 LazyLoad: yes
 ByteCompile: yes
 URL: https://github.com/julienmoeys/macrounchained
