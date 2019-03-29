@@ -3885,7 +3885,7 @@ macrounchainedFocusGW.data.frame <- function(
 #' Text User Interface for macrounchainedFocusGW
 #'
 #' Text User Interface for 
-#'  \code{\link[macrounchained:macrounchainedFocusGW]{macrounchainedFocusGW-methods}}.
+#'  \code{\link[macrounchained:macrounchainedFocusGW-methods]{macrounchainedFocusGW}}.
 #'  The interface guide the user through a series of questions, 
 #'  for fetching template Excel files for \code{macrounchainedFocusGW} 
 #'  or picking an Excel file with parameter sets and starting 
@@ -3893,7 +3893,7 @@ macrounchainedFocusGW.data.frame <- function(
 #'
 #'
 #'@return
-#'  See \code{\link[macrounchained:macrounchainedFocusGW]{macrounchainedFocusGW-methods}}.
+#'  See \code{\link[macrounchained:macrounchainedFocusGW-methods]{macrounchainedFocusGW}}.
 #' 
 #'
 #'@export 
