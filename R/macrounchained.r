@@ -2549,7 +2549,7 @@ macrounchained.data.frame <- function(
                     verbose = verbose, log_width = log_width, 
                     logfiles = log_file, append = TRUE ) 
                 
-                if( (focus_mode == "gw") ){
+                if( focus_mode == "gw" ){
                     target_type <- crop_params[ 
                         s[ sel_subst, "focus_index" ], 
                         "target_type" ] 
@@ -2575,10 +2575,10 @@ macrounchained.data.frame <- function(
                     analyse_args0 <- analyse_args 
                 }   
                 
-                if( length( analyse_args ) > 0L ){
+                if( length( analyse_args0 ) > 0L ){
                     analyse_output[[ o ]] <- do.call( 
                         what = "analyse", args = c( list( 
-                        "x" = output_run[[ o ]] ), analyse_args ) )
+                        "x" = output_run[[ o ]] ), analyse_args0 ) )
                 }else{
                     analyse( x = output_run[[ o ]] )
                 }   
@@ -3387,8 +3387,6 @@ macrounchainedFocusGW.data.frame <- function(
         FUN = function(i){
             focus_soil_i <- match_soil[[ "rows" ]][ i, "focus_soil" ]
             
-            # browser()
-            
             crop_list_sanitized2b <- 
                 soil_crop_list_split[[ focus_soil_i ]][, "crop_list_sanitized2" ]
             
@@ -3407,10 +3405,6 @@ macrounchainedFocusGW.data.frame <- function(
                             return( out_k )
                         }   
                     ) 
-                    
-                    # if( any(crop_sanitized2[[ i ]] == "sugarbeets") & (j == 11L) ){
-                        # browser()
-                    # }   
                     
                     #   Some element of crop_sanitized2[[ i ]] 
                     #   not matched by anything in 
