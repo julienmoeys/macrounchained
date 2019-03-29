@@ -59,7 +59,7 @@ param <- data.frame(
 
 
 expected_results_s <- data.frame(
-    "name"                  = c( "GW-A", "GW-B" ), 
+    "name"           = c( "GW-A", "GW-B" ), 
     "ug_per_L_rnd"   = c(   19.3,   8.02 ), 
     "index_period1"  = c(     20,     15 ), 
     "index_period2"  = c(     11,     19 ), 
@@ -74,7 +74,7 @@ expected_results_w <- data.frame(
 expected_parfiles <- data.frame(
     "name"      = c( "GW-A", "GW-B" ), 
     "is_inter"  = c(  FALSE,  FALSE ), 
-    "nb_diff"   = c(     1L,     1L ), 
+    "nb_diff"   = c(     1L,     0L ), 
     "parfile"   = c( 
         "rust_sprCer_GW-A_d131_1000gHa.par", 
         "heia_leg_GW-B_d129_1000gHa.par" ), 

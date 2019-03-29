@@ -59,16 +59,16 @@ param <- data.frame(
 
 
 expected_results_s <- data.frame(
-    "name"                  = c( "GW-A", "GW-B", "GW-C" ), 
-    "target_ug_per_L_rnd"   = c(   33.9,   15.9,  0.188 ), 
-    "target_index_period1"  = c(      2,     10,     14 ), 
-    "target_index_period2"  = c(      3,      4,     11 ), 
+    "name"           = c( "GW-A", "GW-B", "GW-C" ), 
+    "ug_per_L_rnd"   = c(   33.9,   15.9,  0.188 ), 
+    "index_period1"  = c(      2,     10,     14 ), 
+    "index_period2"  = c(      3,      4,     11 ), 
     stringsAsFactors        = FALSE ) 
 
 expected_results_w <- data.frame(
     "name"                  = c( "GW-A", "GW-B", "GW-C" ), 
-    "perc_period1_mm"       = c(  28.96, 284.97,  31.32 ), 
-    "perc_period2_mm"       = c(  20.07, 258.67,  47.32 ), 
+    "perc_period1_mm"       = c(  28.96, 284.97,  35.84 ), 
+    "perc_period2_mm"       = c(  20.07, 258.67,  41.62 ), 
     stringsAsFactors        = FALSE ) 
 
 expected_parfiles <- data.frame(

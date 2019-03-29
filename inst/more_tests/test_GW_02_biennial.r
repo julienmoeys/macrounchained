@@ -55,10 +55,10 @@ param <- data.frame(
     stringsAsFactors    = FALSE ) 
 
 expected_results_s <- data.frame(
-    "name"                  = "GW-D", 
-    "target_ug_per_L_rnd"   = 0.0254, 
-    "target_index_period1"  = 19, 
-    "target_index_period2"  = 2, 
+    "name"           = "GW-D", 
+    "ug_per_L_rnd"   = 0.0254, 
+    "index_period1"  = 19, 
+    "index_period2"  = 2, 
     stringsAsFactors        = FALSE ) 
 
 expected_results_w <- data.frame(

@@ -31,12 +31,10 @@ param <- readxl::read_excel(
 #   Inspect
 as.data.frame( param ) 
 
-parfile <- system.file( "par-files", 
-    "chat_winCer_GW-X_900gHa_d182.par", package = "rmacrolite" )
+
 
 res <- macrounchainedFocusGW( 
     s         = param, 
-    parfile   = parfile, 
     overwrite = TRUE, 
     run       = FALSE ) # Dry run 
 
@@ -54,13 +52,10 @@ param2 <- readxl::read_excel(
 #   Inspect
 as.data.frame( param2 ) 
 
-parfile2 <- system.file( "par-files", 
-    "chat_winCer_GW-X_900gHa_d182.par", 
-    package = "rmacrolite" )
+
 
 res2 <- macrounchainedFocusGW( 
     s         = param2, 
-    parfile   = parfile2, 
     overwrite = TRUE, 
     run       = FALSE ) # Dry run 
 
@@ -78,13 +73,10 @@ param3 <- readxl::read_excel(
 #   Inspect
 as.data.frame( param3 ) 
 
-parfile3 <- system.file( "par-files", 
-    "chat_winCer_GW-X_900gHa_d182.par", 
-    package = "rmacrolite" )
 
-res2 <- macrounchainedFocusGW( 
+
+res3 <- macrounchainedFocusGW( 
     s         = param3, 
-    parfile   = parfile3, 
     overwrite = TRUE, 
     run       = FALSE ) # Dry run 
 

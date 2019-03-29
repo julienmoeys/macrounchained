@@ -59,10 +59,10 @@ param <- data.frame(
 
 
 expected_results_s <- data.frame(
-    "name"                  = c( "GW-A", "GW-B",  "GW-C", "Met_C", "GW-D" ), 
-    "target_ug_per_L_rnd"   = c(   2.86,    7.2, 1.45E-5,    23.3,  0.154 ), 
-    "target_index_period1"  = c(      7,      4,       7,       8,     10 ), 
-    "target_index_period2"  = c(      8,      6,       8,      10,      7 ), 
+    "name"           = c( "GW-A", "GW-B",  "GW-C", "Met_C", "GW-D" ), 
+    "ug_per_L_rnd"   = c(   2.86,    7.2, 1.45E-5,    23.3,  0.154 ), 
+    "index_period1"  = c(      7,      4,       7,       8,     10 ), 
+    "index_period2"  = c(      8,      6,       8,      10,      7 ), 
     stringsAsFactors        = FALSE ) 
 
 expected_results_w <- data.frame(

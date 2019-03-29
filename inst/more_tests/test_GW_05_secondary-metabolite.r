@@ -65,10 +65,10 @@ param <- data.frame(
 #   rmacrolite 0.9.2 (git revision: b792510) and 
 #   macroutils2 2.2.1 (git revision: fafcc2b)
 expected_results_s <- data.frame(
-    "name"                  = c( "GW-M", "Met-M1", "Met-M2" ), 
-    "target_ug_per_L_rnd"   = c(  0.140,  0.00269,  0.04150 ), 
-    "target_index_period1"  = c(     14,        7,        8 ), 
-    "target_index_period2"  = c(      7,       15,        2 ), 
+    "name"           = c( "GW-M", "Met-M1", "Met-M2" ), 
+    "ug_per_L_rnd"   = c(  0.140,  0.00269,  0.04150 ), 
+    "index_period1"  = c(     14,        7,        8 ), 
+    "index_period2"  = c(      7,       15,        2 ), 
     stringsAsFactors        = FALSE ) 
 
 expected_results_w <- data.frame(
