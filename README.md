@@ -10,7 +10,8 @@ scenario of MACRO In FOCUS.
 
 *   **Development status**: pre-release. Do not use for 
     production purpose, as the interface may still evolve if 
-    needed.
+    needed, and some bugs may I come unnoticed despite all 
+    the tests.
     
 *   **General information**: See [DESCRIPTION](DESCRIPTION) 
     (including author(s), package-version, minimum R version 
@@ -32,28 +33,37 @@ for using `macrounchained` (see below).
 Features
 ============================================================
 
-*   The user need in the first place to export a template 
+*   MACRO In FOCUS / groundwater users just need to use one 
+    R command, `macrounchained::``macrounchainedFocusGW_ui()`.
+    The command starts a text user interface that allows the 
+    users to obtain a copy of example 
+    Excel files for the input-parameters, or to run 
+    MACRO In FOCUS simulations after importing input parameters 
+    from an Excel file they have prepared. It is possible 
+    to include multiple scenario, crops and substance 
+    parameters sets (with or without metabolites). It is 
+    also possible to simulate several applications per year and 
+    applications every other or every third year. The 
+    scenario currently included as Châteaudun, the three 
+    Swedish scenario (Näsbygård, Önnestad and Krusenberg), 
+    and the two Norwegian scenario (Heia and Rustad).
+
+*   MACRO users need in the first place to export a template 
     `.par`-file (a text file containing the parameters for 
-    a MACRO simulation) from MACRO or MACRO In FOCUS, and 
+    a MACRO simulation) from MACRO, and 
     will use that template as an input for `macrounchained`
     to modify the substance properties and application 
-    patterns (dose, application date, ...). For MACRO In FOCUS, 
-    the number of application per year and the number of 
-    years interval are part of the parameters handled by the 
-    package. 
+    patterns (doses and application dates). 
     All other parameters such as those concerting the soil 
-    properties, the climate and the crop cannot be modified 
-    by `macrounchained`.
-    MACRO In FOCUS users need to export a template 
-    `.par`-file for the right scenario and crop before 
-    using `macrounchained`.
+    properties, the climate, the crop or the number of applications 
+    cannot be modified by `macrounchained`.
     
 *   Several sets of substance properties can be simulated 
     in the same batch (up to 998 sets per batch). The sets 
     of substance properties don't need to be related.
     
-*   Several `.par`-file templates can be used in the same 
-    batch of simulations.
+*   For MACRO users, several `.par`-file templates can be 
+    used in the same batch of simulations.
     
 *   **Nth-order metabolites** can be simulated (only limited by 
     the total number of simulations) and several degradation 
@@ -68,13 +78,14 @@ Features
     and `macrounchainedFocusGW()`. The first is a generic 
     functions, the workhorse of this package, while the 
     second is designed for MACRO In FOCUS groundwater
-    simulations.
+    simulations. `macrounchained::``macrounchainedFocusGW_ui()` 
+    is a simple text interface for `macrounchainedFocusGW()`.
     
 *   `macrounchainedFocusGW()` analyses on-the-fly the simulation 
     results and provides the user with a summary of the results, 
     in the same fashion as standard **MACRO In FOCUS groundwater**
     simulations.
-    
+    .
 *   Currently only tested on **MACRO In FOCUS 5.5.4**.
     
 *   The results of `macrounchainedFocusGW()` have been 
