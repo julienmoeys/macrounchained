@@ -1427,6 +1427,8 @@ macrounchained.data.frame <- function(
                     focus_mode ) )
             }   
             
+            rownames( crop_params ) <- NULL 
+            
             
             
             .muc_logMessage( m = "* Import crop parameter map", 
