@@ -2997,12 +2997,12 @@ macroutilsFocusGWConc_summary.list <- function(
                 
                 out_i[, "perc_period1_mm" ] <- 
                     x[[ i ]][[ "water_perc_by_period" ]][ 
-                        out_i[, "target_index_period1" ], 
+                        out_i[, "index_period1" ], 
                         "mm" ]
                 
                 out_i[, "perc_period2_mm" ] <- 
                     x[[ i ]][[ "water_perc_by_period" ]][ 
-                        out_i[, "target_index_period2" ], 
+                        out_i[, "index_period2" ], 
                         "mm" ]
                 
                 # out_i[, "perc_ug_per_L" ] <- 
