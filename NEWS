@@ -1,6 +1,20 @@
     
     package: 'macrounchained'
 
+CHANGES IN VERSION 0.11.1
+    
+    2019/04/11  The output for the two norwegian scenario 
+        is not set to target layer instead of the lower 
+        boundary. For the simulation tested it hardly 
+        changes the results.
+        
+        A bug fix in rmacroliteInfo() is propagated 
+        to this package. It occurred when running 
+        MACRO 5.2 simulations.
+        
+        The operation log now indicates if the scenario 
+        is a FOCUS scenario or not.
+        
 CHANGES IN VERSION 0.11.0
     
     2019/03/26  Add the two Norwegian groundwater scenario 
