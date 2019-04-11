@@ -2451,7 +2451,7 @@ macrounchained.data.frame <- function(
                 "focus_soil" = s[ sel_subst, "focus_soil" ] ) )
         }   
         
-        rmacroliteInfo( x = x_o ) <- new_info
+        rmacroliteInfo( x = x_o, warn = FALSE ) <- new_info
         
         
         
