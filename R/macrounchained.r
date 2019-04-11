@@ -2238,14 +2238,28 @@ macrounchained.data.frame <- function(
         
         
         if( scenario_provided ){
-            .muc_logMessage( m = "FOCUS: %s; %s; %s", 
+            is_focus <- crop_params[ 
+                s[ sel_subst, "focus_index" ], 
+                "is_focus" ] 
+                    
+            
+            FOCUS_text <- ifelse(
+                test = is_focus, 
+                yes  = "FOCUS", 
+                no   = "Not FOCUS" ) 
+            
+            .muc_logMessage( m = "%s: %s; %s; %s", 
                 verbose = verbose, log_width = log_width, 
                 logfiles = log_file, append = TRUE, 
-                values = list( s[ sel_subst, "focus_soil" ], 
-                s[ sel_subst, "focus_crop" ], 
-                ifelse( 
-                    test = crop_params[ s[ sel_subst, "focus_index" ], "is_irrigated" ], 
-                    yes  = "Irrigated", no = "Not irrigated" ) ) ) 
+                values = list( 
+                    FOCUS_text, 
+                    s[ sel_subst, "focus_soil" ], 
+                    s[ sel_subst, "focus_crop" ], 
+                    ifelse( 
+                        test = crop_params[ s[ sel_subst, "focus_index" ], "is_irrigated" ], 
+                        yes  = "Irrigated", no = "Not irrigated" ) ) ) 
+            
+            rm( FOCUS_text, is_focus )
         }   
         
         
