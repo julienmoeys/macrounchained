@@ -2596,7 +2596,7 @@ macrounchained.data.frame <- function(
                         what = "analyse", args = c( list( 
                         "x" = output_run[[ o ]] ), analyse_args0 ) )
                 }else{
-                    analyse( x = output_run[[ o ]] )
+                    analyse_output[[ o ]] <- analyse( x = output_run[[ o ]] )
                 }   
                 
                 .muc_print( x = analyse_output[[ o ]], 
