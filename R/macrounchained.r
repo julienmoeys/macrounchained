@@ -2376,7 +2376,7 @@ macrounchained.data.frame <- function(
             logfiles = log_file, append = TRUE ) 
         
         if( metabolites ){
-            rmacroliteSimType( x = x_o ) <- list( 
+            rmacroliteSimType( x = x_o, warn = FALSE ) <- list( 
                 "type"        = type, 
                 "drivingfile" = operation_register[ o, "drivingfile" ], 
                 "f_conv"      = ifelse( 
@@ -2385,7 +2385,7 @@ macrounchained.data.frame <- function(
                     no   = s[ sel_subst, "f_conv" ] ) )
             
         }else{
-            rmacroliteSimType( x = x_o ) <- list( 
+            rmacroliteSimType( x = x_o, warn = FALSE ) <- list( 
                 "type"        = type, 
                 "drivingfile" = operation_register[ o, "drivingfile" ], 
                 "f_conv"      = 0 )
