@@ -3,7 +3,7 @@
 and application patterns** with [MACRO][macro], a model of water 
 flow and solute transport in macroporous soil, 
 or its regulatory variant [MACRO In FOCUS][macroinfocus], 
-including **Nth-order metabolites**. 
+including simulation of **Nth-order metabolites**. 
 The substance properties and application patterns that can 
 be modified are currently those relevant for the groundwater 
 scenario of MACRO In FOCUS.
@@ -33,13 +33,13 @@ for using `macrounchained` (see below).
 Features
 ============================================================
 
-*   MACRO In FOCUS / groundwater users just need to use one 
+*   MACRO In FOCUS groundwater users just need to use one 
     R command, `macrounchained::``macrounchainedFocusGW_ui()`.
     The command starts a text user interface that allows the 
     users to obtain a copy of example 
-    Excel files for the input-parameters, or to run 
+    Excel-files for the input-parameters, or to run 
     MACRO In FOCUS simulations after importing input parameters 
-    from an Excel file they have prepared. It is possible 
+    from an Excel-file they have prepared. It is possible 
     to include multiple scenario, crops and substance 
     parameters sets (with or without metabolites). It is 
     also possible to simulate several applications per year and 
@@ -56,7 +56,12 @@ Features
     patterns (doses and application dates). 
     All other parameters such as those concerting the soil 
     properties, the climate, the crop or the number of applications 
-    cannot be modified by `macrounchained`.
+    cannot be modified by `macrounchained`. MACRO users may 
+    just use `macrounchained` to run MACRO simulations and 
+    analyse the results separately, or use their own R 
+    functions to analyse and summarise simulation results 
+    'on the fly'. An example for MACRO 5.2 is available 
+    here [inst\more_tests\test_GW_09_macro.r]()
     
 *   Several sets of substance properties can be simulated 
     in the same batch (up to 998 sets per batch). The sets 
@@ -83,8 +88,8 @@ Features
     
 *   `macrounchainedFocusGW()` analyses on-the-fly the simulation 
     results and provides the user with a summary of the results, 
-    in the same fashion as standard **MACRO In FOCUS groundwater**
-    simulations.
+    in a similar fashion as fashion as standard 
+    **MACRO In FOCUS groundwater** simulations.
     .
 *   Currently only tested on **MACRO In FOCUS 5.5.4**.
     
@@ -95,7 +100,8 @@ Features
     control. The function has also been successfully tested 
     against the results of MACRO In FOCUS 5.5.4 for other 
     cases (two application per year; two years interval 
-    between applications). The tests are "build-in" the package, 
+    between applications; Swedish and Norwegian scemario). 
+    The tests are "build-in" the package, 
     and they can be run each time an important change is 
     made to the package. The test results can be 
     checked here: [https://github.com/julienmoeys/macrounchained/tree/master/inst/more_tests][]
@@ -104,18 +110,20 @@ Features
     parametrization of 1st-order metabolites, the package 
     has only been tested for 1st-order metabolites. Results 
     of 2nd-order metabolites have not been compared with 
-    a reference value (because of the lack of a public 
-    benchmark).
+    a reference value, because of the lack of a public 
+    benchmark.
     
 *   `macrounchained()` and `macrounchainedFocusGW()` output 
     an operation log informing the users of the operations 
     being performed. `macrounchainedFocusGW()` also 
     output a summary of the simulation results (including 
-    the PECgw) in the operation log, and in separate files.
+    the PECgw) in the operation log, as well as in separate 
+    files.
     
 *   `macrounchained()` and `macrounchainedFocusGW()` produce 
     a `tar.gz` archive containing all the relevant input 
-    and output files of the simulation batch.
+    and output files of the simulation batch. This can be 
+    used as an archive by the user.
     
 *   The packages do not include any MACRO executable, and 
     instead use an existing MACRO or MACRO In FOCUS installation.
@@ -147,13 +155,16 @@ not work at all.
 Before you install the package, check in the 
 [DESCRIPTION](DESCRIPTION)-file what is the minimum version 
 of R needed to run this package (field "Depends", see 
-"R (>= ...)"). As I don't have time to test the package on 
-multiple R major versions, the package will generally require 
-the latest major-release at the time of testing the latest 
-(pre-)release of the package. If needed, the code can be 
-loaded as an R-script instead of installed as a package (see 
-below), and used on any R-version presumably compatible with 
-the code.
+"R (>= ...)"). For convenience, the minimum R version required 
+has been set to R >= 3.1, so that user with an old version 
+of R may still try to install and use the package. The package 
+has nonetheless not been tested on that version, but instead 
+on R 3.5.1 (at the time of writing this text). Some problems 
+may therefore occur on older versions.
+
+If needed, the code can be loaded as an R-script instead of 
+installed as a package (see below), and used on any 
+R-version presumably compatible with the code.
 
 
 
@@ -186,6 +197,7 @@ Open R graphical user interface for Windows. Click on the
 'Packages'-menu and select 'Install package(s) from local zip 
 file...'. Select the package `.zip` binary package that you just 
 downloaded, so that it is installed. 
+
 When done, type
 ```
 library("codeinfo)
@@ -359,7 +371,7 @@ help to get support from an experienced R programmer.
 Disclaimer
 ------------------------------------------------------------
 
-This tool is **not an official regulatory tool**.
+This tool is **not an official or officious regulatory tool**.
 
 It is **not endorsed** by [FOCUS DG SANTE][focusdgsante], 
 [SLU/CKB][ckb] or the author's [employer][kemi]. 
