@@ -34,7 +34,7 @@ Features
 ============================================================
 
 *   MACRO In FOCUS groundwater users just need to use one 
-    R command, `macrounchained::``macrounchainedFocusGW_ui()`.
+    R command, `macrounchained::macrounchainedFocusGW_ui()`.
     The command starts a text user interface that allows the 
     users to obtain a copy of example 
     Excel-files for the input-parameters, or to run 
@@ -61,7 +61,7 @@ Features
     analyse the results separately, or use their own R 
     functions to analyse and summarise simulation results 
     'on the fly'. An example for MACRO 5.2 is available 
-    here [inst\more_tests\test_GW_09_macro.r]()
+    here [https://github.com/julienmoeys/macrounchained/blob/master/inst/more_tests/test_GW_09_macro.r]()
     
 *   Several sets of substance properties can be simulated 
     in the same batch (up to 998 sets per batch). The sets 
@@ -83,7 +83,7 @@ Features
     and `macrounchainedFocusGW()`. The first is a generic 
     functions, the workhorse of this package, while the 
     second is designed for MACRO In FOCUS groundwater
-    simulations. `macrounchained::``macrounchainedFocusGW_ui()` 
+    simulations. `macrounchained::macrounchainedFocusGW_ui()` 
     is a simple text interface for `macrounchainedFocusGW()`.
     
 *   `macrounchainedFocusGW()` analyses on-the-fly the simulation 
@@ -104,7 +104,7 @@ Features
     The tests are "build-in" the package, 
     and they can be run each time an important change is 
     made to the package. The test results can be 
-    checked here: [https://github.com/julienmoeys/macrounchained/tree/master/inst/more_tests][]
+    checked here: [https://github.com/julienmoeys/macrounchained/tree/master/inst/more_tests]()
     
 *   As the interface of MACRO In FOCUS only allow the 
     parametrization of 1st-order metabolites, the package 
@@ -290,7 +290,7 @@ need to install the package [devtools][] first. It is
 available on CRAN and can be easily installed. Simply type 
 `install.packages("devtools")` in R command prompt. See also 
 the package 
-[README][https://cran.r-project.org/web/packages/devtools/readme/README.html] 
+[README](https://cran.r-project.org/web/packages/devtools/readme/README.html) 
 page.
 
 You can then install the development version of `codeinfo`, 
@@ -315,7 +315,7 @@ objects otherwise invisible to end-users; sourced-code may
 be accidentally modified by the user; lack of traceability), 
 but may be useful to some users, for example with restricted 
 possibilities to install new R packages, as a 
-[bootstrap][https://en.wikipedia.org/wiki/Bootstrapping].
+[bootstrap](https://en.wikipedia.org/wiki/Bootstrapping).
 
 First, open the following `.r`-file 
 https://raw.githubusercontent.com/julienmoeys/macrounchained/master/R/macrounchained.r 
