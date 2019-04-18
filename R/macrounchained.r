@@ -823,6 +823,7 @@ macrounchained <- function(
 #'@export 
 #'
 #'@importFrom stats na.omit
+#'@importFrom utils read.csv
 #'@importFrom utils write.csv
 #'@importFrom utils write.table
 #'@importFrom rmacrolite getRmlPar 
@@ -3908,6 +3909,7 @@ macrounchainedFocusGW.data.frame <- function(
 #'
 #'@export 
 #'
+#'@importFrom utils choose.files
 macrounchainedFocusGW_ui <- function(){
     if( !interactive() ){ 
         stop( "'macrounchainedFocusGW_ui()' can only be used in interactive mode" )
@@ -3979,7 +3981,7 @@ macrounchainedFocusGW_ui <- function(){
             # pattern     = "\\.xlsx$", 
             # replacement = "_copy.xlsx" ) 
         
-        xlsx_file_new <- choose.files(
+        xlsx_file_new <- utils::choose.files(
             default = "", 
             caption = "Save Excel-file as:",
             multi   = FALSE, 
