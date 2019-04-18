@@ -19,6 +19,7 @@ param <- data.frame(
     "transf_f"          = c(     NA,     NA,         NA ), 
     "g_as_per_ha"       = c(   1000,   1000, "1000|950" ), 
     "app_j_day"         = c(   119L,   119L,  "298|305" ), 
+    "f_int"             = 0, 
     "parfile"           = c(
         system.file( "par-files", 
             "chat_winCer_GW-X_900gHa_d182.par", 
@@ -33,9 +34,10 @@ param <- data.frame(
     stringsAsFactors    = FALSE ) 
 
 
-res <- macrounchainedFocusGW( 
-    s         = param, 
-    # parfile   = parfile, 
-    overwrite = TRUE, 
-    run       = FALSE ) 
+res <- macrounchained( 
+    s               = param, 
+    analyse         = macroutils2::macroutilsFocusGWConc, 
+    analyse_summary = macroutils2::macroutilsFocusGWConc_summary, 
+    overwrite       = TRUE, 
+    run             = FALSE ) 
 
