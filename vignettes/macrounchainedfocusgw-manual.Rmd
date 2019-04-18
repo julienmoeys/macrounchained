@@ -26,6 +26,42 @@ anonymise <- function(x){return(macrounchained:::.muc_anonymisePath(x))}
 
 
 
+Using the text user interface for macrounchainedFocusGW()
+------------------------------------------------------------
+
+If `macrounchained` is already installed on your computer, 
+and need to run MACRO In FOCUS groundwater simulations, you 
+can use the function `macrounchained::``macrounchainedFocusGW_ui()`, 
+and don't need to read the rest of this document.
+
+`macrounchained::``macrounchainedFocusGW_ui()` is a text-based 
+user interface for `macrounchainedFocusGW()`.
+
+With this interface the user can:
+*   Obtain a copy of the Excel example files for the input 
+    parameters (including a documentation of these parameters).
+*   Import an Excel file containing input parameters, as 
+    prepared by the user, and start `macrounchainedFocusGW()`, 
+    after a couple of simple questions.
+
+The user simply needs to start R and type the following command:
+
+```{r eval = FALSE}
+macrounchained::macrounchainedFocusGW_ui()
+``` 
+
+and then follow the instructions.
+
+Notice that the function requires the R package `readxl` to 
+be installed (for importing the parameters from an Excel file).
+It can be installed by typing:
+
+```{r eval = FALSE}
+install.packages( "readxl" ) 
+``` 
+
+
+
 Preliminary Note
 ------------------------------------------------------------
 
@@ -185,37 +221,6 @@ functions used by `macrounchained`.
 
 Running MACRO In FOCUS simulations with macrounchainedFocusGW()
 ============================================================
-
-Using the text user interface for macrounchainedFocusGW()
-------------------------------------------------------------
-
-The function `macrounchained::``macrounchainedFocusGW_ui()` 
-is a text-based user interface for `macrounchainedFocusGW()`.
-
-With this interface the user can:
-*   Obtain a copy of the Excel example files for the input 
-    parameters (including a documentation of these parameters).
-*   Import an Excel file containing input parameters, as 
-    prepared by the user, and start `macrounchainedFocusGW()`, 
-    after a couple of simple questions.
-
-The user simply needs to start R and type the following command:
-
-```{r eval = FALSE}
-macrounchained::macrounchainedFocusGW_ui()
-``` 
-
-and then follow the instructions.
-
-Notice that the function requires the R package `readxl` to 
-be installed (for importing the parameters from an Excel file).
-It can be installed by typing:
-
-```{r eval = FALSE}
-install.packages( "readxl" ) 
-``` 
-
-
 
 Preparing a table of substance properties and application patterns
 ------------------------------------------------------------
