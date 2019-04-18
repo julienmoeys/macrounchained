@@ -37,7 +37,7 @@ param <- data.frame(
 res <- macrounchained( 
     s               = param, 
     analyse         = macroutils2::macroutilsFocusGWConc, 
-    analyse_summary = macroutils2::macroutilsFocusGWConc_summary, 
+    analyse_summary = macroutilsFocusGWConc_summary, 
     overwrite       = TRUE, 
     run             = FALSE ) 
 
