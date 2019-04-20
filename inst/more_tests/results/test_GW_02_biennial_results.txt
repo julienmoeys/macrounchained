@@ -1,0 +1,269 @@
+<2019-04-19|10:52:21> Temporary log-file
+    %USERPROFILE%/AppData/Local/Temp/Rtmpc9R3j6/rml_log_290c528157ec.txt
+********************************************************************************
+<2019-04-19|10:52:21> Parametrise and run MACRO simulations
+********************************************************************************
+<2019-04-19|10:52:21> Fetch MACRO executables names and location
+<2019-04-19|10:52:22> Fetch MACRO version
+<2019-04-19|10:52:22> Check input parameter-table ('s')
+<2019-04-19|10:52:22> The parameter table ('s') contains soil/crop scenario
+<2019-04-19|10:52:22> * Look for scenario-templates and crop-parameters for
+    MACRO In FOCUS version '5.5.4'
+<2019-04-19|10:52:22> * Import base information on sites/scenario
+<2019-04-19|10:52:22> * Import crop parameter values
+<2019-04-19|10:52:22> * Import crop parameter map
+<2019-04-19|10:52:22> * Match scenario(s) and crop(s) requested by the user
+    with FOCUS scenario and crops
+<2019-04-19|10:52:22> * Find-out the relevant soil/scenario-template
+    par-file(s)
+<2019-04-19|10:52:22> Import par-file id 1
+    (%USERPROFILE%/Documents/R/win-library/3.5/macrounchained/focus_scenario/5.5.4/
+    soils/chateaudun.par)
+<2019-04-19|10:52:22> Find-out order of simulations (metabolite(s)
+    transformation pathway)
+<2019-04-19|10:52:22> Prepare a list of operations (incl. metabolite(s)
+    intermediate output)
+<2019-04-19|10:52:22> Identified 1 simulations for 1 substances (0
+    intermediate-outputs)
+<2019-04-19|10:52:22> Substance properties (updated):
+        soil     crop id name kfoc  nf dt50 dt50_ref_temp dt50_pf exp_temp_resp
+1 chateaudun potatoes  1 GW-D   60 0.9   20            20       2         0.079
+  exp_moist_resp crop_upt_f diff_coef parent_id g_per_mol transf_f g_as_per_ha
+1           0.49        0.5     5e-10        NA       300       NA        1000
+  app_j_day years_interval f_int focus_soil focus_crop focus_index parfile_id
+1       119              2     0 Chateaudun   Potatoes           8          1
+  as_id met_level f_conv has_met
+1     1         0     NA   FALSE
+<2019-04-19|10:52:22> Table of par-file(s):
+[1] 1
+<2019-04-19|10:52:22> Operations register:
+  id run_id is_as is_met is_inter    par_file       drivingfile output_macro
+1  1      1  TRUE  FALSE    FALSE rml_001.par rml_000_inter.bin MACRO001.BIN
+  output_rename      indump_rename        summary_file
+1   rml_001.bin rml_001_indump.tmp rml_001_summary.txt
+<2019-04-19|10:52:22> All output-files will be now saved in C:/swash/macro
+<2019-04-19|10:52:22> Log-file continues in C:/swash/macro/rml_001-001_log.txt
+<2019-04-19|10:52:22> Exporting updated substance parameters:
+    rml_001-001_s_updated.csv
+<2019-04-19|10:52:22> Exporting operation register:
+    rml_001-001_operation_register.csv
+<2019-04-19|10:52:22> Exporting par-file template(s):
+<2019-04-19|10:52:22> * parfile id 1 (rml_001-001_par_template_id1.par)
+================================================================================
+<2019-04-19|10:52:22> Parametrising, exporting par-files and running
+    simulations
+================================================================================
+--------------------------------------------------------------------------------
+<2019-04-19|10:52:22> Simulation 1/1
+--------------------------------------------------------------------------------
+<2019-04-19|10:52:22> Substance GW-D. id 1, run id 1
+<2019-04-19|10:52:22> FOCUS: Chateaudun; Potatoes; Irrigated
+<2019-04-19|10:52:22> Set substance properties:
+<2019-04-19|10:52:22> * Run id
+<2019-04-19|10:52:22> * Application rate and date (Julian day) and crop
+    interception
+<2019-04-19|10:52:22> * Simulation type
+<2019-04-19|10:52:22> * Simulation identified as: parent
+<2019-04-19|10:52:22> * Sorption parameters
+<2019-04-19|10:52:22> * Degradation parameters
+<2019-04-19|10:52:22> * Crop uptake factor
+<2019-04-19|10:52:22> * Diffusion coefficient
+<2019-04-19|10:52:22> * Set FOCUS-crop parameters
+<2019-04-19|10:52:22> * Information section (end of par-file)
+<2019-04-19|10:52:22> Exporting the par-file (rml_001.par)
+<2019-04-19|10:52:22> Generate indump.tmp and run MACRO simulation
+<2019-04-19|11:57:41> Rename indump.tmp to rml_001_indump.tmp
+<2019-04-19|11:57:41> MACRO runtime 65.29 min
+<2019-04-19|11:57:41> Rename MACRO output from MACRO001.BIN to rml_001.bin
+<2019-04-19|11:57:41> Analyse simulation results:
+$info_general
+  conc_percentile rank_period1 rank_period2 method nb_sim_yrs_used
+1              80           16           17  focus              40
+  nb_yrs_per_period nb_yrs_warmup neg_conc_set_to_0
+1                 2             6              TRUE
+
+$info_period
+   period_index from_year to_year
+1             1      1907    1908
+2             2      1909    1910
+3             3      1911    1912
+4             4      1913    1914
+5             5      1915    1916
+6             6      1917    1918
+7             7      1919    1920
+8             8      1921    1922
+9             9      1923    1924
+10           10      1925    1926
+11           11      1927    1928
+12           12      1929    1930
+13           13      1931    1932
+14           14      1933    1934
+15           15      1935    1936
+16           16      1937    1938
+17           17      1939    1940
+18           18      1941    1942
+19           19      1943    1944
+20           20      1945    1946
+
+$water_target_layer_by_period
+   period_index   mm_mic mm_mac   mm_tot
+1             1 507.2352      0 507.2352
+2             2 602.9543      0 602.9543
+3             3 686.7873      0 686.7873
+4             4 695.5554      0 695.5554
+5             5 653.7106      0 653.7106
+6             6 440.8784      0 440.8784
+7             7 605.8270      0 605.8270
+8             8 312.3090      0 312.3090
+9             9 409.3463      0 409.3463
+10           10 387.3422      0 387.3422
+11           11 500.7897      0 500.7897
+12           12 711.4638      0 711.4638
+13           13 610.8130      0 610.8130
+14           14 603.7133      0 603.7133
+15           15 595.7576      0 595.7576
+16           16 554.1674      0 554.1674
+17           17 476.5689      0 476.5689
+18           18 311.0383      0 311.0383
+19           19 397.7588      0 397.7588
+20           20 555.8113      0 555.8113
+
+$solute_target_layer_by_period
+   period_index mg_per_m2_mic mg_per_m2_mac mg_per_m2_tot     ug_per_L
+1             1  2.481781e-02             0  2.481781e-02 4.892761e-02
+2             2  1.693808e-02             0  1.693808e-02 2.809180e-02
+3             3  8.283604e-03             0  8.283604e-03 1.206138e-02
+4             4  2.780463e-03             0  2.780463e-03 3.997472e-03
+5             5  1.773526e-03             0  1.773526e-03 2.713015e-03
+6             6  5.228259e-04             0  5.228259e-04 1.185873e-03
+7             7  5.997208e-03             0  5.997208e-03 9.899209e-03
+8             8  2.090632e-03             0  2.090632e-03 6.694114e-03
+9             9  2.907037e-05             0  2.907037e-05 7.101655e-05
+10           10  1.834605e-05             0  1.834605e-05 4.736393e-05
+11           11  3.015116e-04             0  3.015116e-04 6.020723e-04
+12           12  6.077187e-03             0  6.077187e-03 8.541807e-03
+13           13  7.968472e-03             0  7.968472e-03 1.304568e-02
+14           14  5.212323e-03             0  5.212323e-03 8.633772e-03
+15           15  4.183132e-02             0  4.183132e-02 7.021534e-02
+16           16  1.625023e-02             0  1.625023e-02 2.932368e-02
+17           17  5.346628e-04             0  5.346628e-04 1.121900e-03
+18           18  5.390580e-05             0  5.390580e-05 1.733092e-04
+19           19  9.033440e-03             0  9.033440e-03 2.271085e-02
+20           20  4.880294e-03             0  4.880294e-03 8.780487e-03
+
+$water_perc_by_period
+   period_index       mm
+1             1 502.5858
+2             2 594.1075
+3             3 691.0754
+4             4 695.1106
+5             5 659.3254
+6             6 439.0747
+7             7 612.1592
+8             8 312.0132
+9             9 408.6323
+10           10 387.8647
+11           11 497.0073
+12           12 707.0425
+13           13 609.2744
+14           14 615.3809
+15           15 594.7422
+16           16 548.3994
+17           17 474.5225
+18           18 321.0303
+19           19 391.8887
+20           20 559.7236
+
+$conc_target_layer
+    ug_per_L ug_per_L_rnd index_period1 index_period2 f_solute_mac f_solute_mic
+1 0.02540133       0.0254            19             2            0            1
+
+================================================================================
+<2019-04-19|11:57:41> Post-processing operations
+================================================================================
+--------------------------------------------------------------------------------
+<2019-04-19|11:57:41> Information (traceability & reproducibility)
+--------------------------------------------------------------------------------
+<2019-04-19|11:57:41> Call from package: 'macrounchained'
+<2019-04-19|11:57:41> Model: FOCUS_MACRO_5.5.4; core-model version: v. 5 (=
+    5.2)
+<2019-04-19|11:57:41> Information on system, packages and executables
+$r
+   variable                        value
+1        OS Windows 10 x64 (build 17134)
+2    system              x86_64, mingw32
+3 R_version R version 3.5.1 (2018-07-02)
+4       GUI                         Rgui
+
+$packages
+         package version revision date_packaged
+1 macrounchained  0.11.2  1fc0b86    2019-04-18
+2     rmacrolite   0.9.7  9a38321    2019-04-15
+3    macroutils2   2.2.3  ef26fd7    2019-04-17
+4       codeinfo   0.1.2  c91f2f2    2019-04-17
+                checksums_checksum
+1 41333ffa6e00554a420dbf2894d223a3
+2 945f371b037b8aa18b057b82096ee0fd
+3 6356c0f3f25b6abd9402e6546c5ab0ef
+4 e028e1e8b0d2f956d6baeab0d51cf9c4
+
+$files
+                         files                    md5_checksums
+1                    adodb.dll c0f0651ac9610796599e87fbb3142802
+2  AxInterop.MSFlexGridLib.dll ec00ebacae2846394a22eb67f394a0ea
+3                     conv.exe 921d18f1097802c6f4bfde51f66f37d6
+4               exeparfile.exe 29651b9fbbb7ad8fef04d2b7b0056ac5
+5         Interop.MSDBGrid.dll b78fb118568484eff04030e52ecc4040
+6    Interop.MSFlexGridLib.dll 967cb46d107518c79433f077de3620fa
+7           Interop.Threed.dll 149a47480822e743460efbfac396a2c0
+8                      m2t.exe c9f39e7986008d5b22f062a7253bd36c
+9              MACRO_FOCUS.exe 5ae35eecbdd04a021f2a3cbbd54f2b1c
+10                  MACRO5.dll 1b8f57d0e3746789c4f585b911a3a84c
+11            Macro52Model.exe 35f9cd21522402dc3f0dda2e4e6b814e
+
+$objects
+             name                    md5_checksums    class    environment
+1         analyse 0192420d2b2ecea4fef91b7736935cc8 function    macroutils2
+2 analyse_summary 93c7497ef335b47b01f485fd3af6176c function macrounchained
+
+<2019-04-19|11:57:41> Original call:
+<2019-04-19|11:57:42> macrounchainedFocusGW(s = param, overwrite = TRUE, run =
+    TRUE)
+--------------------------------------------------------------------------------
+<2019-04-19|11:57:42> Final step(s)
+--------------------------------------------------------------------------------
+<2019-04-19|11:57:42> Output summary (rml_001-001_summary.txt):
+  id run_id name   ug_per_L ug_per_L_rnd index_period1 index_period2
+1  1      1 GW-D 0.02540133       0.0254            19             2
+  perc_period1_mm perc_period2_mm  output_type
+1        391.8887        594.1075 target_layer
+<2019-04-19|11:57:42> Formatting output
+<2019-04-19|11:57:42> Internal clean-up
+<2019-04-19|11:57:42> Total operation time at this point: 65.335 mins
+<2019-04-19|11:57:42> FINAL STEP: Calculate md5-checksums for generated files
+    (rml_001-001_md5.txt) and archive them (rml_001-001_archive.tar.gz)
+********************************************************************************
+<2019-04-19|11:57:43> Benchmark (par-file(s))
+********************************************************************************
+<2019-04-19|11:57:43> Substance: GW-D | id: 1 | Is inter: FALSE)
+<2019-04-19|11:57:43> Par-file comparison:
+<2019-04-19|11:57:43> * Number of rows. Expected 2290, obtained 2290 (EQUAL)
+<2019-04-19|11:57:43> * Number of rows with differences 1 (known: 1) (EQUAL)
+********************************************************************************
+<2019-04-19|11:57:43> Benchmark (results)
+********************************************************************************
+<2019-04-19|11:57:43> Expected results (water):
+  name perc_period1_mm perc_period2_mm
+1 GW-D        391.8886        594.1076
+<2019-04-19|11:57:43> Expected results (solute):
+  name ug_per_L_rnd index_period1 index_period2
+1 GW-D       0.0254            19             2
+<2019-04-19|11:57:43> Obtained results (water and solute):
+  id run_id name   ug_per_L ug_per_L_rnd index_period1 index_period2
+1  1      1 GW-D 0.02540133       0.0254            19             2
+  perc_period1_mm perc_period2_mm  output_type
+1        391.8887        594.1075 target_layer
+<2019-04-19|11:57:44> Differences in percolation: 0 to 0 % of the expected
+    percolation
+<2019-04-19|11:57:44> Test conclusions (solute): ALL EQUAL
+<2019-04-19|11:57:44> END
