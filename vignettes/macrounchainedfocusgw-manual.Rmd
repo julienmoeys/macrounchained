@@ -31,10 +31,10 @@ Using the text user interface for macrounchainedFocusGW()
 
 If `macrounchained` is already installed on your computer, 
 and need to run MACRO In FOCUS groundwater simulations, you 
-can use the function `macrounchained::``macrounchainedFocusGW_ui()`, 
+can use the function `macrounchained::macrounchainedFocusGW_ui()`, 
 and don't need to read the rest of this document.
 
-`macrounchained::``macrounchainedFocusGW_ui()` is a text-based 
+`macrounchained::macrounchainedFocusGW_ui()` is a text-based 
 user interface for `macrounchainedFocusGW()`.
 
 With this interface the user can:
