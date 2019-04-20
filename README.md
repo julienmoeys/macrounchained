@@ -338,6 +338,115 @@ downloaded. See above the remark on the path separator.
 
 
 
+Swedish and Norwegian MACRO scenario
+------------------------------------------------------------
+
+The five Swedish and Norwegian MACRO scenario (Krusenberg, 
+Önnestad, Näsbygård, Heia and Rustad) require specific 
+climate-files that are not delivered with MACRO In FOCUS. 
+These files are not included either in `macrounchained`, and 
+need to be obtained separately. See the Northern Zone Guidance 
+Document for more information.
+
+On the other hand, it is not necessary to have the Access 
+database with the Norwegian MACRO scenario (Heia and Rustad), 
+as their parameters are included in `macrounchained`. More 
+generally, `macrounchained` does not make use of MACRO In FOCUS 
+Access-files.
+
+
+
+Benchmarks
+============================================================
+
+In order to make sure that the package results are conform 
+to the output of MACRO In FOCUS 5.5.4 or MACRO 5.2, a number 
+of benchmarks have been prepared. In these benchmarks, the 
+output of `macrounchainedFocusGW()` is compared to the output 
+of MACRO In FOCUS (PECgw and water percolation).
+
+These benchmarks can be run at anytime, and also aim at detecting 
+mistakes that could be introduced in the code when it is further 
+develloped (for maintenance or new features).
+
+In some cases it is was possible to compare the output of 
+`macrounchainedFocusGW()` with MACRO In FOCUS (secondary 
+metabolites), and the benchmarks is only used to detect 
+accidental drift from the original output.
+
+In these benchmarks, the parameter files (`.par`-files) produced 
+by `macrounchainedFocusGW()` or `macrounchained()` are 
+compared to those produced by MACRO In FOCUS 5.5.4 or MACRO 
+5.2. Some differences in the parameter files have been noticed, 
+that are thought to be without consequences on the output. 
+The benchmark make sure there are no more differences than 
+what is expected.
+
+For reasons that are not completely clear, some small differences 
+have been noted in the output files. They could be due to 
+a difference in the preparation of the `indump.tmp`-file 
+produced by MACRO In FOCUS 5.5.4 or MACRO 5.2 and that 
+produced by the `exeparfile.exe`. Small differences may 
+also be possible in the way the results are aggregated for 
+each "period" (yearly flows when the pesticide is applied 
+every year). In the benchmarks, the PECgw 
+produced by `macrounchainedFocusGW()` are the same as those 
+produced by MACRO In FOCUS 5.5.4, when rounded to three significant 
+figures, but a case has been observed where the third digit 
+of the PECgw differed from that of MACRO In FOCUS 5.5.4. In 
+the later case, it was observed that several years had very 
+close yearly-average concentrations, resulting in a different 
+ranking that that obtained by  MACRO In FOCUS 5.5.4.
+
+The benchmarks and their results are available here 
+[https://github.com/julienmoeys/macrounchained/blob/master/inst/more_tests/test_GW_09_macro.r]()
+
+
+
+Official FOCUS "version control"
+------------------------------------------------------------
+
+*   Châteaudun-scenario, winter cereals, application every 
+    year with substances "GW-A", "GW-B", "GW-C", "Met_C" and 
+    "GW-D". "Met_C" is a primary metabolite of "GW-C". All 
+    these substances are so called FOCUS dummy substances.
+    
+*   Châteaudun-scenario, potatoes, application every 
+    third year with substance "GW-D".
+
+
+
+Other benchmarks
+------------------------------------------------------------
+
+*   Châteaudun-scenario, potatoes, application every 
+    second year with substance "GW-D".
+    
+*   Châteaudun-scenario, winter cereals, two applications 
+    per year, every year, with substance "GW-A".
+    
+*   Châteaudun-scenario, winter cereals, application every 
+    year with a new dummy substance M, a primary metabolite 
+    "Met-M1" and a secondary metabolite "Met-M2".
+    
+*   The three Swedish scenario (non FOCUS), Krusenberg, 
+    Önnestad and Näsbygård, with spring oilseed rape, 
+    grass and pome/ stone fruits, respectively, and substances 
+    "GW-A", "GW-B" and "GW-C", respectively.
+    
+*   The two Norwegian scenario (non FOCUS), Rustad and Heia, 
+    with spring cereals and legumes, respectively, and 
+    substances "GW-A" and "GW-B", respectively.
+    
+*   Default simulation in MACRO 5.2, two year simulations, 
+    with the default crop and an application every year. 
+    "GW-C" and "Met_C" werer simulated, and their overall 
+    average leaching concentration was calculated. Notice 
+    that metabolites cannot be parametrised in MACRO 5.2, 
+    so the comparison only concerns the parent.
+
+
+
 About
 ============================================================
 
