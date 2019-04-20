@@ -61,7 +61,7 @@ Features
     analyse the results separately, or use their own R 
     functions to analyse and summarise simulation results 
     'on the fly'. An example for MACRO 5.2 is available 
-    here [https://github.com/julienmoeys/macrounchained/blob/master/inst/more_tests/test_GW_09_macro.r]()
+    here https://github.com/julienmoeys/macrounchained/blob/master/inst/more_tests/test_GW_09_macro.r
     
 *   Several sets of substance properties can be simulated 
     in the same batch (up to 998 sets per batch). The sets 
@@ -104,7 +104,7 @@ Features
     The tests are "build-in" the package, 
     and they can be run each time an important change is 
     made to the package. The test results can be 
-    checked here: [https://github.com/julienmoeys/macrounchained/tree/master/inst/more_tests]()
+    checked here: https://github.com/julienmoeys/macrounchained/tree/master/inst/more_tests
     
 *   As the interface of MACRO In FOCUS only allow the 
     parametrization of 1st-order metabolites, the package 
@@ -173,7 +173,7 @@ Installing the package from Windows binaries
 
 Windows binary-installer (a `.zip` file) and source tar of the 
 package (a `.tar.gz` file) can be downloaded from the following 
-address: https://rpackages.julienmoeys.info/macrounchained/.
+address: https://rpackages.julienmoeys.info/macrounchained/ 
 
 Choose both the binary-installer for `macrounchained`, 
 `rmacrolite`, `macroutils2` and `codeinfo`.
@@ -399,7 +399,7 @@ close yearly-average concentrations, resulting in a different
 ranking that that obtained by  MACRO In FOCUS 5.5.4.
 
 The benchmarks and their results are available here 
-[https://github.com/julienmoeys/macrounchained/blob/master/inst/more_tests/test_GW_09_macro.r]()
+https://github.com/julienmoeys/macrounchained/tree/master/inst/more_tests
 
 
 
