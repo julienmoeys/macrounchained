@@ -37,7 +37,7 @@ pdu_detach( pkgName = pkgName )
 pdu_pkgDescription( 
     pkgName     = pkgName, 
     pkgDir      = pkgDir, 
-    pkgVersion  = "0.11.2", 
+    pkgVersion  = "0.12.0", 
     pkgDepends  = NULL, 
     pkgImports  = c( "rmacrolite", "macroutils2", "codeinfo", 
         "utils", "stats" ), 

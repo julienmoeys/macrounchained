@@ -1,6 +1,14 @@
     
     package: 'macrounchained'
 
+CHANGES IN VERSION 0.12.0
+    
+    2019/04/30  Internal re-organisation of the 
+        code inside 'macrounchained()' in order to make 
+        the code more readable. Changes:
+        
+        - Checks of 's' table in a separate internal function.
+    
 CHANGES IN VERSION 0.11.2
     
     2019/04/18  Updated vignette and README.md.
