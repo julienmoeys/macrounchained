@@ -941,13 +941,15 @@ macrounchained.data.frame <- function(
         macro_version = macro_version, 
         parfile       = parfile )   
     
-    metabolites       <- s0[[ "metabolites" ]]
-    scenario_provided <- s0[[ "scenario_provided" ]]
-    parfile_in_s      <- s0[[ "parfile_in_s" ]]
+    metabolites          <- s0[[ "metabolites" ]]
+    scenario_provided    <- s0[[ "scenario_provided" ]]
+    parfile_in_s         <- s0[[ "parfile_in_s" ]]
     
     if( nrow( s0[[ "parfile_table" ]] ) > 0 ){
-        parfile_table <- s0[[ "parfile_table" ]]
+        parfile_table    <- s0[[ "parfile_table" ]]
     }   
+    
+    macroinfocus_version <- s0[[ "macroinfocus_version" ]]
     
     s                 <- s0[[ "s" ]]
     rm( s0 )
@@ -3996,7 +3998,8 @@ AsIs_to_text <- function( x ){
         };  rm( test_focus_model )
         
     }else{
-        scenario_provided <- FALSE 
+        scenario_provided    <- FALSE 
+        macroinfocus_version <- character(0)
     }   
     
     
@@ -4187,12 +4190,13 @@ AsIs_to_text <- function( x ){
     
     
     out <- list(
-        "s"                 = s, 
-        "metabolites"       = metabolites, 
-        "scenario_provided" = scenario_provided, 
-        "n"                 = n, 
-        "parfile_in_s"      = parfile_in_s, 
-        "parfile_table"     = parfile_table ) 
+        "s"                    = s, 
+        "metabolites"          = metabolites, 
+        "scenario_provided"    = scenario_provided, 
+        "n"                    = n, 
+        "parfile_in_s"         = parfile_in_s, 
+        "parfile_table"        = parfile_table, 
+        "macroinfocus_version" = macroinfocus_version ) 
     
     return( out ) 
 }   
