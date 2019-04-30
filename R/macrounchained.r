@@ -944,7 +944,11 @@ macrounchained.data.frame <- function(
     metabolites       <- s0[[ "metabolites" ]]
     scenario_provided <- s0[[ "scenario_provided" ]]
     parfile_in_s      <- s0[[ "parfile_in_s" ]]
-    parfile_table     <- s0[[ "parfile_table " ]]
+    
+    if( nrow( s0[[ "parfile_table " ]] ) > 0 ){
+        parfile_table <- s0[[ "parfile_table " ]]
+    }   
+    
     s                 <- s0[[ "s" ]]
     rm( s0 )
     
@@ -4177,6 +4181,8 @@ AsIs_to_text <- function( x ){
         rownames( parfile_table ) <- NULL 
         
         s <- s[, colnames( s ) != "parfile" ] 
+    }else{
+        parfile_table <- data.frame()
     }   
     
     
