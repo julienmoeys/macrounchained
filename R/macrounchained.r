@@ -2149,9 +2149,9 @@ macrounchained.data.frame <- function(
         values = list( s_updated_file ), 
         logfiles = log_file, append = TRUE ) 
     
-    utils::write.csv( x = s, file = file.path( modelVar[["path"]], 
-        s_updated_file ), row.names = FALSE, 
-        fileEncoding = "UTF-8" )
+    utils::write.csv( x = AsIs_to_text( s ), 
+        file = file.path( modelVar[["path"]], s_updated_file ), 
+        row.names = FALSE, fileEncoding = "UTF-8" )
     
     
     
@@ -2161,9 +2161,9 @@ macrounchained.data.frame <- function(
         values = list( operation_register_file ), 
         logfiles = log_file, append = TRUE ) 
     
-    utils::write.csv( x = operation_register, file = file.path( modelVar[["path"]], 
-        operation_register_file ), row.names = FALSE, 
-        fileEncoding = "UTF-8" )
+    utils::write.csv( x = AsIs_to_text( operation_register ), 
+        file = file.path( modelVar[["path"]], operation_register_file ), 
+        row.names = FALSE, fileEncoding = "UTF-8" )
     
     
     
@@ -4112,3 +4112,41 @@ macrounchainedFocusGW_ui <- function(){
     return( invisible( out ) )
 }   
 
+
+
+### Convert 'AsIs' columns in a table into text variables
+### The values in cells containing multiple values are then 
+### separated by a vertical bar.
+AsIs_to_text <- function( x ){
+    x <- lapply(
+        X   = 1:ncol( x ), 
+        FUN = function( j ){
+            if( "AsIs" %in% class( x[, j ] ) ){
+                x_j <- unlist( lapply(
+                    X   = 1:nrow( x ), 
+                    FUN = function( i ){
+                        return( paste( x[ i, j ][[ 1L ]], 
+                            collapse = "|" ) ) 
+                    }   
+                ) ) 
+                
+                x_j <- data.frame( "noname" = x_j, 
+                    stringsAsFactors = FALSE )
+                
+                colnames( x_j ) <- colnames( x )[ j ] 
+            }else{
+                x_j <- x[, j, drop = FALSE ]
+            }   
+            
+            return( x_j )
+        }   
+    )   
+    
+    x <- do.call( what = "cbind", args = x ) 
+    
+    return( x ) 
+}   
+
+    # tmp <- data.frame( a = 1:2, b = I( list( c(3, 4), 5 ) ) )
+    # AsIs_to_text( tmp )
+    # class( AsIs_to_text( tmp )[,2] )
