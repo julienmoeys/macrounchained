@@ -946,7 +946,7 @@ macrounchained.data.frame <- function(
     parfile_in_s      <- s0[[ "parfile_in_s" ]]
     
     if( nrow( s0[[ "parfile_table " ]] ) > 0 ){
-        parfile_table <- s0[[ "parfile_table " ]]
+        parfile_table <- s0[[ "parfile_table" ]]
     }   
     
     s                 <- s0[[ "s" ]]
