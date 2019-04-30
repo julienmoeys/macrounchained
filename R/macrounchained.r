@@ -945,7 +945,7 @@ macrounchained.data.frame <- function(
     scenario_provided <- s0[[ "scenario_provided" ]]
     parfile_in_s      <- s0[[ "parfile_in_s" ]]
     
-    if( nrow( s0[[ "parfile_table " ]] ) > 0 ){
+    if( nrow( s0[[ "parfile_table" ]] ) > 0 ){
         parfile_table <- s0[[ "parfile_table" ]]
     }   
     
