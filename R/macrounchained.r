@@ -950,8 +950,9 @@ macrounchained.data.frame <- function(
     }   
     
     macroinfocus_version <- s0[[ "macroinfocus_version" ]]
+    id_range             <- s0[[ "id_range" ]]
     
-    s                 <- s0[[ "s" ]]
+    s                    <- s0[[ "s" ]]
     rm( s0 )
     
     
@@ -4196,7 +4197,8 @@ AsIs_to_text <- function( x ){
         "n"                    = n, 
         "parfile_in_s"         = parfile_in_s, 
         "parfile_table"        = parfile_table, 
-        "macroinfocus_version" = macroinfocus_version ) 
+        "macroinfocus_version" = macroinfocus_version, 
+        "id_range"             = id_range ) 
     
     return( out ) 
 }   
