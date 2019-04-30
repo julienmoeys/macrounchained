@@ -934,328 +934,19 @@ macrounchained.data.frame <- function(
         verbose = verbose, log_width = log_width, 
         logfiles = temp_log, append = TRUE )
     
-    if( !(focus_mode %in% c( "no", "gw" )) ){
-        stop( sprintf( 
-            "Argument 'focus_mode' can either be 'no' or 'gw' (currently %s)", 
-            focus_mode ) )
-    }   
+    # INSERT .muc_check_s() HERE
+    s0 <- .muc_check_s( 
+        s             = s, 
+        focus_mode    = focus_mode, 
+        macro_version = macro_version, 
+        parfile       = parfile )   
     
-    #   List of compulsory columns in s
-    columns_subst <- c( "id", "kfoc", "nf", "dt50", 
-        "dt50_ref_temp", "dt50_pf", "exp_temp_resp", 
-        "exp_moist_resp", "crop_upt_f", "diff_coef" ) # "name", 
-    
-    #   Columns required for running metabolites
-    columns_met <- c( "parent_id", "g_per_mol", "transf_f" )
-    
-    #   Columns with applied dose and application Julian day
-    #   (also always needed)
-    columns_appln <- c( "g_as_per_ha", "app_j_day", "f_int" )
-    
-    #   Convert from "tibble" to pure data.frame
-    #   (if imported from Excel)
-    if( any(c( "tbl_df", "tbl" ) %in% class(s)) ){
-        s <- as.data.frame( s ) 
-    }   
-    
-    #   Test s and its columns
-    if( !("data.frame" %in% class(s)) ){
-        stop( sprintf( 
-            "'s' must be a data.frame. Now class %s", 
-            paste( class(s), collapse = ", " ) ) ) 
-    }   
-    
-    if( focus_mode == "gw" ){
-        columns_appln <- c( columns_appln, "years_interval" )
-        
-        if( !("years_interval" %in% colnames( s )) ){
-            s <- data.frame( s, "years_interval" = 1L, 
-                stringsAsFactors = FALSE )
-        }   
-    }   
-    
-    
-    
-    #   Check if soil and crop scenario are given
-    column_scen <- c( "soil", "crop" )
-    scenario_provided <- column_scen %in% colnames( s )
-    
-    if( any( scenario_provided ) ){
-        if( !all( scenario_provided ) ){
-            stop( sprintf(
-                "The column '%s' is provided in 's', while '%s' is not. Provide either both columns or none of them.", 
-                column_scen[  scenario_provided ], 
-                column_scen[ !scenario_provided ] ) ) 
-        }   
-        
-        scenario_provided <- TRUE 
-        
-        if( !missing( parfile ) ){
-            stop( "The columns 'soil' and 'crop' are provided in 's', while argument 'parfile' is also given. Use either or but not both." )
-        }   
-        
-        if( "parfile" %in% colnames( s ) ){
-            stop( "The columns 'soil' and 'crop' are provided in 's', as well as a column 'parfile'. Use either or but not both." )
-        }   
-        
-        #   Check that none of the required scenario column contains NA
-        #   (application pattern)
-        for( i in 1:length( column_scen ) ){
-            test_class <- "character" %in% class( s[, column_scen[ i ] ] ) 
-            
-            if( !test_class ){
-                stop( sprintf( 
-                    "Column '%s' in 's' must be of class 'character'. Now %s", 
-                    column_scen[ i ], 
-                    paste( class( s[, column_scen[ i ] ] ), 
-                        collapse = " " )
-                ) ) 
-            }   
-            
-            rm( test_class ) 
-            
-            if( any( is.na( unlist( s[, column_scen[ i ] ] ) ) ) ){ 
-                          # unlist() required here for AsIs columns
-                stop( sprintf( "NA-values detected in s[,'%s']. Missing values not allowed.", 
-                    column_scen[ i ] 
-                ) ) 
-            }   
-        };  rm( i )
-        
-        if( focus_mode == "no" ){
-            stop( "The argument 'focus_mode' cannot be 'no' when the columns 'soil' and 'crop' are provided in 's'." )
-        }   
-        
-        test_focus_model <- grepl( 
-            x       = tolower( macro_version[ "name" ] ), 
-            pattern = "focus", 
-            fixed   = TRUE )
-        
-        if( !test_focus_model ){
-            stop( sprintf( 
-                "The model name ('%s') does not seems to be a FOCUS model, while the columns 'soil' and 'crop' are provided in 's'.", 
-                macro_version[ "name" ] ) ) 
-            
-        }else{
-            macroinfocus_version <- strsplit( 
-                x     = macro_version[ "name" ], 
-                split = "_", 
-                fixed = TRUE )[[ 1L ]]
-            
-            macroinfocus_version <- 
-                macroinfocus_version[ length( macroinfocus_version ) ]
-            
-            macroinfocus_version0 <- gsub( 
-                x           = macroinfocus_version, 
-                pattern     = ".", 
-                replacement = "", 
-                fixed       = TRUE )
-            
-            macroinfocus_version0 <- gsub( 
-                x           = macroinfocus_version0, 
-                pattern     = "-", 
-                replacement = "", 
-                fixed       = TRUE )
-            
-            suppressWarnings( test_macroinfocus_version <- 
-                is.na( try( as.numeric( macroinfocus_version0 ) ) ) )
-            
-            if( test_macroinfocus_version ){ 
-                stop( sprintf( 
-                    "Failed to extract MACRO In FOCUS version from the name '%s'.", 
-                    macro_version[ "name" ] ) ) 
-            }   
-            
-            rm( macroinfocus_version0 )
-            
-        };  rm( test_focus_model )
-        
-    }else{
-        scenario_provided <- FALSE 
-    }   
-    
-    
-    
-    test_columns <- c( columns_subst, columns_appln ) %in% 
-        colnames( s )
-    
-    if( any( !test_columns ) ){
-        stop( sprintf( 
-            "Some compulsory columns are missing in 's': %s", 
-            paste( c( columns_subst, columns_appln )[ !test_columns ], 
-                collapse = ", " ) ) ) 
-    };  rm( test_columns )
-    
-    test_met_columns <- columns_met %in% colnames( s ) 
-    
-    metabolites <- ifelse( test = any( test_met_columns ), 
-        yes = TRUE, no = FALSE )
-    
-    if( metabolites & (!all(test_met_columns)) ){
-        stop( sprintf( 
-            "Some columns related to metabolites are given in 's' while other are missing: %s", 
-            paste( columns_met[ !test_met_columns ], 
-                collapse = ", " ) ) ) 
-    };  rm( test_met_columns )
-    
-    
-    
-    #   Check that none of the required column contains NA
-    #   (substance properties)
-    for( i in 1:length( columns_subst ) ){
-        if( any( is.na( s[, columns_subst[ i ] ] ) ) ){ 
-            stop( sprintf( "NA-values detected in s[,'%s']. Missing values not allowed.", 
-                columns_subst[ i ] 
-            ) ) 
-        }   
-        
-        if( !all( is.numeric( s[, columns_subst[ i ] ] ) ) ){ 
-            stop( sprintf( "Non-numeric values detected in s[,'%s'].", 
-                columns_subst[ i ] 
-            ) ) 
-        }   
-    };  rm( i )
-    
-    
-    
-    #   Check that none of the required column contains NA
-    #   (application pattern)
-    for( i in 1:length( columns_appln ) ){
-        test_class <- any( c( "AsIs", "list", "character", 
-            "numeric", "integer" ) %in% class( s[, columns_appln[ i ] ] ) )
-        
-        if( !test_class ){
-            stop( sprintf( 
-                "Column '%s' in 's' must be of class 'AsIs', 'list', 'numeric' or 'character'. Now %s", 
-                columns_appln[ i ], 
-                paste( class( s[, columns_appln[ i ] ] ), 
-                    collapse = " " )
-            ) ) 
-            
-        }else{
-            s[[ columns_appln[ i ] ]] <- .muc_vbar_to_numeric( 
-                x = s[, columns_appln[ i ] ] ) 
-        }   
-        
-        rm( test_class ) 
-        
-        if( any( is.na( unlist( s[, columns_appln[ i ] ] ) ) ) ){ 
-                      # unlist() required here for AsIs columns
-            stop( sprintf( "NA-values detected in s[,'%s']. Missing values not allowed.", 
-                columns_appln[ i ] 
-            ) ) 
-        }   
-        
-        if( !all( is.numeric( unlist( s[, columns_appln[ i ] ] ) ) ) ){ 
-            stop( sprintf( "Non-numeric values detected in s[,'%s'].", 
-               columns_appln[ i ] 
-            ) ) 
-        }   
-    };  rm( i )
-    
-    
-    
-    #   Ignore the metabolite columns if they are all NA
-    if( metabolites ){
-        metabolites <- ifelse( test = all( is.na( s[, columns_met ] ) ), 
-            yes = FALSE, no = TRUE )
-    }   
-    
-    
-    
-    if( metabolites ){
-        parent_id_NA <- is.na( s[, "parent_id" ] )
-        
-        for( i in 1:length( columns_met ) ){
-            if( any( is.na( s[, columns_met[ i ] ] ) & (!parent_id_NA) ) ){
-                stop( sprintf( "NA-values detected in s[,'%s'] while s[,'parent_id'] is not NA.", 
-                    columns_met[ i ] 
-                ) ) 
-            }   
-        };  rm( i )
-        
-        #   Check that "g_per_mol" is also given for the parent
-        parent_M_is_NA <- is.na( s[, "g_per_mol" ] ) & 
-            (s[, "id" ] %in% stats::na.omit( s[, "parent_id" ] ))
-            
-        if( any( parent_M_is_NA ) ){
-            stop( sprintf( "s[,'g_per_mol'] is missing (NA) for some parent-substances (id: %s)", 
-                paste( s[ parent_M_is_NA, "id" ], collapse = ", " ) ) ) 
-        };  rm( parent_M_is_NA )
-        
-    }   
-    
-    
-    
-    #   Add a column "name" if missing:
-    names_provided <- ("name" %in% colnames( s ))
-    if( !names_provided ){
-        s[, "name" ] <- sprintf( "subst_%s", formatC( 
-            x = s[, "id" ], flag = "0", 
-            width = max( nchar( s[, "id" ] ) ) ) )
-    }   
-    
-    
-    
-    #   Number of rows in s (number of parameter sets)
-    n <- nrow( s )
-    
-    #   Check that id are unique
-    if( any( dup <- duplicated( s[, "id" ] ) ) ){
-        stop( sprintf( 
-            "Some values in s[,'id'] are duplicated (should be unique): %s", 
-            paste( unique( s[ dup,'id'] ), 
-                collapse = ", " ) ) ) 
-    };  rm( dup )
-    
-    #   Check that id is between 1 and 999
-    id_range <- getRmlPar( "id_range" )
-    
-    if( any( (s[, "id" ] < min(id_range)) | (s[, "id" ] > max(id_range)) ) ){
-        stop( sprintf( 
-            "s[,'id'] must be between %s and %s. Now between %s and %s.", 
-            min(id_range), max(id_range), 
-            min(s[, "id" ]), max(s[, "id" ]) ) ) 
-    }   
-    
-    
-    
-    #   Does 's' contains a column 'parfile'?
-    parfile_in_s <- "parfile" %in% colnames( s ) 
-    
-    parfile_table_template <- data.frame(
-        "parfile_id" = NA_integer_, 
-        "path"       = NA_character_, 
-        stringsAsFactors = FALSE )   
-    
-    if( parfile_in_s ){
-        if( !missing( parfile ) ){
-            stop( "'s' contains a column 'parfile' while argument 'parfile' is given too. Provide one but not both." )
-        }   
-        
-        if( !("character" %in% class( s[, "parfile" ] )) ){
-            stop( sprintf( 
-                "Column 'parfile' in 's' should be character-class. Now class %s", 
-               paste( class( s[, "parfile" ] ), collapse = " " ) ) ) 
-        }   
-        
-        parfile_table <- unique( s[, "parfile" ] ) 
-        parfile_table <- data.frame(
-            "parfile_id" = 1:length( parfile_table ), 
-            "path"       = parfile_table, 
-            stringsAsFactors = FALSE ) 
-        rownames( parfile_table ) <- parfile_table[, "path" ] 
-        
-        #   Add a column 'parfile_id' to 's' and remove the 
-        #   column 'parfile'
-        s[, "parfile_id" ] <- as.integer( parfile_table[ 
-            parfile_table[, "path" ], 
-            "parfile_id" ] ) 
-        
-        rownames( parfile_table ) <- NULL 
-        
-        s <- s[, colnames( s ) != "parfile" ] 
-    }   
+    metabolites       <- s0[[ "metabolites" ]]
+    scenario_provided <- s0[[ "scenario_provided" ]]
+    parfile_in_s      <- s0[[ "parfile_in_s" ]]
+    parfile_table     <- s0[[ "parfile_table " ]]
+    s                 <- s0[[ "s" ]]
+    rm( s0 )
     
     
     
@@ -4150,3 +3841,354 @@ AsIs_to_text <- function( x ){
     # tmp <- data.frame( a = 1:2, b = I( list( c(3, 4), 5 ) ) )
     # AsIs_to_text( tmp )
     # class( AsIs_to_text( tmp )[,2] )
+
+
+
+
+
+
+### Check that the table 's' passed to macrounchained 
+### is conform to expectations
+.muc_check_s <- function( 
+    s, 
+    focus_mode, 
+    macro_version, 
+    parfile
+){  
+    if( !(focus_mode %in% c( "no", "gw" )) ){
+        stop( sprintf( 
+            "Argument 'focus_mode' can either be 'no' or 'gw' (currently %s)", 
+            focus_mode ) )
+    }   
+    
+    #   List of compulsory columns in s
+    columns_subst <- c( "id", "kfoc", "nf", "dt50", 
+        "dt50_ref_temp", "dt50_pf", "exp_temp_resp", 
+        "exp_moist_resp", "crop_upt_f", "diff_coef" ) # "name", 
+    
+    #   Columns required for running metabolites
+    columns_met <- c( "parent_id", "g_per_mol", "transf_f" )
+    
+    #   Columns with applied dose and application Julian day
+    #   (also always needed)
+    columns_appln <- c( "g_as_per_ha", "app_j_day", "f_int" )
+    
+    #   Convert from "tibble" to pure data.frame
+    #   (if imported from Excel)
+    if( any(c( "tbl_df", "tbl" ) %in% class(s)) ){
+        s <- as.data.frame( s ) 
+    }   
+    
+    #   Test s and its columns
+    if( !("data.frame" %in% class(s)) ){
+        stop( sprintf( 
+            "'s' must be a data.frame. Now class %s", 
+            paste( class(s), collapse = ", " ) ) ) 
+    }   
+    
+    if( focus_mode == "gw" ){
+        columns_appln <- c( columns_appln, "years_interval" )
+        
+        if( !("years_interval" %in% colnames( s )) ){
+            s <- data.frame( s, "years_interval" = 1L, 
+                stringsAsFactors = FALSE )
+        }   
+    }   
+    
+    
+    
+    #   Check if soil and crop scenario are given
+    column_scen <- c( "soil", "crop" )
+    scenario_provided <- column_scen %in% colnames( s )
+    
+    if( any( scenario_provided ) ){
+        if( !all( scenario_provided ) ){
+            stop( sprintf(
+                "The column '%s' is provided in 's', while '%s' is not. Provide either both columns or none of them.", 
+                column_scen[  scenario_provided ], 
+                column_scen[ !scenario_provided ] ) ) 
+        }   
+        
+        scenario_provided <- TRUE 
+        
+        if( !missing( parfile ) ){
+            stop( "The columns 'soil' and 'crop' are provided in 's', while argument 'parfile' is also given. Use either or but not both." )
+        }   
+        
+        if( "parfile" %in% colnames( s ) ){
+            stop( "The columns 'soil' and 'crop' are provided in 's', as well as a column 'parfile'. Use either or but not both." )
+        }   
+        
+        #   Check that none of the required scenario column contains NA
+        #   (application pattern)
+        for( i in 1:length( column_scen ) ){
+            test_class <- "character" %in% class( s[, column_scen[ i ] ] ) 
+            
+            if( !test_class ){
+                stop( sprintf( 
+                    "Column '%s' in 's' must be of class 'character'. Now %s", 
+                    column_scen[ i ], 
+                    paste( class( s[, column_scen[ i ] ] ), 
+                        collapse = " " )
+                ) ) 
+            }   
+            
+            rm( test_class ) 
+            
+            if( any( is.na( unlist( s[, column_scen[ i ] ] ) ) ) ){ 
+                          # unlist() required here for AsIs columns
+                stop( sprintf( "NA-values detected in s[,'%s']. Missing values not allowed.", 
+                    column_scen[ i ] 
+                ) ) 
+            }   
+        };  rm( i )
+        
+        if( focus_mode == "no" ){
+            stop( "The argument 'focus_mode' cannot be 'no' when the columns 'soil' and 'crop' are provided in 's'." )
+        }   
+        
+        test_focus_model <- grepl( 
+            x       = tolower( macro_version[ "name" ] ), 
+            pattern = "focus", 
+            fixed   = TRUE )
+        
+        if( !test_focus_model ){
+            stop( sprintf( 
+                "The model name ('%s') does not seems to be a FOCUS model, while the columns 'soil' and 'crop' are provided in 's'.", 
+                macro_version[ "name" ] ) ) 
+            
+        }else{
+            macroinfocus_version <- strsplit( 
+                x     = macro_version[ "name" ], 
+                split = "_", 
+                fixed = TRUE )[[ 1L ]]
+            
+            macroinfocus_version <- 
+                macroinfocus_version[ length( macroinfocus_version ) ]
+            
+            macroinfocus_version0 <- gsub( 
+                x           = macroinfocus_version, 
+                pattern     = ".", 
+                replacement = "", 
+                fixed       = TRUE )
+            
+            macroinfocus_version0 <- gsub( 
+                x           = macroinfocus_version0, 
+                pattern     = "-", 
+                replacement = "", 
+                fixed       = TRUE )
+            
+            suppressWarnings( test_macroinfocus_version <- 
+                is.na( try( as.numeric( macroinfocus_version0 ) ) ) )
+            
+            if( test_macroinfocus_version ){ 
+                stop( sprintf( 
+                    "Failed to extract MACRO In FOCUS version from the name '%s'.", 
+                    macro_version[ "name" ] ) ) 
+            }   
+            
+            rm( macroinfocus_version0 )
+            
+        };  rm( test_focus_model )
+        
+    }else{
+        scenario_provided <- FALSE 
+    }   
+    
+    
+    
+    test_columns <- c( columns_subst, columns_appln ) %in% 
+        colnames( s )
+    
+    if( any( !test_columns ) ){
+        stop( sprintf( 
+            "Some compulsory columns are missing in 's': %s", 
+            paste( c( columns_subst, columns_appln )[ !test_columns ], 
+                collapse = ", " ) ) ) 
+    };  rm( test_columns )
+    
+    test_met_columns <- columns_met %in% colnames( s ) 
+    
+    metabolites <- ifelse( test = any( test_met_columns ), 
+        yes = TRUE, no = FALSE )
+    
+    if( metabolites & (!all(test_met_columns)) ){
+        stop( sprintf( 
+            "Some columns related to metabolites are given in 's' while other are missing: %s", 
+            paste( columns_met[ !test_met_columns ], 
+                collapse = ", " ) ) ) 
+    };  rm( test_met_columns )
+    
+    
+    
+    #   Check that none of the required column contains NA
+    #   (substance properties)
+    for( i in 1:length( columns_subst ) ){
+        if( any( is.na( s[, columns_subst[ i ] ] ) ) ){ 
+            stop( sprintf( "NA-values detected in s[,'%s']. Missing values not allowed.", 
+                columns_subst[ i ] 
+            ) ) 
+        }   
+        
+        if( !all( is.numeric( s[, columns_subst[ i ] ] ) ) ){ 
+            stop( sprintf( "Non-numeric values detected in s[,'%s'].", 
+                columns_subst[ i ] 
+            ) ) 
+        }   
+    };  rm( i )
+    
+    
+    
+    #   Check that none of the required column contains NA
+    #   (application pattern)
+    for( i in 1:length( columns_appln ) ){
+        test_class <- any( c( "AsIs", "list", "character", 
+            "numeric", "integer" ) %in% class( s[, columns_appln[ i ] ] ) )
+        
+        if( !test_class ){
+            stop( sprintf( 
+                "Column '%s' in 's' must be of class 'AsIs', 'list', 'numeric' or 'character'. Now %s", 
+                columns_appln[ i ], 
+                paste( class( s[, columns_appln[ i ] ] ), 
+                    collapse = " " )
+            ) ) 
+            
+        }else{
+            s[[ columns_appln[ i ] ]] <- .muc_vbar_to_numeric( 
+                x = s[, columns_appln[ i ] ] ) 
+        }   
+        
+        rm( test_class ) 
+        
+        if( any( is.na( unlist( s[, columns_appln[ i ] ] ) ) ) ){ 
+                      # unlist() required here for AsIs columns
+            stop( sprintf( "NA-values detected in s[,'%s']. Missing values not allowed.", 
+                columns_appln[ i ] 
+            ) ) 
+        }   
+        
+        if( !all( is.numeric( unlist( s[, columns_appln[ i ] ] ) ) ) ){ 
+            stop( sprintf( "Non-numeric values detected in s[,'%s'].", 
+               columns_appln[ i ] 
+            ) ) 
+        }   
+    };  rm( i )
+    
+    
+    
+    #   Ignore the metabolite columns if they are all NA
+    if( metabolites ){
+        metabolites <- ifelse( test = all( is.na( s[, columns_met ] ) ), 
+            yes = FALSE, no = TRUE )
+    }   
+    
+    
+    
+    if( metabolites ){
+        parent_id_NA <- is.na( s[, "parent_id" ] )
+        
+        for( i in 1:length( columns_met ) ){
+            if( any( is.na( s[, columns_met[ i ] ] ) & (!parent_id_NA) ) ){
+                stop( sprintf( "NA-values detected in s[,'%s'] while s[,'parent_id'] is not NA.", 
+                    columns_met[ i ] 
+                ) ) 
+            }   
+        };  rm( i )
+        
+        #   Check that "g_per_mol" is also given for the parent
+        parent_M_is_NA <- is.na( s[, "g_per_mol" ] ) & 
+            (s[, "id" ] %in% stats::na.omit( s[, "parent_id" ] ))
+            
+        if( any( parent_M_is_NA ) ){
+            stop( sprintf( "s[,'g_per_mol'] is missing (NA) for some parent-substances (id: %s)", 
+                paste( s[ parent_M_is_NA, "id" ], collapse = ", " ) ) ) 
+        };  rm( parent_M_is_NA )
+        
+    }   
+    
+    
+    
+    #   Add a column "name" if missing:
+    names_provided <- ("name" %in% colnames( s ))
+    
+    if( !names_provided ){
+        s[, "name" ] <- sprintf( "subst_%s", formatC( 
+            x = s[, "id" ], flag = "0", 
+            width = max( nchar( s[, "id" ] ) ) ) )
+    }   
+    
+    
+    
+    #   Number of rows in s (number of parameter sets)
+    n <- nrow( s )
+    
+    #   Check that id are unique
+    if( any( dup <- duplicated( s[, "id" ] ) ) ){
+        stop( sprintf( 
+            "Some values in s[,'id'] are duplicated (should be unique): %s", 
+            paste( unique( s[ dup,'id'] ), 
+                collapse = ", " ) ) ) 
+    };  rm( dup )
+    
+    #   Check that id is between 1 and 999
+    id_range <- getRmlPar( "id_range" )
+    
+    if( any( (s[, "id" ] < min(id_range)) | (s[, "id" ] > max(id_range)) ) ){
+        stop( sprintf( 
+            "s[,'id'] must be between %s and %s. Now between %s and %s.", 
+            min(id_range), max(id_range), 
+            min(s[, "id" ]), max(s[, "id" ]) ) ) 
+    }   
+    
+    
+    
+    #   Does 's' contains a column 'parfile'?
+    parfile_in_s <- "parfile" %in% colnames( s ) 
+    
+    parfile_table_template <- data.frame(
+        "parfile_id" = NA_integer_, 
+        "path"       = NA_character_, 
+        stringsAsFactors = FALSE )   
+    
+    if( parfile_in_s ){
+        if( !missing( parfile ) ){
+            stop( "'s' contains a column 'parfile' while argument 'parfile' is given too. Provide one but not both." )
+        }   
+        
+        if( !("character" %in% class( s[, "parfile" ] )) ){
+            stop( sprintf( 
+                "Column 'parfile' in 's' should be character-class. Now class %s", 
+               paste( class( s[, "parfile" ] ), collapse = " " ) ) ) 
+        }   
+        
+        parfile_table <- unique( s[, "parfile" ] ) 
+        parfile_table <- data.frame(
+            "parfile_id" = 1:length( parfile_table ), 
+            "path"       = parfile_table, 
+            stringsAsFactors = FALSE ) 
+        rownames( parfile_table ) <- parfile_table[, "path" ] 
+        
+        #   Add a column 'parfile_id' to 's' and remove the 
+        #   column 'parfile'
+        s[, "parfile_id" ] <- as.integer( parfile_table[ 
+            parfile_table[, "path" ], 
+            "parfile_id" ] ) 
+        
+        rownames( parfile_table ) <- NULL 
+        
+        s <- s[, colnames( s ) != "parfile" ] 
+    }   
+    
+    
+    out <- list(
+        "s"                 = s, 
+        "metabolites"       = metabolites, 
+        "scenario_provided" = scenario_provided, 
+        "n"                 = n, 
+        "parfile_in_s"      = parfile_in_s, 
+        "parfile_table"     = parfile_table ) 
+    
+    return( out ) 
+}   
+
+
