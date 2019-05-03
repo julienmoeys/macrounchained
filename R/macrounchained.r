@@ -979,11 +979,13 @@ macrounchained.data.frame <- function(
     
     if( scenario_provided ){
         s0 <- .muc_scenario_parameters(
-            s         = s, 
-            verbose   = verbose, 
-            log_width = log_width, 
-            logfiles  = temp_log, 
-            append    = TRUE, 
+            s          = s, 
+            verbose    = verbose, 
+            log_width  = log_width, 
+            logfiles   = temp_log, 
+            append     = TRUE, 
+            modelVar   = modelVar, 
+            focus_mode = focus_mode, 
             macroinfocus_version = macroinfocus_version
         )   
         
@@ -4013,6 +4015,8 @@ AsIs_to_text <- function( x ){
     log_width, 
     logfiles, 
     append, 
+    modelVar, 
+    focus_mode, 
     macroinfocus_version
 ){
     .muc_logMessage( m = "The parameter table ('s') contains soil/crop scenario", 
