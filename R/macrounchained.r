@@ -4244,7 +4244,7 @@ AsIs_to_text <- function( x ){
     
     
     
-    out <- lits( 
+    out <- list( 
         "s"              = s, 
         "crop_params"    = crop_params, 
         "crop_param_map" = crop_param_map, 
