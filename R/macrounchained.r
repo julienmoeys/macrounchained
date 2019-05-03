@@ -951,6 +951,7 @@ macrounchained.data.frame <- function(
     
     macroinfocus_version <- s0[[ "macroinfocus_version" ]]
     id_range             <- s0[[ "id_range" ]]
+    names_provided       <- s0[[ "names_provided" ]]
     
     s                    <- s0[[ "s" ]]
     rm( s0 )
@@ -977,225 +978,20 @@ macrounchained.data.frame <- function(
     # ======================================================
     
     if( scenario_provided ){
-        .muc_logMessage( m = "The parameter table ('s') contains soil/crop scenario", 
-            verbose = verbose, log_width = log_width, 
-            logfiles = temp_log, append = TRUE )
+        s0 <- .muc_scenario_parameters(
+            s         = s, 
+            verbose   = verbose, 
+            log_width = log_width, 
+            logfiles  = temp_log, 
+            append    = TRUE, 
+            macroinfocus_version = macroinfocus_version
+        )   
         
-        #   Find out if scenario-template and crop-parameters 
-        #   exist for that version of MACRO In FOCUS
-        .muc_logMessage( m = "* Look for scenario-templates and crop-parameters for MACRO In FOCUS version '%s'", 
-            verbose = verbose, log_width = log_width, 
-            logfiles = temp_log, append = TRUE, values = list(
-            macroinfocus_version ) ) 
+        s <- s0[[ "s" ]]
         
-        focus_scen_path <- system.file( "focus_scenario", 
-            package = "macrounchained" ) 
-        
-        if( !file.exists( focus_scen_path ) ){
-            stop( sprintf( "Cannot find the folder '%s'.", 
-                focus_scen_path ) )
-        }   
-        
-        macroinfocus_versions <- list.dirs( 
-            path       = focus_scen_path, 
-            full.names = FALSE, 
-            recursive  = FALSE ) 
-        
-        if( !macroinfocus_version %in% macroinfocus_versions ){
-            stop( sprintf( "Cannot find parameters for MACRO In FOCUS version '%s' (available version(s): %s).", 
-                macroinfocus_version, 
-                paste( macroinfocus_versions, sep = "; " ) ) )
-        }else{
-            focus_scen_path <- file.path( focus_scen_path, 
-                macroinfocus_version )
-            
-            
-            
-            .muc_logMessage( m = "* Import base information on sites/scenario", 
-                verbose = verbose, log_width = log_width, 
-                logfiles = temp_log, append = TRUE )
-            
-            sites <- read.csv(
-                file = file.path( focus_scen_path, "sites", 
-                    "sites_utf8.csv" ), 
-                stringsAsFactors = FALSE, 
-                fileEncoding = "UTF-8" ) 
-            
-            colnames( sites )[ colnames( sites ) == "namesoil" ] <- 
-                "focus_soil"
-            
-            
-            
-            .muc_logMessage( m = "* Import crop parameter values", 
-                verbose = verbose, log_width = log_width, 
-                logfiles = temp_log, append = TRUE )
-            
-            crop_params <- read.csv(
-                file = file.path( focus_scen_path, "crops", 
-                    "crops_utf8.csv" ), 
-                stringsAsFactors = FALSE, 
-                fileEncoding = "UTF-8" ) 
-            
-            colnames( crop_params )[ colnames( crop_params ) == "location" ] <- 
-                "focus_soil"
-            
-            colnames( crop_params )[ colnames( crop_params ) == "name" ] <- 
-                "focus_crop"
-            
-            test_crop <- crop_params[, "focus_soil" ] %in% sites[, "focus_soil" ]
-            
-            if( any( !test_crop ) ){
-                stop( sprintf(
-                    "The soil(s) %s could not be found in 'sites_utf8.csv'", 
-                    paste( crop_params[ !test_crop, "focus_soil" ], 
-                        collapse = ", " )
-                ) ) 
-            };  rm( test_crop )
-            
-            crop_params <- merge(
-                x     = crop_params, 
-                y     = sites, 
-                by    = "focus_soil", 
-                all.x = TRUE, 
-                sort  = FALSE ) 
-            
-            crop_params[, "is_irrigated" ] <- !is.na( crop_params[, "rname" ] )
-            
-            crop_params[ !crop_params[, "is_irrigated" ], "rname" ] <- 
-                crop_params[ !crop_params[, "is_irrigated" ], "wthname" ] 
-            
-            crop_params[, "METFILE" ] <- file.path( 
-                modelVar[[ "path" ]], 
-                "bin", 
-                sprintf( "%set.BIN", crop_params[, "rname" ] ) )
-            
-            et_file_exists <- file.exists( crop_params[, "METFILE" ] )
-                
-            if( any( !et_file_exists ) ){
-                crop_params[ !et_file_exists, "METFILE" ] <- 
-                    file.path( 
-                        modelVar[[ "path" ]], 
-                        "bin", 
-                        sprintf( "%set.BIN", crop_params[ !et_file_exists, "wthname" ] ) )
-            }   
-            
-            # crop_params[, "METFILE" ] <- normalizePath( 
-                # path = crop_params[, "METFILE" ], 
-                # mustWork = FALSE )
-            
-            # crop_params[, "METFILE" ] <- gsub( 
-                # x = crop_params[, "METFILE" ], pattern = ".bin", 
-                # replacement = ".BIN", fixed = TRUE )
-            
-            crop_params[, "METFILE" ] <- gsub( 
-                x = crop_params[, "METFILE" ], pattern = "/", 
-                replacement = "\\", fixed = TRUE )
-            
-            
-            
-            crop_params[, "RAINFALLFILE" ] <- file.path( 
-                modelVar[[ "path" ]], 
-                "bin", 
-                sprintf( "%sp.BIN", crop_params[, "rname" ] ) )
-            
-            # crop_params[, "RAINFALLFILE" ] <- normalizePath( 
-                # path = crop_params[, "RAINFALLFILE" ], 
-                # mustWork = FALSE )
-            
-            # crop_params[, "RAINFALLFILE" ] <- gsub( 
-                # x = crop_params[, "RAINFALLFILE" ], pattern = ".bin", 
-                # replacement = ".BIN", fixed = TRUE )
-            
-            crop_params[, "RAINFALLFILE" ] <- gsub( 
-                x = crop_params[, "RAINFALLFILE" ], pattern = "/", 
-                replacement = "\\", fixed = TRUE )
-            
-            
-            
-            #   Keep only the scenario with the relevant 
-            #   target (GW or SW)
-            if( focus_mode == "gw" ){
-                crop_params <- crop_params[ 
-                    crop_params[, "target2" ] == "GW", ]
-            }else if( focus_mode == "sw" ){
-                crop_params <- crop_params[ 
-                    crop_params[, "target2" ] == "SW", ]
-            }else{
-                stop( sprintf( 
-                    "Unknown or unsupported value for 'focus_mode' ('%s')", 
-                    focus_mode ) )
-            }   
-            
-            rownames( crop_params ) <- NULL 
-            
-            
-            
-            .muc_logMessage( m = "* Import crop parameter map", 
-                verbose = verbose, log_width = log_width, 
-                logfiles = temp_log, append = TRUE )
-            
-            crop_param_map <- read.csv(
-                file = file.path( focus_scen_path, "..", 
-                    "crops_param-map_utf8.csv" ), 
-                stringsAsFactors = FALSE, 
-                fileEncoding = "UTF-8" ) 
-            
-            
-            
-            .muc_logMessage( m = "* Match scenario(s) and crop(s) requested by the user with FOCUS scenario and crops", 
-                verbose = verbose, log_width = log_width, 
-                logfiles = temp_log, append = TRUE )
-            
-            scenario_match <- .muc_match_soil_crop( 
-                soil_crop = s[, c( "soil", "crop" ) ], 
-                soil_crop_list = crop_params[, c( "focus_soil", "focus_crop" ) ] )
-            
-            .muc_logMessage( m = "* Find-out the relevant soil/scenario-template par-file(s)", 
-                verbose = verbose, log_width = log_width, 
-                logfiles = temp_log, append = TRUE )
-            
-            scenario_match[, "parfile" ] <- file.path(
-                focus_scen_path, "soils", sprintf( "%s.par", 
-                .muc_sanitize( x = scenario_match[, "focus_soil" ] ) ) ) 
-            
-            test_parfile <- file.exists( 
-                scenario_match[, "parfile" ] )
-            
-            if( any( !test_parfile ) ){
-                stop( sprintf(
-                    "Some soil/scenario-template par-file(s) could not be found: %s", 
-                    paste( unique( scenario_match[ 
-                        !test_parfile, "parfile" ] ), 
-                        collapse = "; " ) ) ) 
-            };  rm( test_parfile )
-            
-            s <- data.frame( 
-                s, 
-                scenario_match[, c( "focus_soil", "focus_crop", 
-                    "focus_index", "parfile" ) ], 
-                stringsAsFactors = FALSE )
-            
-            rm( scenario_match )
-        }   
-        
-        parfile_table <- unique( s[, "parfile" ] ) 
-        parfile_table <- data.frame(
-            "parfile_id" = 1:length( parfile_table ), 
-            "path"       = parfile_table, 
-            stringsAsFactors = FALSE ) 
-        rownames( parfile_table ) <- parfile_table[, "path" ] 
-        
-        #   Add a column 'parfile_id' to 's' and remove the 
-        #   column 'parfile'
-        s[, "parfile_id" ] <- as.integer( parfile_table[ 
-            parfile_table[, "path" ], 
-            "parfile_id" ] ) 
-        
-        rownames( parfile_table ) <- NULL 
-        
-        s <- s[, colnames( s ) != "parfile" ] 
-        
-        parfile_in_s <- TRUE 
+        crop_params    <- s0[[ "crop_params" ]]
+        crop_param_map <- s0[[ "crop_param_map" ]]
+        parfile_table  <- s0[[ "parfile_table" ]]
     }   
     
     
@@ -4198,9 +3994,257 @@ AsIs_to_text <- function( x ){
         "parfile_in_s"         = parfile_in_s, 
         "parfile_table"        = parfile_table, 
         "macroinfocus_version" = macroinfocus_version, 
-        "id_range"             = id_range ) 
+        "id_range"             = id_range, 
+        "names_provided"       = names_provided ) 
     
     return( out ) 
 }   
 
 
+
+
+
+
+### Fetch scenario and crop parameters
+### Used by macrounchained()
+.muc_scenario_parameters <- function(
+    s, 
+    verbose, 
+    log_width, 
+    logfiles, 
+    append, 
+    macroinfocus_version
+){
+    .muc_logMessage( m = "The parameter table ('s') contains soil/crop scenario", 
+        verbose = verbose, log_width = log_width, 
+        logfiles = logfiles, append = append )
+    
+    #   Find out if scenario-template and crop-parameters 
+    #   exist for that version of MACRO In FOCUS
+    .muc_logMessage( m = "* Look for scenario-templates and crop-parameters for MACRO In FOCUS version '%s'", 
+        verbose = verbose, log_width = log_width, 
+        logfiles = logfiles, append = append, values = list(
+        macroinfocus_version ) ) 
+    
+    focus_scen_path <- system.file( "focus_scenario", 
+        package = "macrounchained" ) 
+    
+    if( !file.exists( focus_scen_path ) ){
+        stop( sprintf( "Cannot find the folder '%s'.", 
+            focus_scen_path ) )
+    }   
+    
+    macroinfocus_versions <- list.dirs( 
+        path       = focus_scen_path, 
+        full.names = FALSE, 
+        recursive  = FALSE ) 
+    
+    if( !macroinfocus_version %in% macroinfocus_versions ){
+        stop( sprintf( "Cannot find parameters for MACRO In FOCUS version '%s' (available version(s): %s).", 
+            macroinfocus_version, 
+            paste( macroinfocus_versions, sep = "; " ) ) )
+    }else{
+        focus_scen_path <- file.path( focus_scen_path, 
+            macroinfocus_version )
+        
+        
+        
+        .muc_logMessage( m = "* Import base information on sites/scenario", 
+            verbose = verbose, log_width = log_width, 
+            logfiles = logfiles, append = append )
+        
+        sites <- read.csv(
+            file = file.path( focus_scen_path, "sites", 
+                "sites_utf8.csv" ), 
+            stringsAsFactors = FALSE, 
+            fileEncoding = "UTF-8" ) 
+        
+        colnames( sites )[ colnames( sites ) == "namesoil" ] <- 
+            "focus_soil"
+        
+        
+        
+        .muc_logMessage( m = "* Import crop parameter values", 
+            verbose = verbose, log_width = log_width, 
+            logfiles = logfiles, append = append )
+        
+        crop_params <- read.csv(
+            file = file.path( focus_scen_path, "crops", 
+                "crops_utf8.csv" ), 
+            stringsAsFactors = FALSE, 
+            fileEncoding = "UTF-8" ) 
+        
+        colnames( crop_params )[ colnames( crop_params ) == "location" ] <- 
+            "focus_soil"
+        
+        colnames( crop_params )[ colnames( crop_params ) == "name" ] <- 
+            "focus_crop"
+        
+        test_crop <- crop_params[, "focus_soil" ] %in% sites[, "focus_soil" ]
+        
+        if( any( !test_crop ) ){
+            stop( sprintf(
+                "The soil(s) %s could not be found in 'sites_utf8.csv'", 
+                paste( crop_params[ !test_crop, "focus_soil" ], 
+                    collapse = ", " )
+            ) ) 
+        };  rm( test_crop )
+        
+        crop_params <- merge(
+            x     = crop_params, 
+            y     = sites, 
+            by    = "focus_soil", 
+            all.x = TRUE, 
+            sort  = FALSE ) 
+        
+        crop_params[, "is_irrigated" ] <- !is.na( crop_params[, "rname" ] )
+        
+        crop_params[ !crop_params[, "is_irrigated" ], "rname" ] <- 
+            crop_params[ !crop_params[, "is_irrigated" ], "wthname" ] 
+        
+        crop_params[, "METFILE" ] <- file.path( 
+            modelVar[[ "path" ]], 
+            "bin", 
+            sprintf( "%set.BIN", crop_params[, "rname" ] ) )
+        
+        et_file_exists <- file.exists( crop_params[, "METFILE" ] )
+            
+        if( any( !et_file_exists ) ){
+            crop_params[ !et_file_exists, "METFILE" ] <- 
+                file.path( 
+                    modelVar[[ "path" ]], 
+                    "bin", 
+                    sprintf( "%set.BIN", crop_params[ !et_file_exists, "wthname" ] ) )
+        }   
+        
+        # crop_params[, "METFILE" ] <- normalizePath( 
+            # path = crop_params[, "METFILE" ], 
+            # mustWork = FALSE )
+        
+        # crop_params[, "METFILE" ] <- gsub( 
+            # x = crop_params[, "METFILE" ], pattern = ".bin", 
+            # replacement = ".BIN", fixed = TRUE )
+        
+        crop_params[, "METFILE" ] <- gsub( 
+            x = crop_params[, "METFILE" ], pattern = "/", 
+            replacement = "\\", fixed = TRUE )
+        
+        
+        
+        crop_params[, "RAINFALLFILE" ] <- file.path( 
+            modelVar[[ "path" ]], 
+            "bin", 
+            sprintf( "%sp.BIN", crop_params[, "rname" ] ) )
+        
+        # crop_params[, "RAINFALLFILE" ] <- normalizePath( 
+            # path = crop_params[, "RAINFALLFILE" ], 
+            # mustWork = FALSE )
+        
+        # crop_params[, "RAINFALLFILE" ] <- gsub( 
+            # x = crop_params[, "RAINFALLFILE" ], pattern = ".bin", 
+            # replacement = ".BIN", fixed = TRUE )
+        
+        crop_params[, "RAINFALLFILE" ] <- gsub( 
+            x = crop_params[, "RAINFALLFILE" ], pattern = "/", 
+            replacement = "\\", fixed = TRUE )
+        
+        
+        
+        #   Keep only the scenario with the relevant 
+        #   target (GW or SW)
+        if( focus_mode == "gw" ){
+            crop_params <- crop_params[ 
+                crop_params[, "target2" ] == "GW", ]
+        }else if( focus_mode == "sw" ){
+            crop_params <- crop_params[ 
+                crop_params[, "target2" ] == "SW", ]
+        }else{
+            stop( sprintf( 
+                "Unknown or unsupported value for 'focus_mode' ('%s')", 
+                focus_mode ) )
+        }   
+        
+        rownames( crop_params ) <- NULL 
+        
+        
+        
+        .muc_logMessage( m = "* Import crop parameter map", 
+            verbose = verbose, log_width = log_width, 
+            logfiles = logfiles, append = append )
+        
+        crop_param_map <- read.csv(
+            file = file.path( focus_scen_path, "..", 
+                "crops_param-map_utf8.csv" ), 
+            stringsAsFactors = FALSE, 
+            fileEncoding = "UTF-8" ) 
+        
+        
+        
+        .muc_logMessage( m = "* Match scenario(s) and crop(s) requested by the user with FOCUS scenario and crops", 
+            verbose = verbose, log_width = log_width, 
+            logfiles = logfiles, append = append )
+        
+        scenario_match <- .muc_match_soil_crop( 
+            soil_crop = s[, c( "soil", "crop" ) ], 
+            soil_crop_list = crop_params[, c( "focus_soil", "focus_crop" ) ] )
+        
+        .muc_logMessage( m = "* Find-out the relevant soil/scenario-template par-file(s)", 
+            verbose = verbose, log_width = log_width, 
+            logfiles = logfiles, append = append )
+        
+        scenario_match[, "parfile" ] <- file.path(
+            focus_scen_path, "soils", sprintf( "%s.par", 
+            .muc_sanitize( x = scenario_match[, "focus_soil" ] ) ) ) 
+        
+        test_parfile <- file.exists( 
+            scenario_match[, "parfile" ] )
+        
+        if( any( !test_parfile ) ){
+            stop( sprintf(
+                "Some soil/scenario-template par-file(s) could not be found: %s", 
+                paste( unique( scenario_match[ 
+                    !test_parfile, "parfile" ] ), 
+                    collapse = "; " ) ) ) 
+        };  rm( test_parfile )
+        
+        s <- data.frame( 
+            s, 
+            scenario_match[, c( "focus_soil", "focus_crop", 
+                "focus_index", "parfile" ) ], 
+            stringsAsFactors = FALSE )
+        
+        rm( scenario_match )
+        
+    }   
+    
+    
+    
+    parfile_table <- unique( s[, "parfile" ] ) 
+    parfile_table <- data.frame(
+        "parfile_id" = 1:length( parfile_table ), 
+        "path"       = parfile_table, 
+        stringsAsFactors = FALSE ) 
+    rownames( parfile_table ) <- parfile_table[, "path" ] 
+    
+    #   Add a column 'parfile_id' to 's' and remove the 
+    #   column 'parfile'
+    s[, "parfile_id" ] <- as.integer( parfile_table[ 
+        parfile_table[, "path" ], 
+        "parfile_id" ] ) 
+    
+    rownames( parfile_table ) <- NULL 
+    
+    s <- s[, colnames( s ) != "parfile" ] 
+    
+    parfile_in_s <- TRUE 
+    
+    
+    
+    out <- lits( 
+        "s"              = s, 
+        "crop_params"    = crop_params, 
+        "crop_param_map" = crop_param_map, 
+        "parfile_table"  = parfile_table )
+    
+    return( out )
+}   
