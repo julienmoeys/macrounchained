@@ -1144,7 +1144,8 @@ macrounchained.data.frame <- function(
         log_width           = log_width, 
         logfiles            = temp_log, 
         append              = TRUE, 
-        id_range            = id_range 
+        id_range            = id_range, 
+        metabolites         = metabolites 
     )   
     
     s <- s0[[ "s" ]]
@@ -3929,7 +3930,8 @@ AsIs_to_text <- function( x ){
     log_width, 
     logfiles, # temp_log
     append,   # = TRUE
-    id_range 
+    id_range, 
+    metabolites 
 ){  
     #   Template table (row) for operation register
     op_reg0 <- data.frame(
