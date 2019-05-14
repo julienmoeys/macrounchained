@@ -3658,15 +3658,15 @@ length_AsIs <- function(x,col_name){
     #   Test that the number of applied doses per year match 
     #   the number of application day per year
     #   "g_as_per_ha", "app_j_day", "f_int"
-    test_length <- length_AsIs( s[, "g_as_per_ha" ] ) != 
+    length_equal <- length_AsIs( s[, "g_as_per_ha" ] ) == 
         length_AsIs( s[, "app_j_day" ] )
     
-    if( !all( test_length ) ){
+    if( !all( length_equal ) ){
         stop( sprintf(
             "The number of items in 'g_as_per_ha' does not match that of 'app_j_day' for row(s) %s", 
-            paste( which( !test_length ), collapse = " " )
+            paste( which( !length_equal ), collapse = " " )
         ) ) 
-    };  rm( test_length )
+    };  rm( length_equal )
 
     
     
