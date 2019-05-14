@@ -1195,7 +1195,7 @@ macrounchained.data.frame <- function(
     
     
     
-    if( !all( is.na( merge_inter_first[, "run_id" ] ) ) ){
+    if( nrow( merge_inter_first ) != 0L ){
         .muc_logMessage( 
             m = "Merge operations:", 
             verbose = verbose, log_width = log_width, 
@@ -4092,7 +4092,7 @@ length_AsIs <- function(x,col_name){
         "output_rename" = NA_character_, 
         "indump_rename" = NA_character_, 
         "summary_file"  = NA_character_, 
-        "merge_inter_first" = as.logical(NA), 
+        "merge_inter_first" = FALSE, 
         stringsAsFactors = FALSE 
     )   
     
@@ -4546,6 +4546,9 @@ length_AsIs <- function(x,col_name){
             values = list( nrow( operation_register ), 
             nrow( s ) ), logfiles = logfiles, append = append ) 
     }   
+    
+    merge_inter_first <- merge_inter_first[
+        !is.na( merge_inter_first[, "run_id" ] ), ] 
     
     out <- list(
         "s"                  = s, 
