@@ -1,6 +1,13 @@
     
     package: 'macrounchained'
 
+CHANGES IN VERSION 0.13.0
+    
+    2019/05/14  First implementation of multiples transformation 
+        pathways, that is metabolites formed from the 
+        degradation of several substances (either themselves 
+        metabolites or active substances).
+    
 CHANGES IN VERSION 0.12.0
     
     2019/04/30  Internal re-organisation of the 
