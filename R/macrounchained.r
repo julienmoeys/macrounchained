@@ -3399,7 +3399,7 @@ is.na_AsIs <- function(x,col_name){
     unlist( lapply( 
         X   = 1:length(x), 
         FUN = function(i){ 
-            any_is_na <- any( is.na( x[[i]] ) 
+            any_is_na <- any( is.na( x[[i]] ) )
             
             if( any_is_na & !all( is.na( x[[i]] ) ) ){
                 stop( sprintf( 
