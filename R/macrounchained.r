@@ -1150,6 +1150,7 @@ macrounchained.data.frame <- function(
     
     s <- s0[[ "s" ]]
     operation_register <- s0[[ "operation_register" ]]
+    merge_inter_first  <- s0[[ "merge_inter_first" ]]
     rm( s0 ) 
     
     
@@ -1182,6 +1183,7 @@ macrounchained.data.frame <- function(
     # rm( parfile_table0 )
     
     
+    
     .muc_logMessage( 
         m = "Operations register:", 
         verbose = verbose, log_width = log_width, 
@@ -1190,6 +1192,19 @@ macrounchained.data.frame <- function(
     .muc_print( x = operation_register, verbose = verbose, 
         log_width = log_width, logfiles = temp_log, 
         append = TRUE )
+    
+    
+    
+    if( !all( is.na( merge_inter_first[, "run_id" ] ) ) ){
+        .muc_logMessage( 
+            m = "Merge operations:", 
+            verbose = verbose, log_width = log_width, 
+            logfiles = temp_log, append = TRUE ) 
+        
+        .muc_print( x = merge_inter_first, verbose = verbose, 
+            log_width = log_width, logfiles = temp_log, 
+            append = TRUE )
+    }   
     
     
     
@@ -1249,6 +1264,12 @@ macrounchained.data.frame <- function(
         if( run ){
             files_list <- c( files_list, unlist( operation_register[, 
                 c( "output_macro", "output_rename" ) ] ) )
+            
+            if( any( operation_register[, "merge_inter_first" ] ) ){
+                files_list <- c( files_list, operation_register[
+                    operation_register[, "merge_inter_first" ], 
+                    "drivingfile" ] )
+            }   
         }   
         
         files_list <- c( files_list, extra_files )
@@ -1536,15 +1557,75 @@ macrounchained.data.frame <- function(
             values = list( type_text ), 
             logfiles = log_file, append = TRUE ) 
         
+        
+        
+        if( operation_register[ o, "merge_inter_first" ] ){
+            #   Convert and merge intermediate-output bin-files 
+            #   and produce the intermediate input bin-file
+            
+            if( !run ){
+                skipped <- "SKIPPED: "
+            }else{
+                skipped <- ""
+            }   
+            
+            .muc_logMessage( 
+                m = "* %sConverting and merging intermediate bin-files", 
+                verbose = verbose, log_width = log_width, 
+                values = list( skipped ), 
+                logfiles = log_file, append = TRUE ) 
+            
+            for( i in 1:length( operation_register[ o, "inter_in" ][[ 1L ]] ) ){
+                .muc_logMessage( 
+                    m = "  - Input: %s (f_conv: %s)", 
+                    verbose = verbose, log_width = log_width, 
+                    values = list( 
+                        operation_register[ o, "inter_in" ][[ 1L ]][ i ], 
+                        operation_register[ o, "f_conv" ][[ 1L ]][ i ]
+                    ), 
+                    logfiles = log_file, append = TRUE ) 
+                
+            };  rm( i )
+            
+            .muc_logMessage( 
+                m = "  - Output: %s", 
+                verbose = verbose, log_width = log_width, 
+                values = list( operation_register[ o, "inter_out" ] ), 
+                logfiles = log_file, append = TRUE ) 
+            
+            if( run ){
+                .muc_merge_inter(
+                    inter_in  = operation_register[ o, "inter_in" ][[ 1L ]], 
+                    inter_out = operation_register[ o, "inter_out" ], 
+                    f_conv    = operation_register[ o, "f_conv" ][[ 1L ]], 
+                    path      = modelVar[["path"]]
+                )   
+            }   
+            
+            .muc_logMessage( 
+                m = "  Note: 'f_conv' will be set to 1 in the par-file", 
+                verbose = verbose, log_width = log_width, 
+                logfiles = log_file, append = TRUE ) 
+        }   
+        #   WORK ON PROGRESS: 
+        
+        
+        
         if( metabolites ){
+            if( operation_register[ o, "merge_inter_first" ] ){
+                f_conv0 <- 1 
+            }else{
+                f_conv0 <- ifelse( 
+                    test = operation_register[ o, "is_as" ], 
+                    yes  = 0, 
+                    no   = s[ sel_subst, "f_conv" ] )
+            }   
+            
+            
             rmacroliteSimType( x = x_o, warn = FALSE ) <- list( 
                 "type"        = type, 
                 "drivingfile" = operation_register[ o, "drivingfile" ], 
-                "f_conv"      = ifelse( 
-                    test = operation_register[ o, "is_as" ], 
-                    yes  = 0, 
-                    no   = s[ sel_subst, "f_conv" ] ) )
-            
+                "f_conv"      = f_conv0 ) 
         }else{
             rmacroliteSimType( x = x_o, warn = FALSE ) <- list( 
                 "type"        = type, 
@@ -3313,6 +3394,36 @@ AsIs_to_text <- function( x ){
 
 
 
+### Variant of is.na() for AsIs variables
+is.na_AsIs <- function(x,col_name){ 
+    unlist( lapply( 
+        X   = 1:length(x), 
+        FUN = function(i){ 
+            any_is_na <- any( is.na( x[[i]] ) 
+            
+            if( any_is_na & !all( is.na( x[[i]] ) ) ){
+                stop( sprintf( 
+                    "Row %s in column %s: some values are NA, but not all.", 
+                    i, col_name 
+                ) ) 
+            }   
+            
+            return( any_is_na ) 
+        }   
+    ) ) 
+}   
+
+
+
+### Variant of length() for AsIs variables
+length_AsIs <- function(x,col_name){ 
+    unlist( lapply( 
+        X   = 1:length(x), 
+        FUN = function(i){ 
+            return( length( x[[ i ]] ) ) 
+        }   
+    ) ) 
+}   
 
 
 
@@ -3530,7 +3641,7 @@ AsIs_to_text <- function( x ){
         
         rm( test_class ) 
         
-        if( any( is.na( unlist( s[, columns_appln[ i ] ] ) ) ) ){ 
+        if( any( is.na_AsIs( unlist( s[, columns_appln[ i ] ] ), col_name = i ) ) ){ 
                       # unlist() required here for AsIs columns
             stop( sprintf( "NA-values detected in s[,'%s']. Missing values not allowed.", 
                 columns_appln[ i ] 
@@ -3544,6 +3655,19 @@ AsIs_to_text <- function( x ){
         }   
     };  rm( i )
     
+    #   Test that the number of applied doses per year match 
+    #   the number of application day per year
+    #   "g_as_per_ha", "app_j_day", "f_int"
+    test_length <- length_AsIs( s[, "g_as_per_ha" ] ) != 
+        length_AsIs( s[, "app_j_day" ] )
+    
+    if( !all( test_length ) ){
+        stop( sprintf(
+            "The number of items in 'g_as_per_ha' does not match that of 'app_j_day' for row(s) %s", 
+            paste( which( !test_length ), collapse = " " )
+        ) ) 
+    };  rm( test_length )
+
     
     
     #   Ignore the metabolite columns if they are all NA
@@ -3555,19 +3679,41 @@ AsIs_to_text <- function( x ){
     
     
     if( metabolites ){
-        parent_id_NA <- is.na( s[, "parent_id" ] )
+        #   Transform character variables into AsIs variables
+        for( i in 1:length( columns_met ) ){
+            s[[ columns_met[ i ] ]] <- 
+                .muc_vbar_to_numeric( x = s[, columns_met[ i ] ] )
+        };  rm( i )
+        
+        parent_id_NA <- is.na_AsIs( s[, "parent_id" ], col_name = "parent_id" )
         
         for( i in 1:length( columns_met ) ){
-            if( any( is.na( s[, columns_met[ i ] ] ) & (!parent_id_NA) ) ){
+            if( any( is.na_AsIs( s[, columns_met[ i ] ], columns_met[ i ] ) & (!parent_id_NA) ) ){
                 stop( sprintf( "NA-values detected in s[,'%s'] while s[,'parent_id'] is not NA.", 
                     columns_met[ i ] 
                 ) ) 
             }   
         };  rm( i )
         
+        
+        
+        #   Test that when a substance is formed from n parents, 
+        #   there is also x "transf_f" given in the table
+        test_length <- length_AsIs( s[, "parent_id" ] ) != 
+            length_AsIs( s[, "transf_f" ] )
+        
+        if( !all( test_length ) ){
+            stop( sprintf(
+                "The number of items in 'parent_id' does not match that of 'transf_f' for row(s) %s", 
+                paste( which( !test_length ), collapse = " " )
+            ) ) 
+        };  rm( test_length )
+        
+        
+        
         #   Check that "g_per_mol" is also given for the parent
         parent_M_is_NA <- is.na( s[, "g_per_mol" ] ) & 
-            (s[, "id" ] %in% stats::na.omit( s[, "parent_id" ] ))
+            (s[, "id" ] %in% stats::na.omit( unlist( s[, "parent_id" ] ) ))
             
         if( any( parent_M_is_NA ) ){
             stop( sprintf( "s[,'g_per_mol'] is missing (NA) for some parent-substances (id: %s)", 
@@ -3946,8 +4092,18 @@ AsIs_to_text <- function( x ){
         "output_rename" = NA_character_, 
         "indump_rename" = NA_character_, 
         "summary_file"  = NA_character_, 
+        "merge_inter_first" = as.logical(NA), 
         stringsAsFactors = FALSE 
     )   
+    
+    merge_inter_first0 <- data.frame(
+        "id"            = NA_integer_, 
+        "run_id"        = NA_integer_, 
+        "parent_id"     = I( list( NA_integer_ ) ), 
+        "f_conv"        = I( list( NA_real_ ) ), 
+        "inter_out"     = NA_character_, 
+        "inter_in"      = NA_character_, 
+        stringsAsFactors = FALSE 
     
     if( metabolites ){
         .muc_logMessage( 
@@ -3956,13 +4112,14 @@ AsIs_to_text <- function( x ){
             logfiles = logfiles, append = append )
         
         #   Check that all "parent_id" refer to an existing "id"
-        test_parent_id <- s[, "parent_id" ] %in% s[, "id" ] 
-        test_parent_id[ is.na( s[, "parent_id" ] ) ] <- TRUE 
+        test_parent_id <- unlist( s[, "parent_id" ] ) %in% s[, "id" ] 
+        test_parent_id[ is.na( unlist( s[, "parent_id" ] ) ) ] <- TRUE 
         
         if( any( !test_parent_id ) ){
             stop( sprintf( 
                 "Some values in s[,'parent_id'] are not found in s[,'id']: %s", 
-                paste( unique( s[ !test_parent_id, 'parent_id' ] ), 
+                paste( unique( unlist( 
+                    s[, 'parent_id' ][ !test_parent_id ] ) ), 
                     collapse = ", " ) ) ) 
         }   
         
@@ -3987,17 +4144,27 @@ AsIs_to_text <- function( x ){
         #   *   MACRO conversion factor
         s[, "f_conv" ] <- NA_real_ 
         
+        if( any( c( "AsIs", "list" ) %in% class(  s[, "parent_id" ]) ) ){
+            s[[ "f_conv" ]] <- I( as.list( s[, "f_conv" ] ) )
+        }   
+        
         #   *   If the substance does not have a parent, 
         #       it is an active substance (even if it does 
         #       not have a metabolite)
-        s[ is.na( s[, "parent_id" ] ), "as_id" ] <- 
-            s[ is.na( s[, "parent_id" ] ), "id" ] 
+        s[ is.na_AsIs( s[, "parent_id" ] ), "as_id" ] <- 
+            s[ is.na_AsIs( s[, "parent_id" ] ), "id" ] 
+        
+        if( any( c( "AsIs", "list" ) %in% class(  s[, "parent_id" ]) ) ){
+            s[[ "as_id" ]] <- I( as.list( s[, "as_id" ] ) )
+        }   
         
         #   *   Active substances are level 0
-        s[ is.na( s[, "parent_id" ] ), "met_level" ] <- 0L 
+        s[ is.na_AsIs( s[, "parent_id" ] ), "met_level" ] <- 0L 
         
         #   *   Substances that have at least one metabolite
-        s[, "has_met" ] <- s[, "id" ] %in% stats::na.omit( s[, "parent_id" ] )
+        s[, "has_met" ] <- s[, "id" ] %in% stats::na.omit( unlist( s[, "parent_id" ] ) )
+        
+        
         
         #   *   Note:
         #       met_level   has_met   description
@@ -4020,36 +4187,67 @@ AsIs_to_text <- function( x ){
             
             #   Find the id of the substance with the last 
             #   level attributed
-            id_current_level <- s[, "met_level" ] == current_met_level 
+            id_current_level <- s[, "met_level" ] <= current_met_level 
             id_current_level[ is.na(id_current_level) ] <- FALSE 
             id_current_level <- s[ id_current_level, "id" ]
             
             #   Assign the next metabolite level
-            next_level <- s[, "parent_id" ] %in% id_current_level
+            next_level <- unlist( lapply(
+                X   = 1:nrow(s), 
+                FUN = function(i){
+                    return( all( s[ i, "parent_id" ][[ 1L ]] %in% 
+                        id_current_level ) ) 
+                }   
+            ) ) 
+            # next_level <- s[, "parent_id" ] %in% id_current_level
+            
             s[ next_level, "met_level" ] <- current_met_level + 1L 
             
             #   Assign the top active substance
             id_next_level <- s[ next_level, "id" ]
-            s[ next_level, "as_id" ] <- unlist( lapply(
-                X   = id_next_level, 
-                FUN = function(.id){
-                    parent_id <- s[ s[,"id"] == .id, 
-                        "parent_id" ]
-                    return( s[ s[,"id"] == parent_id, "as_id" ] ) 
-                } ) ) 
             
-            s[ next_level, "f_conv" ] <- unlist( lapply(
-                X   = id_next_level, 
-                FUN = function(.id){
-                    parent_id <- s[ s[,"id"] == .id, 
-                        "parent_id" ]
+            for( i in which( next_level ) ){
+                #   Determine as_id
+                id_next_level_i <- s[ i, "id" ]
+                
+                parent_id_i <- s[ s[,"id"] == id_next_level_i, "parent_id" ]
+                
+                as_id_i <- unique( unlist( 
+                    s[ s[, "id" ] %in% parent_id_i, "as_id" ] ) ) 
+                
+                s[[ "as_id" ]][[ i ]] <- as_id_i 
+                
+                #   Determine f_conv
+                M_parent <- s[ s[,"id"] == parent_id_i,     "g_per_mol" ] 
+                M_met    <- s[ s[,"id"] == id_next_level_i, "g_per_mol" ] 
+                transf_f <- s[ s[,"id"] == id_next_level_i, "transf_f" ][[ 1L ]] 
+                
+                s[[ "f_conv" ]][[ i ]] <- (M_met/M_parent)*transf_f
+            }   
+            
+            rm( i, id_next_level_i, parent_id_i, as_id_i, 
+                M_parent, M_met, transf_f )
+            
+            # s[ next_level, "as_id" ] <- unlist( lapply(
+                # X   = id_next_level, 
+                # FUN = function(.id){
+                    # parent_id <- s[ s[,"id"] == .id, 
+                        # "parent_id" ]
+                    # return( s[ s[,"id"] == parent_id, "as_id" ] ) 
+                # } ) ) 
+            
+            # s[ next_level, "f_conv" ] <- unlist( lapply(
+                # X   = id_next_level, 
+                # FUN = function(.id){
+                    # parent_id <- s[ s[,"id"] == .id, 
+                        # "parent_id" ]
                     
-                    M_parent <- s[ s[,"id"] == parent_id, "g_per_mol" ] 
-                    M_met    <- s[ s[,"id"] == .id,       "g_per_mol" ] 
-                    transf_f <- s[ s[,"id"] == .id,       "transf_f" ] 
+                    # M_parent <- s[ s[,"id"] == parent_id, "g_per_mol" ] 
+                    # M_met    <- s[ s[,"id"] == .id,       "g_per_mol" ] 
+                    # transf_f <- s[ s[,"id"] == .id,       "transf_f" ] 
                     
-                    return( (M_met/M_parent)*transf_f ) 
-                } ) ) 
+                    # return( (M_met/M_parent)*transf_f ) 
+                # } ) ) 
         }   
         
         #   Clean up
@@ -4059,9 +4257,17 @@ AsIs_to_text <- function( x ){
         #   Order the substances so that substances having 
         #   the same top active substances are simulated 
         #   together and in the right order
+        as_id_txt <- unlist( lapply(
+            X   = s[, "as_id" ], 
+            FUN = function(as_id0){
+                return( paste( as.character( as_id0 ), 
+                    collapse = "|" ) )
+            }   
+        ) ) 
+        
         s <- split( x = s, f = factor( 
-            x       = s[, "as_id" ], 
-            levels  = unique( s[, "as_id" ] ), 
+            x       = as_id_txt, 
+            levels  = unique( as_id_txt ), 
             ordered = TRUE ) )
         
         s <- lapply(
@@ -4082,9 +4288,7 @@ AsIs_to_text <- function( x ){
             logfiles = logfiles, append = append ) 
         
         #   Number of intermediate simulations to be run
-        # run_with_inter <- (s[, "id" ] == s[, "as_id" ]) & 
-            # (s[, "id" ] %in% s[, "parent_id" ])
-        run_with_inter <- s[, "id" ] %in% s[, "parent_id" ]
+        run_with_inter <- s[, "id" ] %in% unlist( s[, "parent_id" ] )
         nb_inter <- sum( run_with_inter ) 
         
         #   Prepare id to be attributed to the intermediate 
@@ -4110,35 +4314,22 @@ AsIs_to_text <- function( x ){
             operation_register[[ o ]][, "run_id" ] <- s[ o, "id" ] 
             
             operation_register[[ o ]][, "is_as" ] <- ifelse( 
-                test = s[ o, "id" ] == s[ o, "as_id" ], 
+                test = s[ o, "id" ] %in% unlist( s[ o, "as_id" ] ), 
                 yes  = TRUE, 
                 no   = FALSE ) 
             
             operation_register[[ o ]][, "is_met" ] <- ifelse( 
-                test = !is.na( s[ o, "parent_id" ] ), 
+                test = !any( is.na( s[ o, "parent_id" ][[ 1L ]] ) ), 
                 yes  = TRUE, 
                 no   = FALSE ) 
             
             operation_register[[ o ]][, "is_inter" ] <- FALSE 
+            #   Intermediate simulation will be added later
             
             operation_register[[ o ]][, "par_file" ] <- 
                 sprintf( fileNameTemplate[[ "r" ]], 
                     formatC( x = s[ o, "id" ], width = idWidth, 
                     flag = "0" ), "par" )
-            
-            if( operation_register[[ o ]][, "is_met" ] ){
-                operation_register[[ o ]][, "drivingfile" ] <- 
-                    sprintf( fileNameTemplate[[ "r" ]], 
-                    sprintf( "%s_inter", formatC( 
-                    x = s[ o, "parent_id" ], width = idWidth, 
-                    flag = "0" ) ), "bin" )
-            }else{
-                operation_register[[ o ]][, "drivingfile" ] <- 
-                    sprintf( fileNameTemplate[[ "r" ]], 
-                    sprintf( "%s_inter", formatC( 
-                    x = 0L, width = idWidth, 
-                    flag = "0" ) ), "bin" )
-            }   
             
             operation_register[[ o ]][, "output_macro" ] <- 
                 sprintf( fileNameTemplate[[ "macro" ]], 
@@ -4148,7 +4339,32 @@ AsIs_to_text <- function( x ){
             operation_register[[ o ]][, "output_rename" ] <- 
                 sprintf( fileNameTemplate[[ "r" ]], 
                     formatC( x = s[ o, "id" ], width = idWidth, 
-                    flag = "0" ), "bin" )
+                    flag = "0" ), "bin" ) 
+            
+            if( operation_register[[ o ]][, "is_met" ] ){
+                if( length( s[ o, "parent_id" ][[ 1L ]] ) > 1L ){
+                    operation_register[[ o ]][, "drivingfile" ] <- 
+                        sprintf( fileNameTemplate[[ "r" ]], 
+                        sprintf( "%s_inter-input", formatC( 
+                        x = s[ o, "id" ], width = idWidth, 
+                        flag = "0" ) ), "bin" )
+                }else{
+                    #   Case: only 1 parent
+                    operation_register[[ o ]][, "drivingfile" ] <- 
+                        sprintf( fileNameTemplate[[ "r" ]], 
+                        sprintf( "%s_inter", formatC( 
+                        x = s[ o, "parent_id" ][[ 1L ]], 
+                        width = idWidth, 
+                        flag = "0" ) ), "bin" )
+                }   
+                
+            }else{
+                operation_register[[ o ]][, "drivingfile" ] <- 
+                    sprintf( fileNameTemplate[[ "r" ]], 
+                    sprintf( "%s_inter", formatC( 
+                    x = 0L, width = idWidth, 
+                    flag = "0" ) ), "bin" )
+            }   
             
             operation_register[[ o ]][, "indump_rename" ] <- 
                 sprintf( fileNameTemplate[[ "r" ]], sprintf( 
@@ -4210,6 +4426,48 @@ AsIs_to_text <- function( x ){
                 # operation_register[[ o ]][ 2L, "summary_file" ] <- 
                     # NA_character_
                 
+            }   
+            
+            if( operation_register[[ o ]][, "is_met" ] ){
+                if( length( s[ o, "parent_id" ][[ 1L ]] ) > 1L ){
+                    if( !exists( "merge_inter_first" ) ){
+                        merge_inter_first <- merge_inter_first0 
+                    }else{
+                        merge_inter_first <- rbin( 
+                            merge_inter_first, 
+                            merge_inter_first0 ) 
+                    }   
+                    
+                    merge_inter_first[ nrow( merge_inter_first ), 
+                        "id" ]  <- s[ o, "id" ] 
+                    
+                    merge_inter_first[ nrow( merge_inter_first ), 
+                        "run_id" ] <- s[ o, "id" ] 
+                    
+                    merge_inter_first[[ "parent_id" ]][ 
+                        nrow( merge_inter_first ) ] <- 
+                            s[ o, "parent_id" ][[ 1L ]] 
+                    
+                    merge_inter_first[[ "f_conv" ]][ 
+                        nrow( merge_inter_first ) ] <- 
+                            s[ o, "f_conv" ][[ 1L ]] 
+                    
+                    merge_inter_first[ nrow( merge_inter_first ), 
+                        "inter_out" ] <- 
+                            operation_register[[ o ]][ 1L, 
+                                "drivingfile" ]
+                    
+                    merge_inter_first[[ "inter_in" ]][ 
+                        nrow( merge_inter_first ) ] <- 
+                            sprintf( fileNameTemplate[[ "r" ]], 
+                            sprintf( "%s_inter", formatC( 
+                            x = s[ o, "parent_id" ][[ 1L ]], 
+                            width = idWidth, flag = "0" ) ), 
+                            "bin" ) 
+                }   
+                
+            }else{
+                merge_inter_first <- merge_inter_first0 
             }   
         }   
         
@@ -4291,7 +4549,66 @@ AsIs_to_text <- function( x ){
     
     out <- list(
         "s"                  = s, 
-        "operation_register" = operation_register ) 
+        "operation_register" = operation_register, 
+        "merge_inter_first"  = merge_inter_first ) 
     
     return( out ) 
+}   
+
+
+
+#   Convert and merge the intermediate output bin-files 
+#   and export an intermediate input bin-file
+.muc_merge_inter <- function(
+    inter_in, 
+    inter_out, 
+    f_conv, 
+    path 
+){  
+    if( length( inter_in ) != length( f_conv ) ){
+        stop( sprintf(
+            "length( inter_in ) and length( f_conv ) differ ( %s and %s, respectively).", 
+            length( inter_in ), length( f_conv ) ) ) 
+    }   
+    
+    bin_exists <- file.exists( file.path( path, inter_in ) )
+    
+    if( !all( bin_exists ) ){
+        stop( sprintf( "Some intermediate bin files could not be found: %s", 
+            paste( inter_in[ bin_exists ], collapse = "; " )
+        ) )
+    }   
+    
+    
+    
+    #   Import and convert the intermediate bin-files
+    bins <- lapply(
+        X   = 1:length( inter_in ), 
+        FUN = function(i){
+            bin_i <- macroReadBin( 
+                f             = file.path( path, inter_in[ i ] ), 
+                header        = TRUE, 
+                rmSuffixes    = FALSE,
+                # trimLength  = integer(), 
+                rmNonAlphaNum = FALSE, 
+                rmSpaces      = FALSE,
+                rmRunID       = FALSE )
+            
+            return( bin_i * f_conv[ i ] )
+        }   
+    )   
+    
+    bins <- do.call( what = "+", args = bins ) 
+    
+    
+    
+    #   Export the merged/ concerted bin files
+    macroWriteBin(
+        x      = bins, 
+        f      = file.path( path, inter_out ), 
+        header = TRUE )
+    
+    
+    
+    return( invisible( bins ) )
 }   
