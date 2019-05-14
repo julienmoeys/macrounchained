@@ -4103,7 +4103,7 @@ length_AsIs <- function(x,col_name){
         "f_conv"        = I( list( NA_real_ ) ), 
         "inter_out"     = NA_character_, 
         "inter_in"      = NA_character_, 
-        stringsAsFactors = FALSE 
+        stringsAsFactors = FALSE )
     
     if( metabolites ){
         .muc_logMessage( 
