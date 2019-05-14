@@ -3699,15 +3699,15 @@ length_AsIs <- function(x,col_name){
         
         #   Test that when a substance is formed from n parents, 
         #   there is also x "transf_f" given in the table
-        test_length <- length_AsIs( s[, "parent_id" ] ) != 
+        length_equal <- length_AsIs( s[, "parent_id" ] ) == 
             length_AsIs( s[, "transf_f" ] )
         
-        if( !all( test_length ) ){
+        if( !all( length_equal ) ){
             stop( sprintf(
                 "The number of items in 'parent_id' does not match that of 'transf_f' for row(s) %s", 
-                paste( which( !test_length ), collapse = " " )
+                paste( which( !length_equal ), collapse = " " )
             ) ) 
-        };  rm( test_length )
+        };  rm( length_equal )
         
         
         
