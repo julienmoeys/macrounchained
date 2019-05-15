@@ -1618,7 +1618,7 @@ macrounchained.data.frame <- function(
                 f_conv0 <- ifelse( 
                     test = operation_register[ o, "is_as" ], 
                     yes  = 0, 
-                    no   = s[ sel_subst, "f_conv" ] )
+                    no   = s[ sel_subst, "f_conv" ][[ 1L ]] )
             }   
             
             
