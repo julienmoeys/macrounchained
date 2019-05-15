@@ -541,7 +541,7 @@ NULL
             args    = "tar.exe", 
             stdout  = TRUE ) ) ) 
         
-        if( is.character( where_tar ) ){
+        if( !is.null( attr( where_tar, "status" ) ) ){
             utils::tar( 
                 tarfile     = tarfile, 
                 files       = files,
