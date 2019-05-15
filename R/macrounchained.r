@@ -4430,6 +4430,9 @@ length_AsIs <- function(x,col_name){
             
             if( operation_register[[ o ]][ 1L, "is_met" ] ){
                 if( length( s[ o, "parent_id" ][[ 1L ]] ) > 1L ){
+                    operation_register[[ o ]][, 
+                        "merge_inter_first" ] <- TRUE 
+                    
                     if( !exists( "merge_inter_first" ) ){
                         merge_inter_first <- merge_inter_first0 
                     }else{
