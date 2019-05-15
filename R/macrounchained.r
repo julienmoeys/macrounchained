@@ -4433,7 +4433,7 @@ length_AsIs <- function(x,col_name){
                     if( !exists( "merge_inter_first" ) ){
                         merge_inter_first <- merge_inter_first0 
                     }else{
-                        merge_inter_first <- rbin( 
+                        merge_inter_first <- rbind( 
                             merge_inter_first, 
                             merge_inter_first0 ) 
                     }   
