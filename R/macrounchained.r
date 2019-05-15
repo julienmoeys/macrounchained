@@ -4210,7 +4210,7 @@ length_AsIs <- function(x,col_name){
                 #   Determine as_id
                 id_next_level_i <- s[ i, "id" ]
                 
-                parent_id_i <- s[ s[,"id"] == id_next_level_i, "parent_id" ]
+                parent_id_i <- unlist( s[ s[,"id"] == id_next_level_i, "parent_id" ] )
                 
                 as_id_i <- unique( unlist( 
                     s[ s[, "id" ] %in% parent_id_i, "as_id" ] ) ) 
