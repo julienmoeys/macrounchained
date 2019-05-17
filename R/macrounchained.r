@@ -4257,28 +4257,31 @@ length_AsIs <- function(x,col_name){
         #   Order the substances so that substances having 
         #   the same top active substances are simulated 
         #   together and in the right order
-        as_id_txt <- unlist( lapply(
-            X   = s[, "as_id" ], 
-            FUN = function(as_id0){
-                return( paste( as.character( as_id0 ), 
-                    collapse = "|" ) )
-            }   
-        ) ) 
+        s <- .muc_sort_subst_by_as( subst = s, 
+            id_range = id_range )
         
-        s <- split( x = s, f = factor( 
-            x       = as_id_txt, 
-            levels  = unique( as_id_txt ), 
-            ordered = TRUE ) )
+        # as_id_txt <- unlist( lapply(
+            # X   = s[, "as_id" ], 
+            # FUN = function(as_id0){
+                # return( paste( as.character( as_id0 ), 
+                    # collapse = "|" ) )
+            # }   
+        # ) ) 
         
-        s <- lapply(
-            X   = s, 
-            FUN = function(y){
-                return( y[ order( y[, "met_level" ] ), ] )
-            }   
-        )   
+        # s <- split( x = s, f = factor( 
+            # x       = as_id_txt, 
+            # levels  = unique( as_id_txt ), 
+            # ordered = TRUE ) )
         
-        s <- do.call( what = "rbind", args = s ) 
-        rownames( s ) <- NULL 
+        # s <- lapply(
+            # X   = s, 
+            # FUN = function(y){
+                # return( y[ order( y[, "met_level" ] ), ] )
+            # }   
+        # )   
+        
+        # s <- do.call( what = "rbind", args = s ) 
+        # rownames( s ) <- NULL 
         
         
         
@@ -4617,4 +4620,93 @@ length_AsIs <- function(x,col_name){
     
     
     return( invisible( bins ) )
+}   
+
+
+
+#   Function that will sort substances by their "active 
+#   substance(s)", that is the substance applied.
+#   Especially needed for substances that originates 
+#   from the degradation of several active substances
+.muc_sort_subst_by_as <- function( 
+    subst, 
+    id_range = c( 1L, 999L ) 
+){  
+    as_id_txt <- lapply(
+        X   = subst[[ "as_id" ]], 
+        FUN = function(x){
+            return( paste( x, collapse = "|" ) ) 
+        }   
+    )   
+    
+    as_id_txt <- factor( 
+        x       = as_id_txt, 
+        levels  = unique( as_id_txt ), 
+        ordered = TRUE )
+    
+    as_id_txt
+    
+    subst <- split( 
+        x = subst, 
+        f = as_id_txt )
+    
+    unique_as_id <- data.frame(
+        "as_id_txt" = names( subst ), 
+        "as_id"     = I( strsplit( 
+            x     = names( subst ), 
+            split = "|", 
+            fixed = TRUE ) ) ) 
+    
+    unique_as_id[[ "as_id" ]] <- I( lapply( 
+        X   = unique_as_id[[ "as_id" ]], 
+        FUN = as.integer ) )
+    
+    subst_out <- vector( 
+        mode   = "list", 
+        length = length( subst ) )
+    
+    some_values_not_sorted <- TRUE 
+    current_output_index   <- 1L
+    unique_as_id_is_attr   <- rep( FALSE, nrow(unique_as_id) )
+    max_nb_iter            <- max( id_range )
+    iteration_nb           <- 0L
+    
+    while( some_values_not_sorted ){
+        iteration_nb <- iteration_nb + 1L 
+        
+        for( i in (1:nrow( unique_as_id ))[ !unique_as_id_is_attr ] ){
+            test_case <- 
+                (length( unique_as_id[ i, "as_id" ][[ 1L ]] ) == 1L) | 
+                all( unique_as_id[ i, "as_id" ][[ 1L ]] %in% 
+                     unique( unlist( unique_as_id[ unique_as_id_is_attr, "as_id" ] ) ) ) 
+            
+            if( test_case ){
+                as_id_txt0 <- unique_as_id[ i, "as_id_txt" ]
+                
+                subst_out[[ current_output_index ]] <- 
+                    subst[[ as_id_txt0 ]] 
+                
+                names( subst_out )[ current_output_index ] <- 
+                    unique_as_id[ i, "as_id_txt" ]
+                
+                unique_as_id_is_attr[ i ]  <- TRUE 
+                current_output_index       <- current_output_index + 1L 
+                some_values_not_sorted     <- any( !unique_as_id_is_attr ) 
+                
+                break
+            }   
+        }   
+        
+        if( iteration_nb == max_nb_iter ){
+            stop( "Maximum number of iterations reached. Failed to sort the table of substances properties." )
+        }   
+    }   
+    
+    subst_out <- do.call( 
+        what = "rbind", 
+        args = subst_out )
+    
+    rownames( subst_out ) <- NULL 
+    
+    return( subst_out )
 }   
