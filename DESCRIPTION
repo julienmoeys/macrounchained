@@ -1,6 +1,6 @@
 Package: macrounchained
 Version: 0.13.0
-Date: 2019-05-15
+Date: 2019-05-17
 Author: Julien Moeys [aut, cre]
 Authors@R: c( person( given = "Julien", family = "Moeys", "role" = c("aut", "cre"), "email" = "jules_m78-soiltexture@@yahooDOTfr" ) )
 Maintainer: Julien Moeys <jules_m78-soiltexture@yahoo.fr>
