@@ -1577,7 +1577,7 @@ macrounchained.data.frame <- function(
             
             for( i in 1:length( operation_register[ o, "inter_in" ][[ 1L ]] ) ){
                 .muc_logMessage( 
-                    m = "  - Input: %s (f_conv: %s)", 
+                    m = "    Input: %s (f_conv: %s)", 
                     verbose = verbose, log_width = log_width, 
                     values = list( 
                         operation_register[ o, "inter_in" ][[ 1L ]][ i ], 
@@ -1588,7 +1588,7 @@ macrounchained.data.frame <- function(
             };  rm( i )
             
             .muc_logMessage( 
-                m = "  - Output: %s", 
+                m = "    Output: %s", 
                 verbose = verbose, log_width = log_width, 
                 values = list( operation_register[ o, "inter_out" ] ), 
                 logfiles = log_file, append = TRUE ) 
