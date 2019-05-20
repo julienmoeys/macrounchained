@@ -4102,7 +4102,7 @@ length_AsIs <- function(x,col_name){
         "parent_id"     = I( list( NA_integer_ ) ), 
         "f_conv"        = I( list( NA_real_ ) ), 
         "inter_out"     = NA_character_, 
-        "inter_in"      = NA_character_, 
+        "inter_in"      = I( list( NA_character_ ) ), 
         stringsAsFactors = FALSE )
     
     if( metabolites ){
@@ -4464,7 +4464,7 @@ length_AsIs <- function(x,col_name){
                                 "drivingfile" ]
                     
                     merge_inter_first[[ "inter_in" ]][ 
-                        nrow( merge_inter_first ) ] <- 
+                        nrow( merge_inter_first ) ][[ 1L ]] <- 
                             sprintf( fileNameTemplate[[ "r" ]], 
                             sprintf( "%s_inter", formatC( 
                             x = s[ o, "parent_id" ][[ 1L ]], 
