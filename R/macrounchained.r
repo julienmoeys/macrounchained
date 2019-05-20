@@ -4675,12 +4675,16 @@ length_AsIs <- function(x,col_name){
         iteration_nb <- iteration_nb + 1L 
         
         for( i in (1:nrow( unique_as_id ))[ !unique_as_id_is_attr ] ){
-            test_case <- 
-                (length( unique_as_id[ i, "as_id" ][[ 1L ]] ) == 1L) | 
+            test_length <- 
+                length( unique_as_id[ i, "as_id" ][[ 1L ]] ) == 1L
+            test_id1 <- 
                 all( unique_as_id[ i, "as_id" ][[ 1L ]] %in% 
-                     unique( unlist( unique_as_id[ unique_as_id_is_attr, "as_id" ] ) ) ) 
+                     unique_as_id[ unique_as_id_is_attr, "as_id" ] )
             
-            if( test_case ){
+            # test_case <- test_length | test_id1 
+            # rm( test_length, test_id1, test_id2 )
+            
+            if( test_length | test_id1 ){
                 as_id_txt0 <- unique_as_id[ i, "as_id_txt" ]
                 
                 subst_out[[ current_output_index ]] <- 
@@ -4698,15 +4702,66 @@ length_AsIs <- function(x,col_name){
         }   
         
         if( iteration_nb == max_nb_iter ){
-            stop( "Maximum number of iterations reached. Failed to sort the table of substances properties." )
+            stop( "Maximum number of iterations reached (1). Failed to sort the table of substances properties." )
         }   
     }   
     
-    subst_out <- do.call( 
+    subst <- do.call( 
         what = "rbind", 
         args = subst_out )
     
-    rownames( subst_out ) <- NULL 
+    rownames( subst ) <- NULL 
+    rm( subst_out )
     
-    return( subst_out )
+    
+    
+    #   Finer sorting, substance by substance
+    subst_out2 <- vector( 
+        mode   = "list", 
+        length = nrow( subst ) )
+    
+    some_values_not_sorted <- TRUE 
+    current_output_index   <- 1L
+    row_is_attributed      <- rep( FALSE, nrow( subst ) ) 
+    max_nb_iter            <- max( id_range )
+    iteration_nb           <- 0L
+    
+    while( some_values_not_sorted ){
+        iteration_nb <- iteration_nb + 1L 
+        
+        for( i in (1:nrow( subst ))[ !row_is_attributed ] ){
+            #   Case 1: the substance is a parent:
+            test_case1 <- all( is.na( subst[ i, "parent_id" ][[ 1L ]] ) ) 
+            
+            #   Case 2: the substance is a metabolite, 
+            #           all parents have been sorted already
+            test_case2 <- all( subst[ i, "parent_id" ][[ 1L ]] %in% 
+                               subst[ row_is_attributed, "id" ] )
+            
+            if( test_case1 | test_case2 ){
+                subst_out2[[ current_output_index ]] <- subst[ i, ] 
+                
+                current_output_index   <- current_output_index + 1L
+                row_is_attributed[ i ] <- TRUE 
+                some_values_not_sorted <- any( !row_is_attributed ) 
+                
+                break 
+            }   
+        }   
+        
+        if( iteration_nb == max_nb_iter ){
+            stop( "Maximum number of iterations reached (2). Failed to sort the table of substances properties." )
+        }   
+    }   
+    
+    subst <- do.call( 
+        what = "rbind", 
+        args = subst_out2 )
+    
+    rownames( subst ) <- NULL 
+    rm( subst_out2 )
+    
+    
+    
+    return( subst )
 }   
