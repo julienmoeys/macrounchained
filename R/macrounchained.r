@@ -4451,11 +4451,11 @@ length_AsIs <- function(x,col_name){
                         "run_id" ] <- s[ o, "id" ] 
                     
                     merge_inter_first[[ "parent_id" ]][ 
-                        nrow( merge_inter_first ) ] <- 
+                        nrow( merge_inter_first ) ][[ 1L ]] <- 
                             s[ o, "parent_id" ][[ 1L ]] 
                     
                     merge_inter_first[[ "f_conv" ]][ 
-                        nrow( merge_inter_first ) ] <- 
+                        nrow( merge_inter_first ) ][[ 1L ]] <- 
                             s[ o, "f_conv" ][[ 1L ]] 
                     
                     merge_inter_first[ nrow( merge_inter_first ), 
