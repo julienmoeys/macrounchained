@@ -1575,8 +1575,8 @@ macrounchained.data.frame <- function(
                 values = list( skipped ), 
                 logfiles = log_file, append = TRUE ) 
             
-            sel_merge <- merge_inter_first[, "id" ] == 
-                operation_register[ o, "id" ] 
+            sel_merge <- merge_inter_first[, "run_id" ] == 
+                operation_register[ o, "run_id" ] 
             
             for( i in 1:length( merge_inter_first[ sel_merge, "inter_in" ][[ 1L ]] ) ){
                 .muc_logMessage( 
@@ -4100,7 +4100,7 @@ length_AsIs <- function(x,col_name){
     
     merge_inter_first0 <- data.frame(
         "id"            = NA_integer_, 
-        # "run_id"        = NA_integer_, 
+        "run_id"        = NA_integer_, 
         "parent_id"     = I( list( NA_integer_ ) ), 
         "f_conv"        = I( list( NA_real_ ) ), 
         "inter_out"     = NA_character_, 
@@ -4435,43 +4435,50 @@ length_AsIs <- function(x,col_name){
             
             if( operation_register[[ o ]][ 1L, "is_met" ] ){
                 if( length( s[ o, "parent_id" ][[ 1L ]] ) > 1L ){
-                    operation_register[[ o ]][, 
-                        "merge_inter_first" ] <- TRUE 
-                    
-                    if( !exists( "merge_inter_first" ) ){
-                        merge_inter_first <- merge_inter_first0 
-                    }else{
-                        merge_inter_first <- rbind( 
-                            merge_inter_first, 
-                            merge_inter_first0 ) 
+                    if( !operation_register[[ o ]][ 1L, "is_inter" ] ){
+                        operation_register[[ o ]][, 
+                            "merge_inter_first" ] <- TRUE 
+                        
+                        if( !exists( "merge_inter_first" ) ){
+                            merge_inter_first <- merge_inter_first0 
+                        }else{
+                            merge_inter_first <- rbind( 
+                                merge_inter_first, 
+                                merge_inter_first0 ) 
+                        }   
+                        
+                        merge_inter_first[ nrow( merge_inter_first ), 
+                            "id" ]  <- s[ o, "id" ] 
+                        
+                        merge_inter_first[ nrow( merge_inter_first ), 
+                            "run_id" ] <- s[ o, "id" ] 
+                        
+                        merge_inter_first[[ "parent_id" ]][ 
+                            nrow( merge_inter_first ) ][[ 1L ]] <- 
+                                s[ o, "parent_id" ][[ 1L ]] 
+                        
+                        merge_inter_first[[ "f_conv" ]][ 
+                            nrow( merge_inter_first ) ][[ 1L ]] <- 
+                                s[ o, "f_conv" ][[ 1L ]] 
+                        
+                        merge_inter_first[ nrow( merge_inter_first ), 
+                            "inter_out" ] <- 
+                                operation_register[[ o ]][ 1L, 
+                                    "drivingfile" ]
+                        
+                        merge_inter_first[[ "inter_in" ]][ 
+                            nrow( merge_inter_first ) ][[ 1L ]] <- 
+                                sprintf( fileNameTemplate[[ "r" ]], 
+                                sprintf( "%s_inter", formatC( 
+                                x = s[ o, "parent_id" ][[ 1L ]], 
+                                width = idWidth, flag = "0" ) ), 
+                                "bin" ) 
                     }   
                     
-                    merge_inter_first[ nrow( merge_inter_first ), 
-                        "id" ]  <- s[ o, "id" ] 
-                    
-                    # merge_inter_first[ nrow( merge_inter_first ), 
-                        # "run_id" ] <- s[ o, "id" ] 
-                    
-                    merge_inter_first[[ "parent_id" ]][ 
-                        nrow( merge_inter_first ) ][[ 1L ]] <- 
-                            s[ o, "parent_id" ][[ 1L ]] 
-                    
-                    merge_inter_first[[ "f_conv" ]][ 
-                        nrow( merge_inter_first ) ][[ 1L ]] <- 
-                            s[ o, "f_conv" ][[ 1L ]] 
-                    
-                    merge_inter_first[ nrow( merge_inter_first ), 
-                        "inter_out" ] <- 
-                            operation_register[[ o ]][ 1L, 
-                                "drivingfile" ]
-                    
-                    merge_inter_first[[ "inter_in" ]][ 
-                        nrow( merge_inter_first ) ][[ 1L ]] <- 
-                            sprintf( fileNameTemplate[[ "r" ]], 
-                            sprintf( "%s_inter", formatC( 
-                            x = s[ o, "parent_id" ][[ 1L ]], 
-                            width = idWidth, flag = "0" ) ), 
-                            "bin" ) 
+                }else{
+                    if( !exists( "merge_inter_first" ) ){
+                        merge_inter_first <- merge_inter_first0 
+                    }   
                 }   
                 
             }else{
