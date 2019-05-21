@@ -1578,13 +1578,17 @@ macrounchained.data.frame <- function(
             sel_merge <- merge_inter_first[, "run_id" ] == 
                 operation_register[ o, "run_id" ] 
             
+            if( !any( sel_merge ) ){
+                stop( "Tables 'operation_register' and 'merge_inter_first' incoherent." )
+            }   
+            
             for( i in 1:length( merge_inter_first[ sel_merge, "inter_in" ][[ 1L ]] ) ){
                 .muc_logMessage( 
                     m = "    Input: %s (f_conv: %s)", 
                     verbose = verbose, log_width = log_width, 
                     values = list( 
                         merge_inter_first[ sel_merge, "inter_in" ][[ 1L ]][ i ], 
-                        merge_inter_first[ sel_merge, "f_conv" ][[ 1L ]][ i ]
+                        round( merge_inter_first[ sel_merge, "f_conv" ][[ 1L ]][ i ], 4L )
                     ), 
                     logfiles = log_file, append = TRUE ) 
                 
@@ -4436,7 +4440,7 @@ length_AsIs <- function(x,col_name){
             if( operation_register[[ o ]][ 1L, "is_met" ] ){
                 if( length( s[ o, "parent_id" ][[ 1L ]] ) > 1L ){
                     if( !operation_register[[ o ]][ 1L, "is_inter" ] ){
-                        operation_register[[ o ]][, 
+                        operation_register[[ o ]][ 1L, 
                             "merge_inter_first" ] <- TRUE 
                         
                         if( !exists( "merge_inter_first" ) ){
