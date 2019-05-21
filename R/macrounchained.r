@@ -1575,13 +1575,16 @@ macrounchained.data.frame <- function(
                 values = list( skipped ), 
                 logfiles = log_file, append = TRUE ) 
             
-            for( i in 1:length( operation_register[ o, "inter_in" ][[ 1L ]] ) ){
+            sel_merge <- merge_inter_first[, "id" ] == 
+                operation_register[ o, "id" ] 
+            
+            for( i in 1:length( merge_inter_first[ sel_merge, "inter_in" ][[ 1L ]] ) ){
                 .muc_logMessage( 
                     m = "    Input: %s (f_conv: %s)", 
                     verbose = verbose, log_width = log_width, 
                     values = list( 
-                        operation_register[ o, "inter_in" ][[ 1L ]][ i ], 
-                        operation_register[ o, "f_conv" ][[ 1L ]][ i ]
+                        merge_inter_first[ sel_merge, "inter_in" ][[ 1L ]][ i ], 
+                        merge_inter_first[ sel_merge, "f_conv" ][[ 1L ]][ i ]
                     ), 
                     logfiles = log_file, append = TRUE ) 
                 
@@ -1590,14 +1593,14 @@ macrounchained.data.frame <- function(
             .muc_logMessage( 
                 m = "    Output: %s", 
                 verbose = verbose, log_width = log_width, 
-                values = list( operation_register[ o, "inter_out" ] ), 
+                values = list( merge_inter_first[ sel_merge, "inter_out" ] ), 
                 logfiles = log_file, append = TRUE ) 
             
             if( run ){
                 .muc_merge_inter(
-                    inter_in  = operation_register[ o, "inter_in" ][[ 1L ]], 
-                    inter_out = operation_register[ o, "inter_out" ], 
-                    f_conv    = operation_register[ o, "f_conv" ][[ 1L ]], 
+                    inter_in  = merge_inter_first[ sel_merge, "inter_in" ][[ 1L ]], 
+                    inter_out = merge_inter_first[ sel_merge, "inter_out" ], 
+                    f_conv    = merge_inter_first[ sel_merge, "f_conv" ][[ 1L ]], 
                     path      = modelVar[["path"]]
                 )   
             }   
@@ -1607,7 +1610,6 @@ macrounchained.data.frame <- function(
                 verbose = verbose, log_width = log_width, 
                 logfiles = log_file, append = TRUE ) 
         }   
-        #   WORK ON PROGRESS: 
         
         
         
@@ -4098,7 +4100,7 @@ length_AsIs <- function(x,col_name){
     
     merge_inter_first0 <- data.frame(
         "id"            = NA_integer_, 
-        "run_id"        = NA_integer_, 
+        # "run_id"        = NA_integer_, 
         "parent_id"     = I( list( NA_integer_ ) ), 
         "f_conv"        = I( list( NA_real_ ) ), 
         "inter_out"     = NA_character_, 
@@ -4447,8 +4449,8 @@ length_AsIs <- function(x,col_name){
                     merge_inter_first[ nrow( merge_inter_first ), 
                         "id" ]  <- s[ o, "id" ] 
                     
-                    merge_inter_first[ nrow( merge_inter_first ), 
-                        "run_id" ] <- s[ o, "id" ] 
+                    # merge_inter_first[ nrow( merge_inter_first ), 
+                        # "run_id" ] <- s[ o, "id" ] 
                     
                     merge_inter_first[[ "parent_id" ]][ 
                         nrow( merge_inter_first ) ][[ 1L ]] <- 
@@ -4473,7 +4475,9 @@ length_AsIs <- function(x,col_name){
                 }   
                 
             }else{
-                merge_inter_first <- merge_inter_first0 
+                if( !exists( "merge_inter_first" ) ){
+                    merge_inter_first <- merge_inter_first0 
+                }   
             }   
         }   
         
