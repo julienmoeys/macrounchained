@@ -447,6 +447,28 @@ Other benchmarks
 
 
 
+Release history
+============================================================
+
+For more information on the changes, see the [NEWS](NEWS)-files 
+for `macrounchained` and for its dependencies.
+
+_2019-04_
+
+```
+         package version revision date_packaged
+1 macrounchained  0.11.2  1fc0b86    2019-04-18
+2     rmacrolite   0.9.7  9a38321    2019-04-15
+3    macroutils2   2.2.3  ef26fd7    2019-04-17
+4       codeinfo   0.1.2  c91f2f2    2019-04-17
+```
+
+_2019-05_
+
+```
+4       codeinfo   0.1.3  a595b27    2019-05-13
+```
+
 About
 ============================================================
 
