@@ -4583,6 +4583,7 @@ length_AsIs <- function(x,col_name){
 
 #   Convert and merge the intermediate output bin-files 
 #   and export an intermediate input bin-file
+#'@importFrom macroutils2 macroReadBin 
 .muc_merge_inter <- function(
     inter_in, 
     inter_out, 
@@ -4618,11 +4619,26 @@ length_AsIs <- function(x,col_name){
                 rmSpaces      = FALSE,
                 rmRunID       = FALSE )
             
-            return( bin_i * f_conv[ i ] )
+            bin_i[, colnames( bin_i ) != "Date" ] <- 
+                bin_i[, colnames( bin_i ) != "Date" ] * f_conv[ i ]
+                
+            return( bin_i )
         }   
     )   
     
+    dates <- bins[[ 1L ]][, "Date" ]
+    
+    bins <- lapply(
+        X   = bins, 
+        FUN = function(b){ return( b[, colnames( b ) != "Date" ] ) }
+    )   
+    
     bins <- do.call( what = "+", args = bins ) 
+    
+    bins <- data.frame(
+        "Date" = dates, 
+        bins, 
+        stringsAsFactors = FALSE ) 
     
     
     
