@@ -4515,6 +4515,8 @@ length_AsIs <- function(x,col_name){
             logfiles = logfiles, append = append ) 
         
     }else{
+        merge_inter_first <- merge_inter_first0 
+        
         #   s does not contain metabolites
         .muc_logMessage( 
             m = "Prepare a list of operations", 
