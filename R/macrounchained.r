@@ -3593,11 +3593,23 @@ length_AsIs <- function(x,col_name){
                 collapse = ", " ) ) ) 
     };  rm( test_columns )
     
-    test_met_columns <- 
-        columns_met[ columns_met != "g_per_mol" ] %in% colnames( s ) 
     
-    metabolites <- ifelse( test = any( test_met_columns ), 
-        yes = TRUE, no = FALSE )
+    
+    metabolites <- FALSE 
+    for( col_met in columns_met[ columns_met != "g_per_mol" ] ){
+        if( col_met %in% colnames( s ) ){
+            if( !all( is.na( s[, col_met ] ) ) ){
+                metabolites <- TRUE 
+            }   
+        }   
+    }   
+    
+    test_met_columns <- columns_met %in% colnames( s ) 
+    
+    # metabolites <- ifelse( test = any( test_met_columns ), 
+        # yes = TRUE, no = FALSE )
+    
+    
     
     if( metabolites & (!all(test_met_columns)) ){
         stop( sprintf( 
