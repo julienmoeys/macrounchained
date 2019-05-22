@@ -934,7 +934,6 @@ macrounchained.data.frame <- function(
         verbose = verbose, log_width = log_width, 
         logfiles = temp_log, append = TRUE )
     
-    # INSERT .muc_check_s() HERE
     s0 <- .muc_check_s( 
         s             = s, 
         focus_mode    = focus_mode, 
@@ -3594,7 +3593,8 @@ length_AsIs <- function(x,col_name){
                 collapse = ", " ) ) ) 
     };  rm( test_columns )
     
-    test_met_columns <- columns_met %in% colnames( s ) 
+    test_met_columns <- 
+        columns_met[ columns_met != "g_per_mol" ] %in% colnames( s ) 
     
     metabolites <- ifelse( test = any( test_met_columns ), 
         yes = TRUE, no = FALSE )
