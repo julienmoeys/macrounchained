@@ -4598,6 +4598,7 @@ length_AsIs <- function(x,col_name){
 #   Convert and merge the intermediate output bin-files 
 #   and export an intermediate input bin-file
 #'@importFrom macroutils2 macroWriteBin 
+#'@importFrom macroutils2 macroReadBin 
 .muc_merge_inter <- function(
     inter_in, 
     inter_out, 
