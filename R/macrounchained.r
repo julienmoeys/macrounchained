@@ -4648,7 +4648,11 @@ length_AsIs <- function(x,col_name){
         FUN = function(b){ return( b[, colnames( b ) != "Date" ] ) }
     )   
     
-    bins <- do.call( what = "+", args = bins ) 
+    
+    
+    # bins <- do.call( what = "+", args = bins ) 
+    bins <- Reduce( f = `+`, x = bins )
+    
     
     bins <- data.frame(
         "Date" = dates, 
