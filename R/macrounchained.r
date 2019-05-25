@@ -4235,16 +4235,15 @@ length_AsIs <- function(x,col_name){
                 
                 s[[ "as_id" ]][[ i ]] <- as_id_i 
                 
-                #   Determine f_conv
-                M_parent <- s[ s[,"id"] == parent_id_i,     "g_per_mol" ] 
-                M_met    <- s[ s[,"id"] == id_next_level_i, "g_per_mol" ] 
-                transf_f <- s[ s[,"id"] == id_next_level_i, "transf_f" ][[ 1L ]] 
+                # #   Determine f_conv
+                # M_parent <- s[ s[,"id"] %in% parent_id_i,   "g_per_mol" ] 
+                # M_met    <- s[ s[,"id"] == id_next_level_i, "g_per_mol" ] 
+                # transf_f <- s[ s[,"id"] == id_next_level_i, "transf_f" ][[ 1L ]] 
                 
-                s[[ "f_conv" ]][[ i ]] <- (M_met/M_parent)*transf_f
+                # s[[ "f_conv" ]][[ i ]] <- (M_met/M_parent)*transf_f
             }   
             
-            rm( i, id_next_level_i, parent_id_i, as_id_i, 
-                M_parent, M_met, transf_f )
+            rm( i, id_next_level_i, parent_id_i, as_id_i )
             
             # s[ next_level, "as_id" ] <- unlist( lapply(
                 # X   = id_next_level, 
@@ -4271,6 +4270,23 @@ length_AsIs <- function(x,col_name){
         #   Clean up
         rm( current_met_level, id_current_level, next_level, 
             id_next_level )
+        
+        
+        
+        #   Determine f_conv
+        for( i in which( s[, "met_level" ] > 0 ) ){
+            parent_id_i <- s[ i, "parent_id" ][[ 1L ]] 
+            
+            M_parent <- s[ s[,"id"] %in% parent_id_i, "g_per_mol" ] 
+            M_met    <- s[ i,                         "g_per_mol" ] 
+            transf_f <- s[ i,                         "transf_f" ][[ 1L ]] 
+            
+            s[[ "f_conv" ]][[ i ]] <- (M_met/M_parent)*transf_f
+        }   
+        
+        rm( i, parent_id_i, M_parent, M_met, transf_f )
+        
+        
         
         #   Order the substances so that substances having 
         #   the same top active substances are simulated 
