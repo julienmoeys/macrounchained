@@ -1159,7 +1159,7 @@ macrounchained.data.frame <- function(
         verbose = verbose, log_width = log_width, 
         logfiles = temp_log, append = TRUE ) 
     
-    .muc_print( x = s, verbose = verbose, 
+    .muc_print( x = AsIs_columns_to_text( s ), verbose = verbose, 
         log_width = log_width, logfiles = temp_log, 
         append = TRUE )
     
@@ -1200,9 +1200,9 @@ macrounchained.data.frame <- function(
             verbose = verbose, log_width = log_width, 
             logfiles = temp_log, append = TRUE ) 
         
-        .muc_print( x = merge_inter_first, verbose = verbose, 
-            log_width = log_width, logfiles = temp_log, 
-            append = TRUE )
+        .muc_print( x = AsIs_columns_to_text( merge_inter_first ), 
+            verbose = verbose, log_width = log_width, 
+            logfiles = temp_log, append = TRUE )
     }   
     
     
@@ -4831,3 +4831,53 @@ length_AsIs <- function(x,col_name){
     
     return( subst )
 }   
+
+
+
+#   Convert AsIs columns to text
+AsIs_columns_to_text <- function( x, digits = 3L ){
+    colnames_x <- colnames( x )
+    
+    x <- lapply(
+        X   = 1:ncol(x), 
+        FUN = function(j){
+            if( any( c( "AsIs", "list" ) %in% class( x[, j ] ) ) ){
+                x_j <- unlist( lapply(
+                    X   = 1:nrow(x), 
+                    FUN = function(i){
+                        if( is.numeric( x[ i, j ][[ 1L ]] ) ){
+                            x_i_j <- round( x[ i, j ][[ 1L ]], 
+                                digits = digits )
+                        }else{
+                            x_i_j <- x[ i, j ][[ 1L ]]
+                        }   
+                        
+                        return( paste( x_i_j, collapse = ", " ) )
+                    }   
+                ) ) 
+                
+                x_j <- data.frame( "zzz" = x_j, stringsAsFactors = FALSE ) 
+                colnames( x_j ) <- colnames_x[ j ] 
+                
+                return( x_j )
+            }else{
+                return( x[, j, drop = FALSE ] )
+            }   
+        }   
+    )   
+    
+    x <- do.call( what = "cbind", args = x ) 
+    
+    colnames( x ) <- colnames_x
+    
+    return( x ) 
+}   
+
+    # tmp <- data.frame(
+        # "id"        = c(1,2,3), 
+        # "parent_id" = I( list( NA, 1, c(2,3) ) ), 
+        # "f_conv"    = I( list( NA, 0.1234567, c(0.1234567,7.6543210) ) ), 
+        # "inter_in"  = I( list( NA, "rml_001_inter.par", c("rml_001_inter.par","rml_002_inter.par") ) ), 
+        # stringsAsFactors = FALSE )   
+
+    # AsIs_columns_to_text( tmp )
