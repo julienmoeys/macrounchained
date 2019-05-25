@@ -338,6 +338,39 @@ downloaded. See above the remark on the path separator.
 
 
 
+tar.exe for archiving all input and output files
+------------------------------------------------------------
+
+`macrounchained()` and `macrounchainedFocusGW()` rely on the 
+executable `tar.exe` to produce an archive containing all 
+the input and output files generated during the operations.
+
+`tar.exe` should be available on Windows 10 [from Build 17063](https://techcommunity.microsoft.com/t5/Containers/Tar-and-Curl-Come-to-Windows/ba-p/382409). 
+If you have an older version of Windows, the archiving may not 
+work (but `macrounchained()` will not crash, just issue a 
+warning). If you don't know if `tar.exe` is installed on your 
+computer, open Windows command prompt (`cmd.exe`) and type 
+```
+echo "%tar%"
+```
+
+If the command returns `"%tar%"`, then no tar executable is 
+defined in Windows Environment Variables. You can then type:
+```
+where tar.exe
+```
+
+If the command returns 
+`INFO: Could not find files for the given pattern(s).`, then 
+`tar.exe` cannot be found in Windows `PATH` environment 
+variable.
+
+If `tar.exe` is not installed on your computer and you need 
+the archive functionality, contact your system administrator 
+to find a solution.
+
+
+
 Swedish and Norwegian MACRO scenario
 ------------------------------------------------------------
 
