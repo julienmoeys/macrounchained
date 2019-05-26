@@ -147,6 +147,164 @@ Features
 
 
 
+How it works
+============================================================
+
+`macrounchained` is an alternative interface to MACRO 5.2 or 
+MACRO In FOCUS 5.5.4. It does not require any modification 
+of the core models. It creates parameter files (`.par`-files) 
+that are used by MACRO or MACRO In FOCUS, via the tool 
+`exeparfile.exe`. The tool uses a template `.par`-file, and 
+modifies the parameters related to the substance properties, 
+the application date, the applied dose and (for MACRO In FOCUS) 
+the number of years interval between application years. While 
+MACRO users need to provide one or several template 
+`.par`-files of their choice, via `macrounchained()`, MACRO 
+In FOCUS do not need template `.par`-files, as these are 
+included in the tool for each groundwater scenario (but not 
+surface water scenario), via `macrounchainedFocusGW()` or 
+`macrounchainedFocusGW_ui()`. The tool also includes a database 
+of crop parameters for each groundwater scenario, and these 
+parameters are set at the same time as substance parameters. 
+MACRO In FOCUS users just need to specify the name of the 
+scenario and the name of the crop.
+
+Four types of simulations can be run:
+
+*   Active substance, that is, the substance that is 
+    applied on the field. This is the 'top parent'.
+    
+*   Intermediate simulation for an active substance (see 
+    below).
+    
+*   Metabolite, that is a substance that is formed from 
+    the degradation of one or several other substances. 
+    The parent-substance can be active substances or 
+    metabolites.
+    
+*   Intermediate simulation for a metabolite (see below).
+
+The algorithm in `macrounchained` is generic, in the sense 
+that there is no limitation to the order of the metabolite 
+(primary, secondary, ternary, etc.) or to the number of 
+metabolites formed from the degradation of a given 
+parent-substance. Metabolites can also be the degradation 
+products of several parent-substances, and the parent-substances 
+can be either one or several active substances and/or one 
+or several metabolite. The only limitation is the total 
+number of model run, which can not be higher than 998.
+
+Also, it is possible to simulate different, unrelated, 
+substances and scenario in the same batch of simulations.
+
+
+
+Primary metabolites (1st order metabolites)
+------------------------------------------------------------
+
+The simulation of metabolites in MACRO In FOCUS is done in three 
+steps. 
+
+*   A simulation is run for the parent substance. 
+    It is not used for the metabolite, but provide output for 
+    the substance leaching to groundwater.
+
+*   The very same simulation is run a second time, but with 
+    specific output variables: the mass of substance degraded 
+    for each time step and each numerical layer in the soil 
+    profiles. The output of that second run is called the 
+    "intermediate" output-file (or intermediate `.bin`-file).
+
+*   A simulation is prepared for the metabolite. It uses the 
+    properties of the metabolite substance and a couple of 
+    other specific parameters indicating that what is simulated 
+    is a metabolite, not an active substance. Among other things, 
+    that simulation will use the the "intermediate" output-file 
+    to internally calculate the mass of metabolite formed at each 
+    time step and in each numerical layer in the soil profiles. 
+    This is done with a parameter called the "conversion factor" 
+    (mass of metabolite formed per mass unit of parent degraded).
+
+The conversion factor is equal to:
+```
+(M_metabolite/M_parent)*formation_fraction
+```
+
+where `M_metabolite` is the molar mass of the metabolite, 
+`M_parent` is the molar mass of the parent and 
+`formation_fraction` is the formation fraction of the metabolite 
+(mol of metabolite formed per mol of parent degraded).
+
+In `macrounchained`, and contrary to MACRO In FOCUS, the user 
+indicates the formation fraction and the molar mass of the 
+metabolite, as well as the molar mass of the parent, instead 
+of giving directly the conversion factor. The conversion factor 
+is calculated internally.
+
+
+
+Nth order metabolites
+------------------------------------------------------------
+
+The case of Nth order metabolites (second order, third order, 
+etc.) is the same as above, except that an "intermediate" 
+simulation needs to be run for the "parent-metabolite" whose 
+degradation produce a higher order metabolite.
+
+
+
+Metabolites formed from the degradation of several parent-substances
+------------------------------------------------------------
+
+In the case of metabolites formed from the degradation of 
+several parent-substances, things are handled differently from 
+what is described above. In such a case, `macrounchained` 
+is converting and merging the intermediate output files as 
+follow:
+
+*   The intermediate output file of each parent is imported:
+
+*   The intermediate output file of each parent is converted 
+    from "mass of parent-substance degraded at each time step 
+    and in each numerical layer" to "mass of metabolite formed 
+    from the degradation of the parent-substance at each time 
+    step and in each numerical layer", using 
+    the "conversion factor" mentioned above.
+    
+*   All converted intermediate output files are merged (i.e. 
+    "summed" time step for time step and numerical layer 
+    for numerical layer) into a single file that I call 
+    the "intermediate input file". This file contains the 
+    "total mass of metabolite formed from the degradation of 
+    all its parent-substances at each time step and in each 
+    numerical layer"
+    
+*   This "intermediate input file" is used as a driving file 
+    for the simulation of the metabolite, exactly as if it 
+    was a standard, "intermediate output file", except that 
+    the "conversion factor" of the simulation is set to 1 in 
+    the simulation's parameter-file (as the conversion has 
+    already been done outside the model).
+
+
+
+Determining the order of the simulations
+------------------------------------------------------------
+
+In `macrounchained`, the user can provide parameters of each 
+substance in any order. That is, it is possible that the row 
+containing the parameters of the metabolite is before the row 
+containing the parameter of its parent substance. Nonetheless, 
+`macrounchained` is internally reordering the substances (and 
+the simulations to be run) so that the simulation of 
+parent-substances is performed before the simulation of their 
+metabolites. This is done with an iterative process.
+
+Also, the package will 'group' the simulation of substances 
+that share the same active substance.
+
+
+
 Installation
 ============================================================
 
