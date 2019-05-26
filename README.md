@@ -513,7 +513,9 @@ to make sure the information is up to date, as the package will
 not include information on its own release.
 
 For more information on the changes, see the [NEWS](NEWS)-files 
-for `macrounchained` and for its dependencies.
+for `macrounchained` and for its dependencies 
+([rmacrolite NEWS][rmacrolite_NEWS], [macroutils2 NEWS][macroutils2_NEWS] and 
+[codeinfo NEWS][codeinfo_NEWS]).
 
 _2019-04_
 
@@ -604,3 +606,6 @@ As stated in the [LICENSE](LICENSE), the package is provided
 [devtools]: https://CRAN.R-project.org/package=devtools "R package devtools (CRAN)"
 [cran]: https://cran.r-project.org/ "The Comprehensive R Archive Network" 
 [kemi]: https://www.kemi.se/en "Swedish Chemicals Agency"
+[NEWS_rmacrolite]: https://github.com/julienmoeys/rmacrolite/blob/master/NEWS "rmacrolite NEWS" 
+[NEWS_macroutils2]: https://github.com/julienmoeys/macroutils2/blob/master/NEWS "macroutils2 NEWS" 
+[NEWS_codeinfo]: https://github.com/julienmoeys/codeinfo/blob/master/NEWS "codeinfo NEWS" 
