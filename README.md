@@ -2,15 +2,18 @@
 [R][r] package for **batch simulation of substance properties 
 and application patterns** with [MACRO][macro], a model of water 
 flow and solute transport in macroporous soil, 
-or its regulatory variant [MACRO In FOCUS][macroinfocus], 
-including simulation of **Nth-order metabolites**. 
-The substance properties and application patterns that can 
-be modified are currently those relevant for the groundwater 
-scenario of MACRO In FOCUS.
+or its regulatory variant [MACRO In FOCUS][macroinfocus]. 
+The package makes it possible to simulate **Nth-order 
+metabolites**, including **[metabolites that are the degradation 
+products of several substances](inst/more_tests/test_GW_10_multiple-paths.svg)** 
+and cases where **several active substances give rise to the 
+same metabolite**. The substance properties and application 
+patterns that can be modified are currently those relevant 
+for the groundwater scenario of MACRO In FOCUS.
 
 *   **Development status**: pre-release. Do not use for 
     production purpose, as the interface may still evolve if 
-    needed, and some bugs may I come unnoticed despite all 
+    needed, and some bugs may have come unnoticed despite all 
     the tests.
     
 *   **General information**: See [DESCRIPTION](DESCRIPTION) 
@@ -25,8 +28,8 @@ scenario of MACRO In FOCUS.
     
 *   **License**: MIT License. See [LICENSE](LICENSE).
 
-Either MACRO or MACRO In FOCUS or both need to be installed 
-for using `macrounchained` (see below).
+*   Either MACRO 5.2 or MACRO In FOCUS 5.5.4 or both need to 
+    be installed for using `macrounchained` (see below).
 
 
 
@@ -74,10 +77,12 @@ Features
     the total number of simulations) and several degradation 
     products can be simulated for the same parent substance 
     (also limited by the total number of simulations), in the 
-    same batch. It is nonetheless not possible to simulate 
-    degradation products originating from several parent 
-    substances. The so called 'intermediate simulations' are 
-    handled automatically by the package.
+    same batch. It also possible to simulate [metabolites that 
+    are the degradation product of several substances](inst/more_tests/test_GW_10_multiple-paths.svg). 
+    The parent substances can be two or more metabolites 
+    and / or two or more active substances. The so called 
+    'intermediate simulations' are handled automatically by 
+    the package.
     
 *   Two higher order functions are provided: `macrounchained()`
     and `macrounchainedFocusGW()`. The first is a generic 
@@ -90,12 +95,12 @@ Features
     results and provides the user with a summary of the results, 
     in a similar fashion as fashion as standard 
     **MACRO In FOCUS groundwater** simulations.
-    .
+    
 *   Currently only tested on **MACRO In FOCUS 5.5.4**.
     
 *   The results of `macrounchainedFocusGW()` have been 
-    successfully tested against the results of the 
-    "version control" of MACRO In FOCUS 5.5.4, and give the 
+    successfully **tested against the results of the 
+    "version control" of MACRO In FOCUS 5.5.4**, and give the 
     same PECgw for all the simulations included in the version 
     control. The function has also been successfully tested 
     against the results of MACRO In FOCUS 5.5.4 for other 
@@ -104,7 +109,8 @@ Features
     The tests are "build-in" the package, 
     and they can be run each time an important change is 
     made to the package. The test results can be 
-    checked here: https://github.com/julienmoeys/macrounchained/tree/master/inst/more_tests
+    checked here: https://github.com/julienmoeys/macrounchained/tree/master/inst/more_tests 
+    See also the "Benchmarks" section below.
     
 *   As the interface of MACRO In FOCUS only allow the 
     parametrization of 1st-order metabolites, the package 
@@ -114,19 +120,22 @@ Features
     benchmark.
     
 *   `macrounchained()` and `macrounchainedFocusGW()` output 
-    an operation log informing the users of the operations 
+    an **operation log** informing the users of the operations 
     being performed. `macrounchainedFocusGW()` also 
     output a summary of the simulation results (including 
     the PECgw) in the operation log, as well as in separate 
     files.
     
 *   `macrounchained()` and `macrounchainedFocusGW()` produce 
-    a `tar.gz` archive containing all the relevant input 
+    a **`tar.gz` archive** containing all the relevant input 
     and output files of the simulation batch. This can be 
     used as an archive by the user.
     
 *   The packages do not include any MACRO executable, and 
-    instead use an existing MACRO or MACRO In FOCUS installation.
+    instead use an existing MACRO or MACRO In FOCUS installation. 
+    The package does not include any climate files for the 
+    Swedish and Norwegian scenario. The package does not make 
+    use of MACRO In FOCUS Access databases.
     
 *   Extensive traceability, with MACRO-version, packages-versions 
     and revision (i.e. a machine generated code linking the 
@@ -157,7 +166,7 @@ Before you install the package, check in the
 of R needed to run this package (field "Depends", see 
 "R (>= ...)"). For convenience, the minimum R version required 
 has been set to R >= 3.1, so that user with an old version 
-of R may still try to install and use the package. The package 
+of R may still _try_ to install and use the package. The package 
 has nonetheless not been tested on that version, but instead 
 on R 3.5.1 (at the time of writing this text). Some problems 
 may therefore occur on older versions.
@@ -400,12 +409,13 @@ of MACRO In FOCUS (PECgw and water percolation).
 
 These benchmarks can be run at anytime, and also aim at detecting 
 mistakes that could be introduced in the code when it is further 
-develloped (for maintenance or new features).
+developed (for maintenance or new features).
 
-In some cases it is was possible to compare the output of 
+In some cases it is was not possible to compare the output of 
 `macrounchainedFocusGW()` with MACRO In FOCUS (secondary 
-metabolites), and the benchmarks is only used to detect 
-accidental drift from the original output.
+metabolites, multiple transformation pathways), and the 
+benchmarks is only used to detect accidental drift from the 
+original output.
 
 In these benchmarks, the parameter files (`.par`-files) produced 
 by `macrounchainedFocusGW()` or `macrounchained()` are 
@@ -459,7 +469,7 @@ Other benchmarks
     per year, every year, with substance "GW-A".
     
 *   Châteaudun-scenario, winter cereals, application every 
-    year with a new dummy substance M, a primary metabolite 
+    year with a new dummy substance, GW-M, a primary metabolite 
     "Met-M1" and a secondary metabolite "Met-M2".
     
 *   The three Swedish scenario (non FOCUS), Krusenberg, 
@@ -473,15 +483,34 @@ Other benchmarks
     
 *   Default simulation in MACRO 5.2, two year simulations, 
     with the default crop and an application every year. 
-    "GW-C" and "Met_C" werer simulated, and their overall 
+    "GW-C" and "Met_C" were simulated, and their overall 
     average leaching concentration was calculated. Notice 
     that metabolites cannot be parametrised in MACRO 5.2, 
     so the comparison only concerns the parent.
+    
+*   Châteaudun-scenario, spring cereals, application every 
+    year with two new dummy active substance, GW-M and GW-N 
+    (representing the hypothetical case of two active 
+    substances included in the same plant protection product). 
+    The degradation pathway can be virtualised here: 
+    [inst/more_tests/test_GW_10_multiple-paths.svg](inst/more_tests/test_GW_10_multiple-paths.svg).
+    GW-M has three metabolites, "Met-M0", "Met-M1" and "Met-M2", 
+    and GW-N has two metabolites, "Met-N1" and "Met-N2". 
+    "Met-M2" and "Met-N2" are in fact the same substance, 
+    and is the degradation product of "GW-M", "Met-M1" and 
+    "Met-N1". The metabolite "Met-M1" is the degradation 
+    product of "GW-M" and "Met-M0". "Met-M0" is the degradation 
+    product of "GW-M", and "Met-N1" is the degradation product 
+    of "GW-N".
 
 
 
 Release history
 ============================================================
+
+Please check the [online version of this page](https://github.com/julienmoeys/macrounchained/blob/master/README.md) 
+to make sure the information is up to date, as the package will 
+not include information on its own release.
 
 For more information on the changes, see the [NEWS](NEWS)-files 
 for `macrounchained` and for its dependencies.
@@ -501,6 +530,8 @@ _2019-05_
 ```
 4       codeinfo   0.1.3  a595b27    2019-05-13
 ```
+
+
 
 About
 ============================================================
