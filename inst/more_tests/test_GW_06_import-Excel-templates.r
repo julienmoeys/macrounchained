@@ -21,6 +21,8 @@ if( as.logical( as.integer( Sys.getenv( "macrounchained_developer", unset = "0" 
 library( "macrounchained" )
 # library( "readxl" ) 
 
+
+
 xlsx <- system.file( "xlsx", "macrounchainedFocusGW-with-met.xlsx", 
     package = "macrounchained" ) 
 
@@ -31,13 +33,10 @@ param <- readxl::read_excel(
 #   Inspect
 as.data.frame( param ) 
 
-
-
 res <- macrounchainedFocusGW( 
     s         = param, 
     overwrite = TRUE, 
     run       = FALSE ) # Dry run 
-
 
 
 
@@ -52,13 +51,10 @@ param2 <- readxl::read_excel(
 #   Inspect
 as.data.frame( param2 ) 
 
-
-
 res2 <- macrounchainedFocusGW( 
     s         = param2, 
     overwrite = TRUE, 
     run       = FALSE ) # Dry run 
-
 
 
 
@@ -73,10 +69,44 @@ param3 <- readxl::read_excel(
 #   Inspect
 as.data.frame( param3 ) 
 
-
-
 res3 <- macrounchainedFocusGW( 
     s         = param3, 
+    overwrite = TRUE, 
+    run       = FALSE ) # Dry run 
+
+
+
+xlsx4 <- system.file( "xlsx", 
+    "macrounchainedFocusGW-multiple-paths.xlsx", 
+    package = "macrounchained" ) 
+
+param4 <- readxl::read_excel( 
+    path = xlsx4, 
+    sheet = "s" )
+
+#   Inspect
+as.data.frame( param4 ) 
+
+res4 <- macrounchainedFocusGW( 
+    s         = param4, 
+    overwrite = TRUE, 
+    run       = FALSE ) # Dry run 
+
+
+
+xlsx5 <- system.file( "xlsx", 
+    "macrounchainedFocusGW-with-more-met.xlsx", 
+    package = "macrounchained" ) 
+
+param5 <- readxl::read_excel( 
+    path = xlsx5, 
+    sheet = "s" )
+
+#   Inspect
+as.data.frame( param5 ) 
+
+res5 <- macrounchainedFocusGW( 
+    s         = param5, 
     overwrite = TRUE, 
     run       = FALSE ) # Dry run 
 
