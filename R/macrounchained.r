@@ -1194,7 +1194,7 @@ macrounchained.data.frame <- function(
     
     
     
-    if( nrow( merge_inter_first ) != 0L ){
+    if( nrow( merge_inter_first ) > 0L ){
         .muc_logMessage( 
             m = "Merge operations:", 
             verbose = verbose, log_width = log_width, 
@@ -1246,6 +1246,15 @@ macrounchained.data.frame <- function(
         "par_template_file"  = par_template_file, 
         "md5_file"           = md5_file, 
         "archive_file"       = archive_file )
+    
+    if( nrow( merge_inter_first ) > 0L ){
+        merge_inter_first_file <- sprintf( fileNameTemplate[[ "r" ]], sprintf( 
+            "%s_merge_inter_first", from_to ), "csv" ) 
+        
+        extra_files <- c( extra_files, merge_inter_first_file ) 
+    }   
+    
+    
     
     if( !overwrite ){
         .muc_logMessage( 
@@ -1345,6 +1354,19 @@ macrounchained.data.frame <- function(
         file = file.path( modelVar[["path"]], operation_register_file ), 
         row.names = FALSE, fileEncoding = "UTF-8" )
     
+    
+    
+    if( nrow( merge_inter_first ) > 0L ){
+        .muc_logMessage( 
+            m = "Exporting table of merging: %s", 
+            verbose = verbose, log_width = log_width, 
+            values = list( merge_inter_first_file ), 
+            logfiles = log_file, append = TRUE ) 
+        
+        utils::write.csv( x = AsIs_to_text( merge_inter_first ), 
+            file = file.path( modelVar[["path"]], merge_inter_first_file ), 
+            row.names = FALSE, fileEncoding = "UTF-8" )
+    }   
     
     
     .muc_logMessage( 
