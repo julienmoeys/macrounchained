@@ -1999,7 +1999,8 @@ macrounchained.data.frame <- function(
         "operation_register"     = operation_register, 
         "extra_files"            = extra_files, 
         "analyse_output"         = analyse_output, 
-        "analyse_summary_output" = analyse_summary_output ) 
+        "analyse_summary_output" = analyse_summary_output, 
+        "merge_inter_first"      = merge_inter_first ) 
     
     
     
