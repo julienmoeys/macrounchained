@@ -514,8 +514,8 @@ not include information on its own release.
 
 For more information on the changes, see the [NEWS](NEWS)-files 
 for `macrounchained` and for its dependencies 
-([rmacrolite NEWS][rmacrolite_NEWS], [macroutils2 NEWS][macroutils2_NEWS] and 
-[codeinfo NEWS][codeinfo_NEWS]).
+([rmacrolite NEWS][NEWS_rmacrolite], [macroutils2 NEWS][NEWS_macroutils2] and 
+[codeinfo NEWS][NEWS_codeinfo]).
 
 _2019-04_
 
