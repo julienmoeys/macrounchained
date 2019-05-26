@@ -38,9 +38,11 @@ and don't need to read the rest of this document.
 user interface for `macrounchainedFocusGW()`.
 
 With this interface the user can:
-*   Obtain a copy of the Excel example files for the input 
+
+-   Obtain a copy of the Excel example files for the input 
     parameters (including a documentation of these parameters).
-*   Import an Excel file containing input parameters, as 
+
+-   Import an Excel file containing input parameters, as 
     prepared by the user, and start `macrounchainedFocusGW()`, 
     after a couple of simple questions.
 
