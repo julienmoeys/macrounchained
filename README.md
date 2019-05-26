@@ -2,7 +2,8 @@
 [R][r] package for **batch simulation of substance properties 
 and application patterns** with [MACRO][macro], a model of water 
 flow and solute transport in macroporous soil, 
-or its regulatory variant [MACRO In FOCUS][macroinfocus]. 
+or the **groundwater scenario** of its regulatory variant 
+[MACRO In FOCUS][macroinfocus]. 
 The package makes it possible to simulate **Nth-order 
 metabolites**, including **[metabolites that are the degradation 
 products of several substances](inst/more_tests/test_GW_10_multiple-paths.svg)** 
