@@ -56,6 +56,12 @@ param <- data.frame(
 
 
 
+res <- macrounchainedFocusGW( 
+    s         = param, 
+    overwrite = TRUE, 
+    run       = TRUE ) 
+
+
 
 
 
@@ -76,19 +82,6 @@ expected_results_w <- data.frame(
     "perc_period1_mm"       = c(  234.0759,  256.3556,  237.0148 ), 
     "perc_period2_mm"       = c( 256.35547,  38.68237,  19.49554 ), 
     stringsAsFactors        = FALSE ) 
-
-
-
-
-
-
-res <- macrounchainedFocusGW( 
-    s         = param, 
-    overwrite = TRUE, 
-    run       = TRUE ) 
-
-
-
 
 
 

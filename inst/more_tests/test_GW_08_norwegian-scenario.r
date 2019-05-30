@@ -55,6 +55,13 @@ param <- data.frame(
 
 
 
+res <- macrounchainedFocusGW( 
+    s         = param, 
+    overwrite = TRUE, 
+    run       = TRUE ) 
+
+
+
 
 
 
@@ -84,19 +91,6 @@ expected_parfiles[, "parfile" ] <- system.file(
     "par-files", 
     expected_parfiles[, "parfile" ], 
     package = "macrounchained" )
-
-
-
-
-
-
-res <- macrounchainedFocusGW( 
-    s         = param, 
-    overwrite = TRUE, 
-    run       = TRUE ) 
-
-
-
 
 
 
