@@ -2,11 +2,11 @@
 [R][r] package for **batch simulation of substance properties 
 and application patterns** with [MACRO][macro], a model of water 
 flow and solute transport in macroporous soil, 
-or the **groundwater scenario** of its regulatory variant 
+or with the **groundwater scenario** of its regulatory variant 
 [MACRO In FOCUS][macroinfocus]. 
 The package makes it possible to simulate **Nth-order 
 metabolites**, including **[metabolites that are the degradation 
-products of several substances](inst/more_tests/test_GW_10_multiple-paths.svg)** 
+products of several substances](https://github.com/julienmoeys/macrounchained/blob/master/inst/more_tests/test_GW_10_multiple-paths.svg)** 
 and cases where **several active substances give rise to the 
 same metabolite**. The substance properties and application 
 patterns that can be modified are currently those relevant 
@@ -79,7 +79,7 @@ Features
     products can be simulated for the same parent substance 
     (also limited by the total number of simulations), in the 
     same batch. It also possible to simulate [metabolites that 
-    are the degradation product of several substances](inst/more_tests/test_GW_10_multiple-paths.svg). 
+    are the degradation product of several substances](https://github.com/julienmoeys/macrounchained/blob/master/inst/more_tests/test_GW_10_multiple-paths.svg). 
     The parent substances can be two or more metabolites 
     and / or two or more active substances. The so called 
     'intermediate simulations' are handled automatically by 
@@ -600,7 +600,7 @@ the later case, it was observed that several years had very
 close yearly-average concentrations, resulting in a different 
 ranking that that obtained by  MACRO In FOCUS 5.5.4.
 
-The benchmarks and their results are available here 
+The benchmarks and their results are available here: 
 https://github.com/julienmoeys/macrounchained/tree/master/inst/more_tests
 
 
@@ -652,7 +652,7 @@ Other benchmarks
     (representing the hypothetical case of two active 
     substances included in the same plant protection product). 
     The degradation pathway can be virtualised here: 
-    [inst/more_tests/test_GW_10_multiple-paths.svg](inst/more_tests/test_GW_10_multiple-paths.svg).
+    [inst/more_tests/test_GW_10_multiple-paths.svg](https://github.com/julienmoeys/macrounchained/blob/master/inst/more_tests/test_GW_10_multiple-paths.svg).
     GW-M has three metabolites, "Met-M0", "Met-M1" and "Met-M2", 
     and GW-N has two metabolites, "Met-N1" and "Met-N2". 
     "Met-M2" and "Met-N2" are in fact the same substance, 
