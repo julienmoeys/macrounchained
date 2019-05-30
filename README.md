@@ -6,7 +6,7 @@ or with the **groundwater scenario** of its regulatory variant
 [MACRO In FOCUS][macroinfocus]. 
 The package makes it possible to simulate **Nth-order 
 metabolites**, including **[metabolites that are the degradation 
-products of several substances](https://github.com/julienmoeys/macrounchained/blob/master/inst/more_tests/test_GW_10_multiple-paths.svg)** 
+products of several substances][test_GW_10_multiple_paths]** 
 and cases where **several active substances give rise to the 
 same metabolite**. The substance properties and application 
 patterns that can be modified are currently those relevant 
@@ -17,17 +17,17 @@ for the groundwater scenario of MACRO In FOCUS.
     needed, and some bugs may have come unnoticed despite all 
     the tests.
     
-*   **General information**: See [DESCRIPTION](DESCRIPTION) 
+*   **General information**: See [DESCRIPTION][NEWS_macrounchained] 
     (including author(s), package-version, minimum R version 
     required, ...).
     
-*   **Change log**: See [NEWS](NEWS).
+*   **Change log**: See [NEWS][NEWS_macrounchained].
     
 *   **Operating system**: `macrounchained` will only work on 
     Windows, because MACRO is a Windows-only 
     program.
     
-*   **License**: MIT License. See [LICENSE](LICENSE).
+*   **License**: MIT License. See [LICENSE][LICENSE_macrounchained].
 
 *   Either MACRO 5.2 or MACRO In FOCUS 5.5.4 or both need to 
     be installed for using `macrounchained` (see below).
@@ -79,7 +79,7 @@ Features
     products can be simulated for the same parent substance 
     (also limited by the total number of simulations), in the 
     same batch. It also possible to simulate [metabolites that 
-    are the degradation product of several substances](https://github.com/julienmoeys/macrounchained/blob/master/inst/more_tests/test_GW_10_multiple-paths.svg). 
+    are the degradation product of several substances][test_GW_10_multiple_paths]. 
     The parent substances can be two or more metabolites 
     and / or two or more active substances. The so called 
     'intermediate simulations' are handled automatically by 
@@ -320,10 +320,10 @@ development version of the package, from [GitHub][github].
 The later should not be seen as a stable version and may 
 not work at all.
 
-Before you install the package, check in the 
-[DESCRIPTION](DESCRIPTION)-file what is the minimum version 
-of R needed to run this package (field "Depends", see 
-"R (>= ...)"). For convenience, the minimum R version required 
+Before you install the package, check in the [DESCRIPTION][DESCRIPTION_macrounchained]-file 
+what is the minimum version of R needed to run this package 
+(field "Depends", see "R (>= ...)"). 
+For convenience, the minimum R version required 
 has been set to R >= 3.1, so that user with an old version 
 of R may still _try_ to install and use the package. The package 
 has nonetheless not been tested on that version, but instead 
@@ -652,7 +652,7 @@ Other benchmarks
     (representing the hypothetical case of two active 
     substances included in the same plant protection product). 
     The degradation pathway can be virtualised here: 
-    [inst/more_tests/test_GW_10_multiple-paths.svg](https://github.com/julienmoeys/macrounchained/blob/master/inst/more_tests/test_GW_10_multiple-paths.svg).
+    [inst/more_tests/test_GW_10_multiple-paths.svg][test_GW_10_multiple_paths].
     GW-M has three metabolites, "Met-M0", "Met-M1" and "Met-M2", 
     and GW-N has two metabolites, "Met-N1" and "Met-N2". 
     "Met-M2" and "Met-N2" are in fact the same substance, 
@@ -671,7 +671,7 @@ Please check the [online version of this page](https://github.com/julienmoeys/ma
 to make sure the information is up to date, as the package will 
 not include information on its own release.
 
-For more information on the changes, see the [NEWS](NEWS)-files 
+For more information on the changes, see the [NEWS][NEWS_macrounchained]-file 
 for `macrounchained` and for its dependencies 
 ([rmacrolite NEWS][NEWS_rmacrolite], [macroutils2 NEWS][NEWS_macroutils2] and 
 [codeinfo NEWS][NEWS_codeinfo]).
@@ -749,8 +749,8 @@ and input files._". Thus, please refer to
 in each EU regulatory zone for guidance on officially accepted 
 tools and methods.
 
-As stated in the [LICENSE](LICENSE), the package is provided 
-**without any warranty**.
+As stated in the [LICENSE][LICENSE_macrounchained], 
+the package is provided **without any warranty**.
 
 
 <!-- LIST OF LINKS -->
@@ -771,6 +771,10 @@ As stated in the [LICENSE](LICENSE), the package is provided
 [devtools]: https://CRAN.R-project.org/package=devtools "R package devtools (CRAN)"
 [cran]: https://cran.r-project.org/ "The Comprehensive R Archive Network" 
 [kemi]: https://www.kemi.se/en "Swedish Chemicals Agency"
-[NEWS_rmacrolite]: https://github.com/julienmoeys/rmacrolite/blob/master/NEWS "rmacrolite NEWS" 
-[NEWS_macroutils2]: https://github.com/julienmoeys/macroutils2/blob/master/NEWS "macroutils2 NEWS" 
-[NEWS_codeinfo]: https://github.com/julienmoeys/codeinfo/blob/master/NEWS "codeinfo NEWS" 
+[NEWS_rmacrolite]: https://github.com/julienmoeys/rmacrolite/blob/master/NEWS "rmacrolite NEWS-file" 
+[NEWS_macroutils2]: https://github.com/julienmoeys/macroutils2/blob/master/NEWS "macroutils2 NEWS-file" 
+[NEWS_codeinfo]: https://github.com/julienmoeys/codeinfo/blob/master/NEWS "codeinfo NEWS-file" 
+[NEWS_macrounchained]: https://github.com/julienmoeys/macrounchained/blob/master/NEWS "macrounchained NEWS-file"
+[DESCRIPTION_macrounchained]: https://github.com/julienmoeys/macrounchained/blob/master/DESCRIPTION "macrounchained DESCRIPTION-file"
+[LICENSE_macrounchained]: https://github.com/julienmoeys/macrounchained/blob/master/LICENSE "macrounchained LICENSE-file"
+[test_GW_10_multiple_paths]: https://github.com/julienmoeys/macrounchained/blob/master/inst/more_tests/test_GW_10_multiple-paths.svg "Figure illustrating multiple transformation pathways"
