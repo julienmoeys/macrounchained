@@ -676,7 +676,19 @@ for `macrounchained` and for its dependencies
 ([rmacrolite NEWS][NEWS_rmacrolite], [macroutils2 NEWS][NEWS_macroutils2] and 
 [codeinfo NEWS][NEWS_codeinfo]).
 
-_2019-04_
+_2019-05  (release 2):_
+
+New versions of `macrounchained` and `codeinfo`
+
+```
+1 macrounchained  0.13.0  93b0f40    2019-05-26
+2     rmacrolite   0.9.7  9a38321    2019-04-15
+3    macroutils2   2.2.3  ef26fd7    2019-04-17
+4       codeinfo   0.1.3  a595b27    2019-05-13
+```
+
+
+_2019-04 (release 1):_
 
 ```
          package version revision date_packaged
@@ -684,12 +696,6 @@ _2019-04_
 2     rmacrolite   0.9.7  9a38321    2019-04-15
 3    macroutils2   2.2.3  ef26fd7    2019-04-17
 4       codeinfo   0.1.2  c91f2f2    2019-04-17
-```
-
-_2019-05_
-
-```
-4       codeinfo   0.1.3  a595b27    2019-05-13
 ```
 
 
